@@ -45,7 +45,6 @@ public class AppUserService {
     }
 
     public AppUser updateUser(final AppUser appUser) {
-        appUser.setPassword(encoder.encode(appUser.getPassword()));
         return repository.save(appUser);
     }
 

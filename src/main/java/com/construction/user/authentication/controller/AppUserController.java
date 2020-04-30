@@ -1,5 +1,6 @@
 package com.construction.user.authentication.controller;
 
+import com.construction.appconfiguration.ApplicationSecurityContext;
 import com.construction.user.authentication.repository.AppUserRepository;
 import com.construction.user.authentication.service.AppUserService;
 import com.construction.persistence.exception.ResourceNotFoundException;
@@ -7,6 +8,8 @@ import com.construction.persistence.service.EntityDataMapper;
 import com.construction.user.authentication.domain.AppUser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -19,21 +22,34 @@ public class AppUserController {
 
     @Autowired
     private AppUserRepository repository;
-
     @Autowired
     private AppUserService service;
-
     @Autowired
     private EntityDataMapper entityDataMapper;
+    @Autowired
+    private PasswordEncoder encoder;
+    @Autowired
+    private ApplicationSecurityContext context;
 
     @GetMapping
+    @PreAuthorize("hasAuthority('ADMIN')")
     public List<AppUser> getAllUser() {
         return repository.findAll();
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("hasAuthority('ADMIN')")
     public AppUser getUserById(@NotNull @PathVariable("id") final Long id) {
         return repository.findById(id).orElseThrow(() -> new ResourceNotFoundException(AppUser.class, id));
+    }
+
+    @GetMapping("/current")
+    public AppUser getCurrentUser() {
+        final var user = context.authenticatedUser();
+        if (user == null) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "unauthorized request");
+        }
+        return user;
     }
 
     @PutMapping("/changePassword")

@@ -2,6 +2,7 @@ package com.construction.user.authentication.domain;
 
 import com.construction.persistence.domain.VersionEntity;
 import com.construction.user.authorization.domain.UserRole;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -28,6 +29,7 @@ public class AppUser extends VersionEntity {
 
     private String mobile;
 
+    @JsonIgnore
     @Column(nullable = false)
     private String password;
 
