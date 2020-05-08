@@ -1,32 +1,20 @@
 package com.construction.feature.address.domain;
 
-import com.construction.user.authentication.domain.AppUser;
-import com.construction.persistence.domain.VersionEntity;
 import lombok.Getter;
 import lombok.Setter;
-import lombok.experimental.Accessors;
 
-import javax.persistence.Embedded;
-import javax.persistence.Entity;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
+import javax.persistence.Embeddable;
 
-@Entity
+@Embeddable
 @Getter
 @Setter
-@Accessors(chain = true)
-public class Address extends VersionEntity {
+public class Address{
 
-    @ManyToOne
-    @JoinColumn(name = "user_id")
-    private AppUser user;
+    private String province;
 
-    @ManyToOne
-    @JoinColumn(name = "district_id")
-    private District district;
+    private String district;
+
+    private String commune;
 
     private String details;
-
-    @Embedded
-    private Location location;
 }

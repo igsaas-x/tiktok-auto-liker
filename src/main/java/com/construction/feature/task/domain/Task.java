@@ -1,4 +1,4 @@
-package com.construction.feature.labor.domain;
+package com.construction.feature.task.domain;
 
 import com.construction.feature.house.domain.House;
 import com.construction.persistence.domain.AuditingEntity;
@@ -17,7 +17,7 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 @Accessors(chain = true)
-public class Labor extends AuditingEntity {
+public class Task extends AuditingEntity {
 
     private String typeOfWork;
 
@@ -33,7 +33,7 @@ public class Labor extends AuditingEntity {
 
     @ManyToOne
     @JoinColumn(name = "parent_id")
-    private Labor parent;
+    private Task parent;
 
     private boolean leaf;
 

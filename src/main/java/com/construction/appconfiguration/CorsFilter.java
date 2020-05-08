@@ -33,9 +33,6 @@ public class CorsFilter extends GenericFilterBean {
             "X-CSRF-TOKEN",
             "otp-token"));
 
-    @Autowired
-    private AccessAmountService amountService;
-
     @Override
     public void doFilter(final ServletRequest request,
                          final ServletResponse response,
@@ -48,7 +45,6 @@ public class CorsFilter extends GenericFilterBean {
                           final FilterChain chain) throws IOException, ServletException {
         // Always add the origins header
         response.setHeader("Access-Control-Allow-Origin", "*");
-        amountService.updateAmount(request);
         if (isPreflightRequest(request)) {
             response.setHeader("Access-Control-Allow-Methods", "GET,POST,DELETE,PUT,OPTIONS");
             response.setHeader("Access-Control-Allow-Headers", ALLOWED_HEADERS);
