@@ -31,7 +31,7 @@ public class ProjectAudit extends AuditingEntity {
 
     private String code;
 
-    private ObjectStatus status;
+    private ObjectStatus status = ObjectStatus.OPEN;
 
     @ManyToOne
     @JoinColumn

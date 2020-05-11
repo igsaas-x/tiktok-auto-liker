@@ -1,15 +1,14 @@
 package com.construction.feature.task.domain;
 
 import com.construction.feature.house.domain.House;
+import com.construction.feature.status.ObjectStatus;
 import com.construction.persistence.domain.AuditingEntity;
 import com.construction.user.authentication.domain.AppUser;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
-import javax.persistence.Entity;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
+import javax.persistence.*;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
@@ -52,6 +51,9 @@ public class Task extends AuditingEntity {
     private BigDecimal totalPrice;
 
     private BigDecimal actualPrice;
+
+    @Enumerated(EnumType.STRING)
+    private ObjectStatus status = ObjectStatus.OPEN;
 
     @ManyToOne
     @JoinColumn

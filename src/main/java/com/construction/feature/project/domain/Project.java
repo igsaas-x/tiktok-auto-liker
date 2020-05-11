@@ -26,7 +26,8 @@ public class Project extends AuditingEntity {
 
     private String code;
 
-    private ObjectStatus status;
+    @Enumerated(EnumType.STRING)
+    private ObjectStatus status = ObjectStatus.OPEN;
 
     @ManyToOne
     @JoinColumn

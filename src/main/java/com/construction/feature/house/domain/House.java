@@ -28,7 +28,7 @@ public class House extends AuditingEntity {
     private String houseNo;
 
     @Enumerated(EnumType.STRING)
-    private ObjectStatus status;
+    private ObjectStatus status = ObjectStatus.OPEN;
 
     private Float houseWidth;
 
