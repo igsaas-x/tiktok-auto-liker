@@ -1,6 +1,5 @@
 package com.construction.feature.project.domain;
 
-import com.construction.feature.project.listener.ProjectListener;
 import com.construction.feature.status.ObjectStatus;
 import com.construction.persistence.domain.AuditingEntity;
 import com.construction.user.authentication.domain.AppUser;
@@ -8,15 +7,21 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import java.time.LocalDateTime;
 
 @Entity
 @Getter
 @Setter
 @Accessors(chain = true)
-@EntityListeners(ProjectListener.class)
-public class Project extends AuditingEntity {
+public class ProjectAudit extends AuditingEntity {
+
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "project_id")
+    private Project project;
 
     @Column(nullable = false)
     private String objectType;

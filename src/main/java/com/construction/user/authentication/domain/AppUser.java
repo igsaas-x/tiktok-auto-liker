@@ -2,7 +2,7 @@ package com.construction.user.authentication.domain;
 
 import com.construction.persistence.domain.VersionEntity;
 import com.construction.user.authorization.domain.UserRole;
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -19,6 +19,7 @@ import javax.validation.constraints.Email;
 @Accessors(chain = true)
 @Where(clause = "status <> 'DELETED'")
 @SQLDelete(sql = "update user set status = 'DELETED' where id = ?")
+@JsonIgnoreProperties(value = "password", allowSetters = true)
 public class AppUser extends VersionEntity {
 
     @Column(name = "user_name", unique = true, nullable = false)
@@ -29,7 +30,6 @@ public class AppUser extends VersionEntity {
 
     private String mobile;
 
-    @JsonIgnore
     @Column(nullable = false)
     private String password;
 

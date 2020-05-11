@@ -28,7 +28,6 @@ dependencies {
     implementation 'org.springframework.security.oauth:spring-security-oauth2:2.4.0.RELEASE'
     implementation 'org.springframework.security:spring-security-jwt:1.0.9.RELEASE'
     implementation 'net.coobird:thumbnailator:0.4.8'
-    implementation 'org.hibernate:hibernate-search-orm:5.11.4.Final'
     implementation 'io.springfox:springfox-swagger2:2.9.2'
     implementation 'io.springfox:springfox-swagger-ui:2.9.2'
     implementation 'com.cksource:ckfinder3:3.5.1'

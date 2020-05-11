@@ -1,6 +1,7 @@
 package com.construction.basic.config.domain;
 
 import com.construction.persistence.domain.AuditingEntity;
+import com.construction.persistence.domain.VersionEntity;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -14,7 +15,7 @@ import javax.persistence.Entity;
 @Setter
 @Accessors(chain = true)
 @Filter(name = "adminFilter", condition = "1 = 0")
-public class SystemConfig extends AuditingEntity {
+public class SystemConfig extends VersionEntity {
 
     @Column(nullable = false, unique = true, updatable = false)
     private String code;
