@@ -2,7 +2,7 @@ package com.construction.feature.project.listener;
 
 import com.construction.appconfiguration.utils.AutowiringHelper;
 import com.construction.feature.project.domain.Project;
-import com.construction.feature.project.repository.ProjectRepository;
+import com.construction.feature.project.repositories.ProjectRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
