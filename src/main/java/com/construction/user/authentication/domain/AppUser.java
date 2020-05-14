@@ -11,17 +11,19 @@ import org.hibernate.annotations.Where;
 
 import javax.persistence.*;
 import javax.validation.constraints.Email;
+import javax.validation.constraints.NotNull;
 
 @Entity
 @Getter
 @Setter
-@Table(name = "user", uniqueConstraints = @UniqueConstraint(columnNames = "user_name"))
+@Table(name = "users", uniqueConstraints = @UniqueConstraint(columnNames = "user_name"))
 @Accessors(chain = true)
 @Where(clause = "status <> 'DELETED'")
-@SQLDelete(sql = "update user set status = 'DELETED' where id = ?")
+@SQLDelete(sql = "update user set status = 'DELETED' where id = ? and version = ?")
 @JsonIgnoreProperties(value = "password", allowSetters = true)
 public class AppUser extends VersionEntity {
 
+    @NotNull
     @Column(name = "user_name", unique = true, nullable = false)
     private String userName;
 
@@ -30,6 +32,7 @@ public class AppUser extends VersionEntity {
 
     private String mobile;
 
+    @NotNull
     @Column(nullable = false)
     private String password;
 

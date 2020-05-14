@@ -1,16 +1,15 @@
 package com.construction.feature.task.domain;
 
 import com.construction.feature.house.domain.House;
-import com.construction.feature.status.ObjectStatus;
+import com.construction.feature.project.domain.Project;
+import com.construction.persistence.domain.ObjectStatus;
 import com.construction.persistence.domain.AuditingEntity;
-import com.construction.user.authentication.domain.AppUser;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
 
 @Entity
 @Getter
@@ -20,9 +19,13 @@ public class Task extends AuditingEntity {
 
     private String typeOfWork;
 
-    @JoinColumn
     @ManyToOne
+    @JoinColumn
     private House house;
+
+    @ManyToOne
+    @JoinColumn
+    private Project project;
 
     private String code;
 
@@ -38,7 +41,9 @@ public class Task extends AuditingEntity {
 
     private String floor;
 
-    private String boq;
+    @ManyToOne
+    @JoinColumn
+    private BOQ boq;
 
     private String contractType;
 
@@ -51,13 +56,4 @@ public class Task extends AuditingEntity {
     private BigDecimal totalPrice;
 
     private BigDecimal actualPrice;
-
-    @Enumerated(EnumType.STRING)
-    private ObjectStatus status = ObjectStatus.OPEN;
-
-    @ManyToOne
-    @JoinColumn
-    private AppUser approvedBy;
-
-    private LocalDateTime approvedAt;
 }

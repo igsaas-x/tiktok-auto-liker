@@ -1,15 +1,12 @@
 package com.construction.feature.house.domain;
 
-import com.construction.feature.status.ObjectStatus;
 import com.construction.feature.project.domain.Project;
 import com.construction.persistence.domain.AuditingEntity;
-import com.construction.user.authentication.domain.AppUser;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
 import javax.persistence.*;
-import java.time.LocalDateTime;
 
 @Entity
 @Getter
@@ -27,9 +24,6 @@ public class House extends AuditingEntity {
 
     private String houseNo;
 
-    @Enumerated(EnumType.STRING)
-    private ObjectStatus status = ObjectStatus.OPEN;
-
     private Float houseWidth;
 
     private Float houseLong;
@@ -37,10 +31,4 @@ public class House extends AuditingEntity {
     private Float landWidth;
 
     private Float landLong;
-
-    @ManyToOne
-    @JoinColumn
-    private AppUser approvedBy;
-
-    private LocalDateTime approvedAt;
 }

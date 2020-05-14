@@ -1,7 +1,5 @@
 package com.construction.basic.file.domain;
 
-import com.construction.graphql.annotation.GQLIgnoreGenerate;
-import com.construction.graphql.annotation.GQLIgnoreGenerateType;
 import com.construction.persistence.domain.VersionEntity;
 import lombok.Getter;
 import lombok.Setter;
@@ -51,15 +49,12 @@ public class FileEntity extends VersionEntity {
     private FileType type;
 
     @Transient
-    @GQLIgnoreGenerate(ignores = {GQLIgnoreGenerateType.CREATE, GQLIgnoreGenerateType.UPDATE})
     private String smallImagePath;
 
     @Transient
-    @GQLIgnoreGenerate(ignores = {GQLIgnoreGenerateType.CREATE, GQLIgnoreGenerateType.UPDATE})
     private String mediumImagePath;
 
     @Transient
-    @GQLIgnoreGenerate(ignores = {GQLIgnoreGenerateType.CREATE, GQLIgnoreGenerateType.UPDATE})
     private String largeImagePath;
 
     public FileEntity setType() {

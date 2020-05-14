@@ -1,6 +1,5 @@
 package com.construction.persistence.domain;
 
-import com.construction.graphql.annotation.GQLIgnoreGenerate;
 import com.construction.user.authentication.domain.AppUser;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
@@ -18,29 +17,45 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 @EntityListeners(AuditingEntityListener.class)
-public abstract class AuditingEntity extends ExtendedEntity {
+public abstract class AuditingEntity extends VersionEntity {
 
     @JsonIgnore
     @CreatedBy
     @ManyToOne
-    @GQLIgnoreGenerate
-    @JoinColumn(name = "create_by_user_id")
+    @JoinColumn(name = "created_by")
     private AppUser createdBy;
+
+    @CreatedDate
+    @Column(name = "created_at", updatable = false)
+    private LocalDateTime createdAt;
 
     @JsonIgnore
     @LastModifiedBy
     @ManyToOne
-    @GQLIgnoreGenerate
-    @JoinColumn(name = "update_by_user_id")
+    @JoinColumn(name = "updated_by")
     private AppUser updatedBy;
 
-    @CreatedDate
-    @GQLIgnoreGenerate
-    @Column(name = "created_at", updatable = false)
-    private LocalDateTime createdAt;
-
     @LastModifiedDate
-    @GQLIgnoreGenerate
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
+
+    @JsonIgnore
+    @ManyToOne
+    @JoinColumn(name = "verified_by")
+    private AppUser verifiedBy;
+
+    @Column(name = "verified_at")
+    private LocalDateTime verifiedAt;
+
+    @JsonIgnore
+    @ManyToOne
+    @JoinColumn(name = "approved_by")
+    private AppUser approvedBy;
+
+    @Column(name = "approved_at")
+    private LocalDateTime approvedAt;
+
+    @Column(name = "status")
+    @Enumerated(EnumType.STRING)
+    private ObjectStatus status = ObjectStatus.OPEN;
 }

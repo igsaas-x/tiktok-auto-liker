@@ -19,10 +19,7 @@ public class UserDetailsImpl implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        if (appUser.getRole() == null) {
-            return null;
-        }
-        if (appUser.getRole().getPermissions() == null) {
+        if (appUser.getRole() == null || appUser.getRole().getPermissions() == null) {
             return null;
         }
         return appUser.getRole().getPermissions().stream().map(this::getAuthority).collect(Collectors.toList());

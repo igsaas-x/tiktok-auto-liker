@@ -7,7 +7,7 @@ import org.springframework.stereotype.Component;
 import javax.persistence.EntityManager;
 
 @Component
-public class FilterConfigurer {
+public class FilterConfig {
 
     @Autowired
     private EntityManager entityManager;

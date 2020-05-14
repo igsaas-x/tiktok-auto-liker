@@ -1,6 +1,5 @@
 package com.construction.feature.payment.domain;
 
-import com.construction.feature.status.ObjectStatus;
 import com.construction.feature.task.domain.Task;
 import com.construction.persistence.domain.AuditingEntity;
 import lombok.Getter;
@@ -18,7 +17,4 @@ public class PaymentRequest extends AuditingEntity {
     @ManyToOne
     @JoinColumn
     private Task task;
-
-    @Enumerated(EnumType.STRING)
-    private ObjectStatus status = ObjectStatus.OPEN;
 }

@@ -34,20 +34,6 @@ dependencies {
     compileOnly 'org.projectlombok:lombok'
     runtimeOnly 'mysql:mysql-connector-java'
     annotationProcessor 'org.projectlombok:lombok'
-    implementation('com.introproventures:graphql-jpa-query-schema:0.4.7') {
-        exclude group: "joda-time"
-        exclude group: "org.slf4j"
-        exclude group: "javax.persistence"
-        exclude group: "javax.transaction"
-        exclude group: "javax.interceptor"
-    }
-    implementation 'com.introproventures:graphql-jpa-query-autoconfigure:0.4.7'
-    implementation('com.introproventures:graphql-jpa-query-boot-starter:0.4.7') {
-        exclude module: 'graphql-jpa-query-web'
-    }
-    implementation('com.graphql-java:graphql-java-extended-scalars:1.0') {
-        exclude group: "com.squareup.okhttp3"
-    }
 }
 
 test {

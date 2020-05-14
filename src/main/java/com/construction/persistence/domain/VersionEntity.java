@@ -1,9 +1,7 @@
 package com.construction.persistence.domain;
 
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.introproventures.graphql.jpa.query.annotation.GraphQLIgnore;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.data.domain.Persistable;
@@ -23,12 +21,10 @@ public abstract class VersionEntity implements Serializable, Persistable<Long> {
 
     @Version
     @JsonIgnore
-    @GraphQLIgnore
-    private Integer version;
+    private Short version;
 
     @Override
     @JsonIgnore
-    @GraphQLIgnore
     public boolean isNew() {
         return version == null;
     }
