@@ -1,9 +1,9 @@
 package com.construction.basic.audit.service;
 
 import com.construction.basic.audit.domain.AccessAmount;
-import com.construction.basic.audit.repository.AccessLogRepository;
 import com.construction.basic.audit.domain.AccessLog;
 import com.construction.basic.audit.repository.AccessAmountRepository;
+import com.construction.basic.audit.repository.AccessLogRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;

@@ -1,7 +1,7 @@
 package com.construction.basic.audit.controller;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.construction.basic.audit.repository.AuditLogRepository;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -20,7 +20,7 @@ public class AuditLogController {
     @GetMapping("/monthAction")
     @ResponseBody
     public String getActionEachMonth() {
-       return repository.countByMonth().toString();
+        return repository.countByMonth().toString();
     }
 
     @GetMapping("/monthReport")

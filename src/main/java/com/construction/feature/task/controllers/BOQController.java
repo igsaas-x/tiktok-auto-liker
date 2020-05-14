@@ -1,13 +1,14 @@
 package com.construction.feature.task.controllers;
 
-import org.springframework.web.bind.annotation.*;
-import org.springframework.http.ResponseEntity;
-import org.springframework.data.domain.Pageable;
-import org.springframework.beans.factory.annotation.Autowired;
 import com.construction.feature.task.domain.BOQ;
 import com.construction.feature.task.services.BOQService;
+import org.springframework.data.domain.Pageable;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
 /**
  * 服务类
+ *
  * @author heng
  * @since 1.0.0
  */
@@ -26,21 +27,25 @@ public class BOQController {
     /**
      * 根据BOQ的字段,自动生成条件,字段的值为null不生成条件
      * http://localhost:8080/user/?id=1
-     * @param bOQ 实体对象
+     *
+     * @param bOQ      实体对象
      * @param pageable 分页/排序对象
-     * @return 返回的是实体,里面涵盖分页信息及状态码
+     * @return 返回的是实体, 里面涵盖分页信息及状态码
      */
-     @GetMapping
-     ResponseEntity<Object> search(BOQ bOQ, Pageable pageable) {
-             return bOQService.search(bOQ, pageable);
-     }
-     @PostMapping
-     void create() {
-     }
-     @PutMapping
-     void update(){
-     }
-     @DeleteMapping("/")
-     void delete(){
-     }
+    @GetMapping
+    ResponseEntity<Object> search(BOQ bOQ, Pageable pageable) {
+        return bOQService.search(bOQ, pageable);
+    }
+
+    @PostMapping
+    void create() {
+    }
+
+    @PutMapping
+    void update() {
+    }
+
+    @DeleteMapping("/")
+    void delete() {
+    }
 }

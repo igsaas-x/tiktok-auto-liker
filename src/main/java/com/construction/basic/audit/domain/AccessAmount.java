@@ -24,5 +24,5 @@ public class AccessAmount extends VersionEntity {
     private Month month;
 
     @Min(0)
-    private Integer amount = 0 ;
+    private Integer amount = 0;
 }

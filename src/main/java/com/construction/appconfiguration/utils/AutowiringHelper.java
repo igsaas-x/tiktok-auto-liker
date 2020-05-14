@@ -21,12 +21,12 @@ public final class AutowiringHelper implements ApplicationContextAware {
         }
     }
 
+    public static AutowiringHelper getInstance() {
+        return INSTANCE;
+    }
+
     @Override
     public void setApplicationContext(final ApplicationContext applicationContext) {
         AutowiringHelper.applicationContext = applicationContext;
-    }
-
-    public static AutowiringHelper getInstance() {
-        return INSTANCE;
     }
 }

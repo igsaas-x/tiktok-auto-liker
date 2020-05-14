@@ -4,7 +4,6 @@ import com.construction.feature.house.domain.House;
 import com.construction.feature.project.domain.Project;
 import com.construction.feature.street.domain.Street;
 import com.construction.persistence.domain.ExtendedEntity;
-import com.construction.persistence.domain.VersionEntity;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;

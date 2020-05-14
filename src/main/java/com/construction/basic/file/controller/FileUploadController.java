@@ -1,11 +1,12 @@
 package com.construction.basic.file.controller;
 
-import com.construction.basic.file.repository.FileCategoryRepository;
-import com.construction.basic.file.repository.FileRepository;
 import com.construction.basic.file.domain.FileEntity;
 import com.construction.basic.file.domain.FileType;
+import com.construction.basic.file.repository.FileCategoryRepository;
+import com.construction.basic.file.repository.FileRepository;
 import com.construction.basic.file.storage.StorageFileNotFoundException;
 import com.construction.basic.file.storage.StorageService;
+import net.coobird.thumbnailator.Thumbnails;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
@@ -13,7 +14,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import net.coobird.thumbnailator.*;
 
 import javax.transaction.Transactional;
 import javax.validation.constraints.NotNull;

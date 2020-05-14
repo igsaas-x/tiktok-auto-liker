@@ -21,7 +21,7 @@ import java.util.Map;
  */
 @Named
 public class LoadConfigListener implements Listener<LoadConfigEvent> {
-    private static Logger logger = LoggerFactory.getLogger(LoadConfigListener.class);
+    private static final Logger logger = LoggerFactory.getLogger(LoadConfigListener.class);
 
     @Override
     public void onApplicationEvent(LoadConfigEvent loadConfigEvent) {

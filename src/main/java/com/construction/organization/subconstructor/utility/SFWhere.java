@@ -50,8 +50,8 @@ public class SFWhere {
      * @param <T> 实体对象的类型
      */
     public static class SFClass<T> {
-        private String andOr;
-        private Map<String, Specification<T>> sMap = new HashMap<>();
+        private final String andOr;
+        private final Map<String, Specification<T>> sMap = new HashMap<>();
 
         /**
          * 条件包装类的构造函数

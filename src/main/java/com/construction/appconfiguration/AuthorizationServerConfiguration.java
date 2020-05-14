@@ -35,20 +35,23 @@ public class AuthorizationServerConfiguration extends AuthorizationServerConfigu
     public void configure(final AuthorizationServerSecurityConfigurer oauthServer) throws Exception {
         oauthServer.tokenKeyAccess("permitAll()").checkTokenAccess("isAuthenticated()");
     }
+
     @Override
     public void configure(ClientDetailsServiceConfigurer clients) throws Exception {
         clients.inMemory()
                 .withClient("acmp").secret(encoder.encode("secret"))
-                .authorizedGrantTypes("password", "authorization_code", "refresh_token").scopes("read","write")
+                .authorizedGrantTypes("password", "authorization_code", "refresh_token").scopes("read", "write")
                 .autoApprove(true);
     }
+
     @Override
     public void configure(final AuthorizationServerEndpointsConfigurer endpoints) throws Exception {
         endpoints.tokenStore(tokenStore()).authenticationManager(authenticationManager).accessTokenConverter(defaultAccessTokenConverter())
                 .userDetailsService(userDetailsService);
     }
+
     @Bean
-    public TokenStore tokenStore(){
+    public TokenStore tokenStore() {
         return new JwtTokenStore(defaultAccessTokenConverter());
     }
 

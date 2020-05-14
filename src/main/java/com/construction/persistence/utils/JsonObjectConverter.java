@@ -24,7 +24,7 @@ public class JsonObjectConverter implements AttributeConverter<Map<String, Objec
     }
 
     @Override
-    public  Map<String, Object>  convertToEntityAttribute(final String value) {
+    public Map<String, Object> convertToEntityAttribute(final String value) {
         try {
             return value == null ?
                     null :

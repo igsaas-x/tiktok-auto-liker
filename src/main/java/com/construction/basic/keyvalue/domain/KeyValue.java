@@ -1,7 +1,7 @@
 package com.construction.basic.keyvalue.domain;
 
-import com.construction.persistence.utils.JsonObjectConverter;
 import com.construction.persistence.domain.AuditingEntity;
+import com.construction.persistence.utils.JsonObjectConverter;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;

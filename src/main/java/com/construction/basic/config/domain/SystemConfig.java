@@ -1,6 +1,5 @@
 package com.construction.basic.config.domain;
 
-import com.construction.persistence.domain.AuditingEntity;
 import com.construction.persistence.domain.VersionEntity;
 import lombok.Getter;
 import lombok.Setter;

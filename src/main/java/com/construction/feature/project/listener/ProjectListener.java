@@ -12,7 +12,7 @@ public class ProjectListener {
     @Autowired
     private ProjectRepository repository;
 
-    private void doSth(Project project){
+    private void doSth(Project project) {
         AutowiringHelper.autowire(this, repository);
     }
 }

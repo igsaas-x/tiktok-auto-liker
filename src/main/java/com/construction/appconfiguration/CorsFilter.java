@@ -1,7 +1,5 @@
 package com.construction.appconfiguration;
 
-import com.construction.basic.audit.service.AccessAmountService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
