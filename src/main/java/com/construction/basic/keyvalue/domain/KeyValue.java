@@ -17,7 +17,7 @@ import java.util.Map;
 @Setter
 @Table(name = "key_value")
 @Accessors(chain = true)
-@SQLDelete(sql = "delete from key_value where removable <> 0 and id = ?", check = ResultCheckStyle.COUNT)
+@SQLDelete(sql = "delete from key_value where removable <> 0 and id = ? and version = ?", check = ResultCheckStyle.COUNT)
 public class KeyValue extends AuditingEntity {
 
     @Enumerated(EnumType.STRING)

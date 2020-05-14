@@ -6,32 +6,17 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-/**
- * 服务类
- *
- * @author heng
- * @since 1.0.0
- */
 @RestController
 @CrossOrigin
-@RequestMapping("/bOQ")
+@RequestMapping("/boq")
 public class BOQController {
 
-    final
-    BOQService bOQService;
+    private final BOQService bOQService;
 
     public BOQController(BOQService bOQService) {
         this.bOQService = bOQService;
     }
 
-    /**
-     * 根据BOQ的字段,自动生成条件,字段的值为null不生成条件
-     * http://localhost:8080/user/?id=1
-     *
-     * @param bOQ      实体对象
-     * @param pageable 分页/排序对象
-     * @return 返回的是实体, 里面涵盖分页信息及状态码
-     */
     @GetMapping
     ResponseEntity<Object> search(BOQ bOQ, Pageable pageable) {
         return bOQService.search(bOQ, pageable);
