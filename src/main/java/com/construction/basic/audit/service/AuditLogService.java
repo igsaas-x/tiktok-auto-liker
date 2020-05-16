@@ -1,6 +1,6 @@
 package com.construction.basic.audit.service;
 
-import com.construction.appconfiguration.ApplicationSecurityContext;
+import com.construction.appconfiguration.utils.ApplicationSecurityContext;
 import com.construction.basic.audit.domain.ActionType;
 import com.construction.basic.audit.domain.AuditLog;
 import com.construction.basic.audit.repository.AuditLogRepository;

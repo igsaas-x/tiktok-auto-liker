@@ -13,8 +13,9 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class ProjectAuditService {
+
     @Autowired
-    ProjectAuditRepository projectAuditRepository;
+    private ProjectAuditRepository projectAuditRepository;
 
     public ResponseEntity<Object> search(ProjectAudit projectAudit, Pageable pageable) {
         Page<ProjectAudit> all = projectAuditRepository.findAll(SFWhere.and(projectAudit)

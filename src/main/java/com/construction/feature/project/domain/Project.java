@@ -23,6 +23,7 @@ public class Project extends AuditingEntity {
     @Column(nullable = false)
     private String objectName;
 
+    @Column(unique = true)
     private String code;
 
     @Column(columnDefinition = "mediumtext")

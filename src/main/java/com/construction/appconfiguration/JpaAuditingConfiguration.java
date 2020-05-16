@@ -1,5 +1,6 @@
 package com.construction.appconfiguration;
 
+import com.construction.appconfiguration.utils.ApplicationSecurityContext;
 import com.construction.user.authentication.domain.AppUser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;

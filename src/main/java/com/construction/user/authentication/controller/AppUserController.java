@@ -1,6 +1,6 @@
 package com.construction.user.authentication.controller;
 
-import com.construction.appconfiguration.ApplicationSecurityContext;
+import com.construction.appconfiguration.utils.ApplicationSecurityContext;
 import com.construction.persistence.exception.ResourceNotFoundException;
 import com.construction.persistence.service.EntityDataMapper;
 import com.construction.user.authentication.domain.AppUser;
@@ -32,13 +32,15 @@ public class AppUserController {
     private ApplicationSecurityContext context;
 
     @GetMapping
-    @PreAuthorize("hasAuthority('ADMIN')")
+    @PreAuthorize("hasAuthority('READ_ALL_USER')")
     public List<AppUser> getAllUser() {
+        System.out.println(context.authenticatedUser());
+        System.out.println(context.authenticatedUser());
         return repository.findAll();
     }
 
     @GetMapping("/{id}")
-    @PreAuthorize("hasAuthority('ADMIN')")
+    @PreAuthorize("hasAuthority('READ_ALL_USER')")
     public AppUser getUserById(@NotNull @PathVariable("id") final Long id) {
         return repository.findById(id).orElseThrow(() -> new ResourceNotFoundException(AppUser.class, id));
     }

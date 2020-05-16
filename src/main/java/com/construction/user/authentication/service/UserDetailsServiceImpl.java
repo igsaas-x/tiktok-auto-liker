@@ -1,7 +1,6 @@
 package com.construction.user.authentication.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
@@ -13,8 +12,8 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     private AppUserService service;
 
     @Override
-    public UserDetails loadUserByUsername(final String name) throws UsernameNotFoundException {
+    public UserAuthentication loadUserByUsername(final String name) throws UsernameNotFoundException {
         final var appUser = service.getUserByUserName(name);
-        return new UserDetailsImpl(appUser);
+        return new UserAuthentication(appUser.getUserName(), appUser.getPassword(), service.grantedAuthoritySet(appUser), appUser);
     }
 }

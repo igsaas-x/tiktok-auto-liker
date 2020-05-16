@@ -26,9 +26,6 @@ public class ResourceServerConfiguration extends ResourceServerConfigurerAdapter
 
         http.antMatcher("/**").authorizeRequests()
                 .antMatchers(HttpMethod.GET).permitAll()
-                .antMatchers("/graphql").permitAll()
-                .antMatchers("/v0/graphql").permitAll()
-                .antMatchers("/ckfinder/**").permitAll()
                 .antMatchers(HttpMethod.POST, "/user").permitAll()
                 .antMatchers(HttpMethod.POST, "/upload").permitAll()
                 .antMatchers(HttpMethod.POST, "/feedback").permitAll()

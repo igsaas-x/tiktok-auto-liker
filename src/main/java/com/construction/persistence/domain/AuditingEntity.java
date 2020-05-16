@@ -2,6 +2,7 @@ package com.construction.persistence.domain;
 
 import com.construction.user.authentication.domain.AppUser;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.data.annotation.CreatedBy;
@@ -17,12 +18,13 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 @EntityListeners(AuditingEntityListener.class)
+@JsonIgnoreProperties(value = {"createdAt", "updatedAt", "verifiedAt", "approvedAt", "status"}, allowGetters = true)
 public abstract class AuditingEntity extends VersionEntity {
 
     @JsonIgnore
     @CreatedBy
     @ManyToOne
-    @JoinColumn(name = "created_by")
+    @JoinColumn(name = "created_by", updatable = false)
     private AppUser createdBy;
 
     @CreatedDate

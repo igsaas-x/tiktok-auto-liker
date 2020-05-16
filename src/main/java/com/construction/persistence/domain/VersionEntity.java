@@ -21,6 +21,7 @@ public abstract class VersionEntity implements Serializable, Persistable<Long> {
 
     @Version
     @JsonIgnore
+    @Column(columnDefinition = "SMALLINT default 0")
     private Short version;
 
     @Override

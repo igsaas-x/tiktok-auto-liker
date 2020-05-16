@@ -6,6 +6,8 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 
 @Entity
 @Getter
@@ -13,9 +15,13 @@ import javax.persistence.Entity;
 @Accessors(chain = true)
 public class Permission extends VersionEntity {
 
-    private String actionName;
+    @Enumerated(EnumType.STRING)
+    private ActionName actionName;
 
     private String entityName;
 
     private String codeName;
+
+    @Enumerated(EnumType.STRING)
+    private PermissionScope scope = PermissionScope.ALL;
 }
