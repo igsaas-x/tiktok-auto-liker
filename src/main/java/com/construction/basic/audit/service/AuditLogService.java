@@ -24,7 +24,7 @@ public class AuditLogService {
     @Transactional
     public void insertAuditLog(final String entityType, final ActionType actionType, final String input) {
         final var log = new AuditLog()
-                .setUserName(String.valueOf(context.getAuthPrinciple()))
+                .setUserName(context.authenticatedUser().getUserName())
                 .setTime(LocalDateTime.now())
                 .setEntityType(entityType)
                 .setActionType(actionType)

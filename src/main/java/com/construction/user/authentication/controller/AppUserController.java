@@ -34,8 +34,6 @@ public class AppUserController {
     @GetMapping
     @PreAuthorize("hasAuthority('READ_ALL_USER')")
     public List<AppUser> getAllUser() {
-        System.out.println(context.authenticatedUser());
-        System.out.println(context.authenticatedUser());
         return repository.findAll();
     }
 

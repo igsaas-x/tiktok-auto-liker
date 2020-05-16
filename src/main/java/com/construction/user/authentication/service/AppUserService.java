@@ -6,9 +6,7 @@ import com.construction.persistence.exception.ResourceNotFoundException;
 import com.construction.user.authentication.domain.AppUser;
 import com.construction.user.authentication.repository.AppUserRepository;
 import com.construction.user.authorization.domain.Permission;
-import com.construction.user.authorization.domain.RolePermission;
 import com.construction.user.authorization.repositories.PermissionRepository;
-import com.construction.user.authorization.repositories.RolePermissionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -31,8 +29,6 @@ public class AppUserService {
     @Autowired
     private AppUserRepository repository;
     @Autowired
-    private RolePermissionRepository rolePermissionRepository;
-    @Autowired
     private PermissionRepository permissionRepository;
     @Autowired
     private ApplicationSecurityContext context;
@@ -50,6 +46,7 @@ public class AppUserService {
     public AppUser changePassword(final String oldPass, final String newPass) {
         final var user = context.authenticatedUser();
         if (user != null && encoder.matches(oldPass, user.getPassword())) {
+            assert user.getId() != null;
             final var appUser = repository.findById(user.getId()).orElseThrow();
             appUser.setPassword(encoder.encode(newPass));
             return repository.save(appUser);
@@ -69,25 +66,18 @@ public class AppUserService {
         return repository.save(appUser);
     }
 
-    public List<SimpleGrantedAuthority> grantedAuthoritySet(AppUser user) {
-        var rolePermissions = rolePermissionRepository.findByUserRole(user.getRole());
-        if (!rolePermissions.isEmpty()) {
-            var permissionAll = rolePermissions.stream()
-                    .filter(rolePermission -> rolePermission.getPermission().getCodeName().equals(ALL_PERMISSION))
-                    .findAny();
-            if (permissionAll.isPresent()) {
-                return getAllAuthority();
+    public List<SimpleGrantedAuthority> grantedAuthorities(AppUser user) {
+        var permissions = user.getRole().getPermissions();
+        if (!permissions.isEmpty()) {
+            if (permissions.stream().map(Permission::getCodeName).anyMatch(name -> name.equals(ALL_PERMISSION))) {
+                return allAuthorities();
             }
-            return rolePermissions.stream().map(this::getAuthority).collect(Collectors.toList());
+            return permissions.stream().map(this::getAuthorityFromPermission).collect(Collectors.toList());
         }
         return Collections.EMPTY_LIST;
     }
 
-    private SimpleGrantedAuthority getAuthority(RolePermission rolePermission) {
-        return getAuthorityFromPermission(rolePermission.getPermission());
-    }
-
-    private List<SimpleGrantedAuthority> getAllAuthority() {
+    private List<SimpleGrantedAuthority> allAuthorities() {
         return permissionRepository.findAll().stream()
                 .map(this::getAuthorityFromPermission)
                 .collect(Collectors.toList());

@@ -14,6 +14,6 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     @Override
     public UserAuthentication loadUserByUsername(final String name) throws UsernameNotFoundException {
         final var appUser = service.getUserByUserName(name);
-        return new UserAuthentication(appUser.getUserName(), appUser.getPassword(), service.grantedAuthoritySet(appUser), appUser);
+        return new UserAuthentication(appUser.getUserName(), appUser.getPassword(), service.grantedAuthorities(appUser), appUser);
     }
 }
