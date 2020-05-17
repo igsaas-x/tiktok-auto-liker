@@ -2,9 +2,7 @@ package com.construction.feature.project.services;
 
 import com.construction.appconfiguration.utils.ApplicationSecurityContext;
 import com.construction.feature.project.domain.Project;
-import com.construction.feature.project.domain.ProjectAudit;
 import com.construction.feature.project.repositories.ProjectAssignRepository;
-import com.construction.feature.project.repositories.ProjectAuditRepository;
 import com.construction.feature.project.repositories.ProjectRepository;
 import com.construction.persistence.domain.ObjectStatus;
 import com.construction.persistence.exception.ResourceNotFoundException;
@@ -19,6 +17,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.stream.Collectors;
 
 
 @Service
@@ -28,8 +28,6 @@ public class ProjectService {
     private ProjectRepository repository;
     @Autowired
     private ProjectAssignRepository assignRepository;
-    @Autowired
-    private ProjectAuditRepository auditRepository;
     @Autowired
     private EntityDataMapper mapper;
     @Autowired
@@ -45,16 +43,15 @@ public class ProjectService {
         return repository.save(project);
     }
 
-    public Object update(Long id, Project project) {
+    public Project update(Long id, Project project) {
         var target = repository.findById(id).orElseThrow(() -> new ResourceNotFoundException(Project.class, id));
-        if(target.getStatus().equals(ObjectStatus.VERIFIED) || target.getStatus().equals(ObjectStatus.APPROVED)){
-            var projectAudit = new ProjectAudit()
-                    .setProjectId(target.getId())
-                    .setCode(target.getCode())
-                    .setObjectType(target.getObjectType())
-                    .setObjectName(target.getObjectName())
-                    .setDescription(target.getDescription());
-            return auditRepository.save(projectAudit);
+        var user = context.authenticatedUser();
+        if (!user.hasPermissionTo("UPDATE_ALL_PROJECT")
+                && !user.hasPermissionTo("UPDATE_ASSIGNED_PROJECT")
+                && target.getCreatedBy().equals(user)) {
+            if (target.getStatus().equals(ObjectStatus.VERIFIED) || target.getStatus().equals(ObjectStatus.APPROVED)) {
+                throw new RuntimeException("your project has been verified or approved, please delete and create request");
+            }
         }
         target = mapper.mapObject(project, target, Project.class);
         return repository.save(target);
@@ -62,6 +59,15 @@ public class ProjectService {
 
     public Page<Project> getAll(Pageable pageable) {
         return repository.findAll(pageable);
+    }
+
+    public List<Project> getPendingProject(Pageable pageable) {
+        var user = context.authenticatedUser();
+        var projects = repository.findUserPendingProject(user.getId(), pageable);
+        return projects.stream()
+                .filter(project -> project.getStatus().equals(ObjectStatus.OPEN) || project.getStatus().equals(ObjectStatus.VERIFIED))
+                .filter(project -> !user.equals(project.getVerifiedBy()))
+                .collect(Collectors.toList());
     }
 
     public Project getById(Long id) {
