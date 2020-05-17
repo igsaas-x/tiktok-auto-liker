@@ -10,14 +10,11 @@ import org.hibernate.annotations.ParamDef;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
 
 @Entity
 @Getter
 @Setter
 @Accessors(chain = true)
-@Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
 @FilterDef(name = "assignedObjectFilter",
         defaultCondition = "id in (SELECT pa.project_id FROM project_assign pa WHERE pa.app_user_id = :id) ",
         parameters = @ParamDef(name = "id", type = "long"))

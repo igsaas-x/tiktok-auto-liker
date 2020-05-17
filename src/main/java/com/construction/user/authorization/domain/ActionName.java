@@ -6,5 +6,7 @@ public enum ActionName {
     CREATE,
     UPDATE,
     DELETE,
-    ASSIGN
+    ASSIGN,
+    VERIFY,
+    APPROVE
 }

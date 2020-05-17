@@ -1,6 +1,5 @@
 package com.construction.feature.project.controllers;
 
-import com.construction.appconfiguration.utils.ApplicationSecurityContext;
 import com.construction.feature.project.domain.Project;
 import com.construction.feature.project.services.ProjectService;
 import com.construction.persistence.filter.FilterConfig;
@@ -15,30 +14,31 @@ import org.springframework.web.bind.annotation.*;
 public class ProjectController {
 
     private final ProjectService service;
-    private final ApplicationSecurityContext context;
     private final FilterConfig filterConfig;
 
-    public ProjectController(ProjectService service, ApplicationSecurityContext context, FilterConfig filterConfig) {
+    public ProjectController(ProjectService service, FilterConfig filterConfig) {
         this.service = service;
-        this.context = context;
         this.filterConfig = filterConfig;
     }
 
     @GetMapping("/search")
-    @PreAuthorize("hasAuthority('READ_ALL_PROJECT')")
+    @PreAuthorize("hasAuthority('READ_ALL_PROJECT') or hasAuthority('READ_ASSIGNED_PROJECT')")
     ResponseEntity<Object> search(Project project, Pageable pageable) {
+        filterConfig.configureFilter("read", "project");
         return service.search(project, pageable);
     }
 
     @GetMapping
+    @PreAuthorize("hasAuthority('READ_ALL_PROJECT') or hasAuthority('READ_ASSIGNED_PROJECT')")
     Page<Project> getAllProject(Pageable pageable) {
-        filterConfig.configureFilter("project");
+        filterConfig.configureFilter("read", "project");
         return service.getAll(pageable);
     }
 
     @GetMapping("/{id}")
-    @PreAuthorize("hasAuthority('READ_ALL_PROJECT')")
+    @PreAuthorize("hasAuthority('READ_ALL_PROJECT') or hasAuthority('READ_ASSIGNED_PROJECT')")
     Project getProjectById(@PathVariable Long id) {
+        filterConfig.configureFilter("read", "project");
         return service.getById(id);
     }
 
@@ -49,14 +49,30 @@ public class ProjectController {
     }
 
     @PutMapping("/{id}")
-    @PreAuthorize("hasAuthority('UPDATE_ALL_PROJECT')")
-    Project update(@PathVariable Long id, @RequestBody Project project) {
+    @PreAuthorize("hasAuthority('UPDATE_ALL_PROJECT') or hasAuthority('UPDATE_ASSIGNED_PROJECT')")
+    Object update(@PathVariable Long id, @RequestBody Project project) {
+        filterConfig.configureFilter("update", "project");
         return service.update(id, project);
     }
 
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasAuthority('DELETE_ALL_PROJECT')")
+    @PreAuthorize("hasAuthority('DELETE_ALL_PROJECT') or hasAuthority('DELETE_ASSIGNED_PROJECT')")
     void delete(@PathVariable Long id) {
+        filterConfig.configureFilter("delete", "project");
         service.delete(id);
+    }
+
+    @PostMapping("/{id}/verify")
+    @PreAuthorize("hasAuthority('VERIFY_ALL_PROJECT') or hasAuthority('VERIFY_ASSIGNED_PROJECT')")
+    Project verify(@PathVariable Long id) {
+        filterConfig.configureFilter("verify", "project");
+        return service.verify(id);
+    }
+
+    @PostMapping("/{id}/approve")
+    @PreAuthorize("hasAuthority('APPROVE_ALL_PROJECT') or hasAuthority('APPROVE_ASSIGNED_PROJECT')")
+    Project approve(@PathVariable Long id) {
+        filterConfig.configureFilter("approve", "project");
+        return service.approve(id);
     }
 }

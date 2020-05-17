@@ -31,7 +31,7 @@ public class AssignedProjectController {
     @PostMapping("/{id}/assign/{userId}")
     @PreAuthorize("hasAuthority('ASSIGN_ALL_PROJECT') or hasAuthority('ASSIGN_ASSIGNED_PROJECT')")
     public ProjectAssign assignProject(@PathVariable Long id, @PathVariable Long userId) {
-        filterConfig.configureFilter("project");
+        filterConfig.configureFilter("assign", "project");
         var project = projectRepository.findById(id).orElseThrow(
                 () -> new ResourceNotFoundException(Project.class, id)
         );

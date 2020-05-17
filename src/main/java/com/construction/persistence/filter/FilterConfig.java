@@ -12,14 +12,15 @@ public class FilterConfig {
     @Autowired
     private FilterUtils filterUtils;
 
-    public void configureFilter(String entityName) {
+    public void configureFilter(String action, String entityName) {
         entityName = entityName.toUpperCase();
+        action = action.toUpperCase();
         var user = context.authenticatedUser();
         if (user == null) {
             filterUtils.enableNoAccessFilter();
-        } else if (user.hasPermissionTo("READ_ALL_" + entityName)) {
+        } else if (user.hasPermissionTo(action + "_ALL_" + entityName)) {
             return;
-        } else if (user.hasPermissionTo("READ_ASSIGNED_" + entityName)) {
+        } else if (user.hasPermissionTo(action + "_ASSIGNED_" + entityName)) {
             filterUtils.enableAssignedObjectFilter(user.getId());
         } else {
             filterUtils.enableMyObjectFilter(user.getId());
