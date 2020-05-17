@@ -24,7 +24,7 @@ import java.util.stream.Collectors;
 @SuppressWarnings("unchecked")
 public class AppUserService {
 
-    private static final String ALL_PERMISSION = "ALL_ALL_ALL";
+    public static final String ALL_PERMISSION = "ALL_ALL_ALL";
 
     @Autowired
     private AppUserRepository repository;
@@ -67,6 +67,10 @@ public class AppUserService {
     }
 
     public List<SimpleGrantedAuthority> grantedAuthorities(AppUser user) {
+        var role = user.getRole();
+        if(role == null){
+            return Collections.EMPTY_LIST;
+        }
         var permissions = user.getRole().getPermissions();
         if (!permissions.isEmpty()) {
             if (permissions.stream().map(Permission::getCodeName).anyMatch(name -> name.equals(ALL_PERMISSION))) {

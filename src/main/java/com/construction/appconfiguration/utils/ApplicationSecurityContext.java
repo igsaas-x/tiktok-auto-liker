@@ -5,8 +5,13 @@ import com.construction.user.authentication.service.AppUserService;
 import com.construction.user.authentication.service.UserAuthentication;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Component
@@ -15,16 +20,18 @@ public class ApplicationSecurityContext {
     @Autowired
     private AppUserService service;
 
-    public Object getAuthPrinciple() {
+    public Authentication getAuth() {
         final var context = SecurityContextHolder.getContext();
-        final var authentication = context == null ? null : context.getAuthentication();
-        return authentication == null ? null : authentication.getPrincipal();
+        return context == null ? null : context.getAuthentication();
     }
 
     public AppUser authenticatedUser() {
         try {
-            var principle = getAuthPrinciple();
-            if (principle instanceof UserAuthentication) {
+            var authentication = getAuth();
+            var principle = authentication == null ? null : authentication.getPrincipal();
+            if (principle == null) {
+                return null;
+            } else if (principle instanceof UserAuthentication) {
                 return ((UserAuthentication) principle).getAppUser();
             } else if (principle instanceof String && !principle.equals("anonymousUser")) {
                 return service.getUserByUserName((String) principle);
@@ -34,5 +41,15 @@ public class ApplicationSecurityContext {
             log.error(e.getMessage());
             return null;
         }
+    }
+
+    public List<String> userPermissions() {
+        var authentication = getAuth();
+        if(authentication == null){
+            return null;
+        }
+        return SecurityContextHolder.getContext().getAuthentication().getAuthorities().stream()
+                .map(GrantedAuthority::getAuthority)
+                .collect(Collectors.toList());
     }
 }

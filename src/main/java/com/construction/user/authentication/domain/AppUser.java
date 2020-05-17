@@ -13,6 +13,8 @@ import javax.persistence.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
 
+import static com.construction.user.authentication.service.AppUserService.ALL_PERMISSION;
+
 @Entity
 @Getter
 @Setter
@@ -43,4 +45,12 @@ public class AppUser extends VersionEntity {
     @Column(name = "status")
     @Enumerated(EnumType.STRING)
     private UserStatus status = UserStatus.ACTIVE;
+
+    public boolean hasPermissionTo(final String permissionName) {
+        if (role == null) return false;
+        return role.getPermissions().stream().anyMatch(permission ->
+                permission.getCodeName().equals(ALL_PERMISSION) ||
+                        permission.getCodeName().equals(permissionName)
+        );
+    }
 }

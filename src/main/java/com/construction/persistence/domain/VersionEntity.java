@@ -4,6 +4,8 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.Filter;
+import org.hibernate.annotations.FilterDef;
 import org.springframework.data.domain.Persistable;
 
 import javax.persistence.*;
@@ -13,6 +15,8 @@ import java.io.Serializable;
 @Getter
 @Setter
 @JsonIgnoreProperties(ignoreUnknown = true)
+@FilterDef(name = "noAccessFilter", defaultCondition = "1 = 0")
+@Filter(name = "noAccessFilter")
 public abstract class VersionEntity implements Serializable, Persistable<Long> {
 
     @Id

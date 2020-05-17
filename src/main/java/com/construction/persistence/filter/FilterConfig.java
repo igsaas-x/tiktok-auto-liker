@@ -1,28 +1,28 @@
 package com.construction.persistence.filter;
 
-import org.hibernate.Session;
+import com.construction.appconfiguration.utils.ApplicationSecurityContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-
-import javax.persistence.EntityManager;
 
 @Component
 public class FilterConfig {
 
     @Autowired
-    private EntityManager entityManager;
+    private ApplicationSecurityContext context;
+    @Autowired
+    private FilterUtils filterUtils;
 
-    public void enableFilters(final String username) {
-        final var session = entityManager.unwrap(Session.class);
-        enableUserFilter(session, username);
-        enableAdminFilter(session);
-    }
-
-    private void enableUserFilter(final Session session, final String username) {
-        session.enableFilter("userFilter").setParameter("username", username);
-    }
-
-    private void enableAdminFilter(final Session session) {
-        session.enableFilter("adminFilter");
+    public void configureFilter(String entityName) {
+        entityName = entityName.toUpperCase();
+        var user = context.authenticatedUser();
+        if (user == null) {
+            filterUtils.enableNoAccessFilter();
+        } else if (user.hasPermissionTo("READ_ALL_" + entityName)) {
+            return;
+        } else if (user.hasPermissionTo("READ_ASSIGNED_" + entityName)) {
+            filterUtils.enableAssignedObjectFilter(user.getId());
+        } else {
+            filterUtils.enableMyObjectFilter(user.getId());
+        }
     }
 }

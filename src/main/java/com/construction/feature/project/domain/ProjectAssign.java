@@ -6,13 +6,12 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
-import javax.persistence.Entity;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
+import javax.persistence.*;
 
 @Entity
 @Getter
 @Setter
+@Table(uniqueConstraints = @UniqueConstraint(name = "project_user", columnNames = {"project_id", "app_user_id"}))
 @Accessors(chain = true)
 public class ProjectAssign extends VersionEntity {
 

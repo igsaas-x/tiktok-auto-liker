@@ -7,6 +7,7 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -21,5 +22,5 @@ public class UserRole extends VersionEntity {
     @JsonIgnore
     @OneToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "role_permission")
-    private List<Permission> permissions;
+    private List<Permission> permissions = new ArrayList<>();
 }
