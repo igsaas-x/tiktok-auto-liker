@@ -25,7 +25,7 @@ public class ResourceServerConfiguration extends ResourceServerConfigurerAdapter
     public void configure(HttpSecurity http) throws Exception {
 
         http.antMatcher("/**").authorizeRequests()
-                .antMatchers("/health", "/api/**").permitAll()
+                .antMatchers("/health", "/api/**", "/swagger-resources/**", "/v2/**").permitAll()
                 .antMatchers(HttpMethod.POST, "/user").permitAll()
                 .antMatchers(HttpMethod.POST, "/upload").permitAll()
                 .antMatchers(HttpMethod.POST, "/feedback").permitAll()
