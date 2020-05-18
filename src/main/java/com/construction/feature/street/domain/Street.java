@@ -21,4 +21,6 @@ public class Street extends AuditingEntity {
     @ManyToOne
     @JoinColumn
     private Project project;
+
+    private String description;
 }

@@ -60,7 +60,7 @@ public class ProjectController {
     }
 
     @GetMapping("/pending")
-    List<Project> getPendingProject(Pageable pageable){
+    List<Project> getPendingProject(Pageable pageable) {
         filterConfig.configureFilter("read", "project");
         return service.getPendingProject(pageable);
     }

@@ -68,7 +68,7 @@ public class AppUserService {
 
     public List<SimpleGrantedAuthority> grantedAuthorities(AppUser user) {
         var role = user.getRole();
-        if(role == null){
+        if (role == null) {
             return Collections.EMPTY_LIST;
         }
         var permissions = user.getRole().getPermissions();

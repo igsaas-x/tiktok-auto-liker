@@ -46,11 +46,9 @@ public class ProjectService {
     public Project update(Long id, Project project) {
         var target = repository.findById(id).orElseThrow(() -> new ResourceNotFoundException(Project.class, id));
         var user = context.authenticatedUser();
-        if (!user.hasPermissionTo("UPDATE_ALL_PROJECT")
-                && !user.hasPermissionTo("UPDATE_ASSIGNED_PROJECT")
-                && target.getCreatedBy().equals(user)) {
+        if (target.getCreatedBy().equals(user)) {
             if (target.getStatus().equals(ObjectStatus.VERIFIED) || target.getStatus().equals(ObjectStatus.APPROVED)) {
-                throw new RuntimeException("your project has been verified or approved, please delete and create request");
+                throw new RuntimeException("your project has been verified or approved, please delete and re-create request");
             }
         }
         target = mapper.mapObject(project, target, Project.class);

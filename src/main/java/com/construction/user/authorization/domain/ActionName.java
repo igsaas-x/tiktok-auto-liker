@@ -8,5 +8,6 @@ public enum ActionName {
     DELETE,
     ASSIGN,
     VERIFY,
+    REVIEW,
     APPROVE
 }

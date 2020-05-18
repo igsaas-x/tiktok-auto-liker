@@ -14,7 +14,7 @@ public class SimpleReportService {
     @Autowired
     private SimpleReportExporter reportExporter;
 
-    public void generate(){
+    public void generate() {
         reportFiller.setReportFileName("employeeEmailReport.jrxml");
         reportFiller.compileReport();
 

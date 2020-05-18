@@ -1,4 +1,5 @@
 package com.construction.report;
+
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JasperPrint;
 import net.sf.jasperreports.engine.export.HtmlExporter;
@@ -64,7 +65,7 @@ public class SimpleReportExporter {
         exporter.setExporterOutput(new SimpleOutputStreamExporterOutput(fileName));
 
         SimpleXlsxReportConfiguration reportConfig = new SimpleXlsxReportConfiguration();
-        reportConfig.setSheetNames(new String[] { sheetName });
+        reportConfig.setSheetNames(new String[]{sheetName});
 
         exporter.setConfiguration(reportConfig);
 

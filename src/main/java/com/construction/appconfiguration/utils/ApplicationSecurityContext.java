@@ -45,7 +45,7 @@ public class ApplicationSecurityContext {
 
     public List<String> userPermissions() {
         var authentication = getAuth();
-        if(authentication == null){
+        if (authentication == null) {
             return null;
         }
         return SecurityContextHolder.getContext().getAuthentication().getAuthorities().stream()

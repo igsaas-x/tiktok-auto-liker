@@ -24,4 +24,6 @@ public class Permission extends VersionEntity {
 
     @Enumerated(EnumType.STRING)
     private PermissionScope scope = PermissionScope.ALL;
+
+    private String description;
 }
