@@ -14,11 +14,15 @@ public interface HouseService {
 
     void deleteById(Long id);
 
-    Optional<HouseDTO> findById(Long id);
+    HouseDTO findById(Long id);
 
     List<HouseDTO> findAll();
 
     Page<HouseDTO> findAll(Pageable pageable);
 
-    HouseDTO updateById(Long id);
+    HouseDTO updateById(Long id, HouseDTO dto);
+
+    HouseDTO verify(Long id);
+
+    HouseDTO approve(Long id);
 }

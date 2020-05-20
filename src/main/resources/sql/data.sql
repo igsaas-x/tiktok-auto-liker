@@ -34,8 +34,6 @@ insert into permission(id,version,entity_name,action_name,scope,code_name) value
 insert into permission(id,version,entity_name,action_name,scope,code_name) values(49,0,'HOUSE','UPDATE','ASSIGNED','UPDATE_ASSIGNED_HOUSE');
 insert into permission(id,version,entity_name,action_name,scope,code_name) values(50,0,'HOUSE','DELETE','ALL','DELETE_ALL_HOUSE');
 insert into permission(id,version,entity_name,action_name,scope,code_name) values(51,0,'HOUSE','DELETE','ASSIGNED','DELETE_ASSIGNED_HOUSE');
-insert into permission(id,version,entity_name,action_name,scope,code_name) values(52,0,'HOUSE','ASSIGN','ALL','ASSIGN_ALL_HOUSE');
-insert into permission(id,version,entity_name,action_name,scope,code_name) values(53,0,'HOUSE','ASSIGN','ASSIGNED','ASSIGN_ASSIGNED_HOUSE');
 insert into permission(id,version,entity_name,action_name,scope,code_name) values(54,0,'HOUSE','VERIFY','ALL','VERIFY_ALL_HOUSE');
 insert into permission(id,version,entity_name,action_name,scope,code_name) values(55,0,'HOUSE','VERIFY','ASSIGNED','VERIFY_ASSIGNED_HOUSE');
 insert into permission(id,version,entity_name,action_name,scope,code_name) values(56,0,'HOUSE','APPROVE','ALL','APPROVE_ALL_HOUSE');
@@ -47,8 +45,6 @@ insert into permission(id,version,entity_name,action_name,scope,code_name) value
 insert into permission(id,version,entity_name,action_name,scope,code_name) values(65,0,'STREET','UPDATE','ASSIGNED','UPDATE_ASSIGNED_STREET');
 insert into permission(id,version,entity_name,action_name,scope,code_name) values(66,0,'STREET','DELETE','ALL','DELETE_ALL_STREET');
 insert into permission(id,version,entity_name,action_name,scope,code_name) values(67,0,'STREET','DELETE','ASSIGNED','DELETE_ASSIGNED_STREET');
-insert into permission(id,version,entity_name,action_name,scope,code_name) values(68,0,'STREET','ASSIGN','ALL','ASSIGN_ALL_STREET');
-insert into permission(id,version,entity_name,action_name,scope,code_name) values(69,0,'STREET','ASSIGN','ASSIGNED','ASSIGN_ASSIGNED_STREET');
 insert into permission(id,version,entity_name,action_name,scope,code_name) values(70,0,'STREET','VERIFY','ALL','VERIFY_ALL_STREET');
 insert into permission(id,version,entity_name,action_name,scope,code_name) values(71,0,'STREET','VERIFY','ASSIGNED','VERIFY_ASSIGNED_STREET');
 insert into permission(id,version,entity_name,action_name,scope,code_name) values(72,0,'STREET','APPROVE','ALL','APPROVE_ALL_STREET');

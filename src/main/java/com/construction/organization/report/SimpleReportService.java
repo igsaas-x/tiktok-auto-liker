@@ -1,4 +1,4 @@
-package com.construction.report;
+package com.construction.organization.report;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -15,10 +15,10 @@ public class SimpleReportService {
     private SimpleReportExporter reportExporter;
 
     public void generate() {
-        reportFiller.setReportFileName("employeeEmailReport.jrxml");
+        reportFiller.setReportFileName("report/employeeEmailReport.jrxml");
         reportFiller.compileReport();
 
-        reportFiller.setReportFileName("employeeReport.jrxml");
+        reportFiller.setReportFileName("report/employeeReport.jrxml");
         reportFiller.compileReport();
 
         Map<String, Object> parameters = new HashMap<>();

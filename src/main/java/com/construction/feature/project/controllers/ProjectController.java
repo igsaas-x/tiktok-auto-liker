@@ -3,6 +3,7 @@ package com.construction.feature.project.controllers;
 import com.construction.feature.project.domain.Project;
 import com.construction.feature.project.services.ProjectService;
 import com.construction.persistence.filter.FilterConfig;
+import com.construction.user.authorization.domain.ActionName;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
@@ -25,19 +26,19 @@ public class ProjectController {
 
     @GetMapping("/search")
     ResponseEntity<Object> search(Project project, Pageable pageable) {
-        filterConfig.configureFilter("read", "project");
+        filterConfig.configureFilter(ActionName.READ, "project");
         return service.search(project, pageable);
     }
 
     @GetMapping
     Page<Project> getAllProject(Pageable pageable) {
-        filterConfig.configureFilter("read", "project");
+        filterConfig.configureFilter(ActionName.READ, "project");
         return service.getAll(pageable);
     }
 
     @GetMapping("/{id}")
     Project getProjectById(@PathVariable Long id) {
-        filterConfig.configureFilter("read", "project");
+        filterConfig.configureFilter(ActionName.READ, "project");
         return service.getById(id);
     }
 
@@ -49,31 +50,33 @@ public class ProjectController {
 
     @PutMapping("/{id}")
     Object update(@PathVariable Long id, @RequestBody Project project) {
-        filterConfig.configureFilter("update", "project");
+        filterConfig.configureFilter(ActionName.UPDATE, "project");
         return service.update(id, project);
     }
 
     @DeleteMapping("/{id}")
     void delete(@PathVariable Long id) {
-        filterConfig.configureFilter("delete", "project");
+        filterConfig.configureFilter(ActionName.DELETE, "project");
         service.delete(id);
     }
 
     @GetMapping("/pending")
     List<Project> getPendingProject(Pageable pageable) {
-        filterConfig.configureFilter("read", "project");
+        filterConfig.configureFilter(ActionName.READ, "project");
         return service.getPendingProject(pageable);
     }
 
     @PostMapping("/{id}/verify")
+    @PreAuthorize("hasAuthority('VERIFY_ALL_PROJECT') or hasAuthority('VERIFY_ASSIGNED_PROJECT')")
     Project verify(@PathVariable Long id) {
-        filterConfig.configureFilter("verify", "project");
+        filterConfig.configureFilter(ActionName.VERIFY, "project");
         return service.verify(id);
     }
 
     @PostMapping("/{id}/approve")
+    @PreAuthorize("hasAuthority('APPROVE_ALL_PROJECT') or hasAuthority('APPROVE_ASSIGNED_PROJECT')")
     Project approve(@PathVariable Long id) {
-        filterConfig.configureFilter("approve", "project");
+        filterConfig.configureFilter(ActionName.APPROVE, "project");
         return service.approve(id);
     }
 }

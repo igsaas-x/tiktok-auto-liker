@@ -1,4 +1,4 @@
-package com.construction.report;
+package com.construction.organization.report;
 
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JasperPrint;

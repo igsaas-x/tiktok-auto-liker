@@ -22,10 +22,6 @@ public class WebMvcConfig implements WebMvcConfigurer {
 
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
-        // Configure the resource handler to serve files uploaded with CKFinder.
-        final var publicFilesDir = String.format("file:%s/userfiles/", System.getProperty("user.dir"));
-        registry.addResourceHandler("/userfiles/**").addResourceLocations(publicFilesDir);
-
         registry.addResourceHandler("/api/swagger-ui.html**").addResourceLocations("classpath:/META-INF/resources/swagger-ui.html");
         registry.addResourceHandler("/api/webjars/**").addResourceLocations("classpath:/META-INF/resources/webjars/");
     }

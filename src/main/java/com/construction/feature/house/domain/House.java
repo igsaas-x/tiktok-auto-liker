@@ -1,10 +1,12 @@
 package com.construction.feature.house.domain;
 
 import com.construction.feature.project.domain.Project;
+import com.construction.feature.street.domain.Street;
 import com.construction.persistence.domain.AuditingEntity;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
+import org.hibernate.annotations.Filter;
 
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
@@ -14,15 +16,21 @@ import javax.persistence.ManyToOne;
 @Getter
 @Setter
 @Accessors(chain = true)
+@Filter(name = "assignedObjectFilter" ,
+        condition = "project_id in (SELECT pa.project_id FROM project_assign pa WHERE pa.app_user_id = :id)")
+@Filter(name = "myObjectFilter",
+        condition = "created_by = :id or project_id = (select p.id from project p where p.created_by = :id)")
 public class House extends AuditingEntity {
 
     @ManyToOne
     @JoinColumn
     private Project project;
 
-    private String typeOfHouse;
+    @ManyToOne
+    @JoinColumn
+    private Street street;
 
-    private String street;
+    private String typeOfHouse;
 
     private String houseNo;
 

@@ -6,6 +6,7 @@ import com.construction.user.authentication.domain.AppUser;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
+import org.hibernate.annotations.Filter;
 
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
@@ -16,6 +17,7 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 @Accessors(chain = true)
+@Filter(name = "myObjectFilter", condition = "created_by = :id")
 public class PaymentRequest extends AuditingEntity {
 
     @ManyToOne
