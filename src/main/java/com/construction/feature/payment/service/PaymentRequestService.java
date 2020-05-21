@@ -1,24 +1,52 @@
 package com.construction.feature.payment.service;
 
-import com.construction.feature.payment.dto.PaymentRequestDTO;
+import com.construction.feature.payment.domain.PaymentRequest;
+import com.construction.feature.payment.repository.PaymentRequestRepository;
+import com.construction.persistence.service.EntityDataMapper;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.List;
-import java.util.Optional;
 
-public interface PaymentRequestService {
-    PaymentRequestDTO save(PaymentRequestDTO dto);
+@Service
+@Transactional
+public class PaymentRequestService {
 
-    void save(List<PaymentRequestDTO> dtos);
+    @Autowired
+    private EntityDataMapper dataMapper;
+    @Autowired
+    private PaymentRequestRepository repository;
 
-    void deleteById(Long id);
+    public PaymentRequest save(PaymentRequest dto) {
+        return repository.save(dto);
+    }
 
-    Optional<PaymentRequestDTO> findById(Long id);
+    public void save(List<PaymentRequest> dtos) {
+        repository.saveAll(dtos);
+    }
 
-    List<PaymentRequestDTO> findAll();
+    public void deleteById(Long id) {
+        repository.deleteById(id);
+    }
 
-    Page<PaymentRequestDTO> findAll(Pageable pageable);
+    public PaymentRequest findById(Long id) {
+        return repository.findById(id).orElseThrow();
+    }
 
-    PaymentRequestDTO updateById(Long id);
+    public List<PaymentRequest> findAll() {
+        return repository.findAll();
+    }
+
+    public Page<PaymentRequest> findAll(Pageable pageable) {
+        return repository.findAll(pageable);
+    }
+
+    public PaymentRequest updateById(Long id, PaymentRequest source) {
+        var target = repository.findById(id).orElseThrow();
+        target = dataMapper.mapObject(source, target, PaymentRequest.class);
+        return repository.save(target);
+    }
 }

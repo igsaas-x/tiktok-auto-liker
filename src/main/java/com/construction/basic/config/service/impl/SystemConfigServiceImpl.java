@@ -48,7 +48,7 @@ public class SystemConfigServiceImpl implements SystemConfigService {
 
     @Override
     public List<SystemConfigDTO> findAll() {
-        return mapper.toDtoList((List<SystemConfig>) repository.findAll());
+        return mapper.toDtoList(repository.findAll());
     }
 
     @Override

@@ -1,60 +1,62 @@
 package com.construction.user.authorization.controller;
 
-import com.construction.user.authorization.dto.UserRoleDTO;
+import com.construction.user.authorization.domain.Permission;
+import com.construction.user.authorization.domain.UserRole;
 import com.construction.user.authorization.service.UserRoleService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 
-@RequestMapping("/api/user-role")
+@RequestMapping("/role")
 @RestController
 @Api(tags = "UserRole API")
 public class UserRoleController {
-    private final UserRoleService userRoleService;
 
-    public UserRoleController(UserRoleService userRoleService) {
-        this.userRoleService = userRoleService;
-    }
+    @Autowired
+    private UserRoleService service;
 
     @ApiOperation("Add new data")
     @PostMapping("/save")
-    public void save(@RequestBody UserRoleDTO userRole) {
-        userRoleService.save(userRole);
+    public UserRole save(@RequestBody UserRole userRole) {
+        return service.save(userRole);
     }
 
-    @ApiOperation("Delete based on primary key")
     @GetMapping("/{id}")
-    public UserRoleDTO findById(@PathVariable("id") Long id) {
-        Optional<UserRoleDTO> dtoOptional = userRoleService.findById(id);
-        return dtoOptional.orElse(null);
+    public UserRole findById(@PathVariable("id") Long id) {
+        return service.findById(id);
     }
 
     @ApiOperation("Find by Id")
     @DeleteMapping("/delete/{id}")
     public void delete(@PathVariable("id") Long id) {
-        userRoleService.deleteById(id);
+        service.deleteById(id);
     }
 
     @ApiOperation("Find all data")
-    @GetMapping("/list")
-    public List<UserRoleDTO> list() {
-        return userRoleService.findAll();
+    @GetMapping
+    public List<UserRole> list() {
+        return service.findAll();
     }
 
     @ApiOperation("Pagination request")
-    @GetMapping("/page-query")
-    public Page<UserRoleDTO> pageQuery(Pageable pageable) {
-        return userRoleService.findAll(pageable);
+    @GetMapping("/page")
+    public Page<UserRole> pageQuery(Pageable pageable) {
+        return service.findAll(pageable);
     }
 
-/*    @ApiOperation("Update one data")
+    @ApiOperation("Update one data")
     @PutMapping("/update/{id}")
-    public UserRoleDTO update(@RequestBody UserRoleDTO dto) {
-        return userRoleService.updateById(dto);
-    }*/
+    public UserRole update(@PathVariable Long id, @RequestBody UserRole dto) {
+        return service.updateById(id, dto);
+    }
+
+    @GetMapping("/{id}/permissions")
+    public List<Permission> getPermissionByRoleId(@PathVariable Long id) {
+        return service.findById(id).getPermissions();
+    }
 }

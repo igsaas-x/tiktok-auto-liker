@@ -1,60 +1,43 @@
 package com.construction.organization.subconstructor.controller;
 
-import com.construction.organization.subconstructor.dto.SubConstructorDTO;
-import com.construction.organization.subconstructor.service.SubConstructorService;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
+import com.construction.organization.subconstructor.domain.SubConstructor;
+import com.construction.organization.subconstructor.services.SubConstructorService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 
-@RequestMapping("/api/sub-constructor")
 @RestController
-@Api(tags = "SubConstructor API")
+@RequestMapping("/subconstructor")
 public class SubConstructorController {
-    private final SubConstructorService subConstructorService;
 
-    public SubConstructorController(SubConstructorService subConstructorService) {
-        this.subConstructorService = subConstructorService;
+    @Autowired
+    private SubConstructorService service;
+
+    @GetMapping("/page")
+    public Page<SubConstructor> getAll(Pageable pageable) {
+        return service.getAllAsPage(pageable);
     }
 
-    @ApiOperation("Add new data")
-    @PostMapping("/save")
-    public void save(@RequestBody SubConstructorDTO subConstructor) {
-        subConstructorService.save(subConstructor);
+    @GetMapping
+    public List<SubConstructor> getAll() {
+        return service.getAll();
     }
 
-    @ApiOperation("Delete based on primary key")
-    @GetMapping("/{id}")
-    public SubConstructorDTO findById(@PathVariable("id") String id) {
-        Optional<SubConstructorDTO> dtoOptional = subConstructorService.findById(id);
-        return dtoOptional.orElse(null);
+    @PostMapping
+    public SubConstructor create(@RequestBody SubConstructor subConstructor) {
+        return service.create(subConstructor);
     }
 
-    @ApiOperation("Find by Id")
-    @DeleteMapping("/delete/{id}")
-    public void delete(@PathVariable("id") String id) {
-        subConstructorService.deleteById(id);
+    @PutMapping("/{id}")
+    public SubConstructor update(@PathVariable Long id, @RequestBody SubConstructor subConstructor) {
+        return service.update(id, subConstructor);
     }
 
-    @ApiOperation("Find all data")
-    @GetMapping("/list")
-    public List<SubConstructorDTO> list() {
-        return subConstructorService.findAll();
-    }
-
-    @ApiOperation("Pagination request")
-    @GetMapping("/page-query")
-    public Page<SubConstructorDTO> pageQuery(Pageable pageable) {
-        return subConstructorService.findAll(pageable);
-    }
-
-    @ApiOperation("Update one data")
-    @PutMapping("/update/{id}")
-    public SubConstructorDTO update(@RequestBody SubConstructorDTO dto) {
-        return subConstructorService.updateById(dto);
+    @DeleteMapping("/{id}")
+    public void delete(@PathVariable Long id) {
+        service.delete(id);
     }
 }

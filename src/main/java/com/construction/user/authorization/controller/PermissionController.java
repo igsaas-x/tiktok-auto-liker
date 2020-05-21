@@ -1,0 +1,43 @@
+package com.construction.user.authorization.controller;
+
+import com.construction.persistence.service.EntityDataMapper;
+import com.construction.user.authorization.domain.Permission;
+import com.construction.user.authorization.repository.PermissionRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+@RestController
+@RequestMapping("/permission")
+public class PermissionController {
+
+    @Autowired
+    private PermissionRepository repository;
+    @Autowired
+    private EntityDataMapper dataMapper;
+
+    @GetMapping
+    public List<Permission> getAll() {
+        return repository.findAll();
+    }
+
+    @GetMapping("/{id}")
+    public Permission getById(@PathVariable Long id) {
+        return repository.findById(id).orElseThrow();
+    }
+
+    @GetMapping("/page")
+    public Page<Permission> getAllAsPage(Pageable pageable) {
+        return repository.findAll(pageable);
+    }
+
+    @PutMapping("/{id}")
+    public Permission update(@PathVariable Long id, @RequestBody Permission permission) {
+        var target = repository.findById(id).orElseThrow();
+        target = dataMapper.mapObject(permission, target, Permission.class);
+        return repository.save(target);
+    }
+}

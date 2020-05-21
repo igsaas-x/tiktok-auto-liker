@@ -48,7 +48,7 @@ public class KeyValueServiceImpl implements KeyValueService {
 
     @Override
     public List<KeyValueDTO> findAll() {
-        return mapper.toDtoList((List<KeyValue>) repository.findAll());
+        return mapper.toDtoList(repository.findAll());
     }
 
     @Override

@@ -1,24 +1,49 @@
 package com.construction.feature.street.service;
 
-import com.construction.feature.street.dto.StreetDTO;
+import com.construction.feature.street.domain.Street;
+import com.construction.feature.street.repository.StreetRepository;
+import com.construction.persistence.exception.ResourceNotFoundException;
+import com.construction.persistence.service.EntityDataMapper;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.List;
-import java.util.Optional;
 
-public interface StreetService {
-    StreetDTO save(StreetDTO dto);
+@Service
+@Transactional
+public class StreetService {
 
-    void save(List<StreetDTO> dtos);
+    @Autowired
+    private StreetRepository repository;
+    @Autowired
+    private EntityDataMapper dataMapper;
 
-    void deleteById(Long id);
+    public Street save(Street dto) {
+        return repository.save(dto);
+    }
 
-    Optional<StreetDTO> findById(Long id);
+    public void deleteById(Long id) {
+        repository.deleteById(id);
+    }
 
-    List<StreetDTO> findAll();
+    public Street findById(Long id) {
+        return repository.findById(id).orElseThrow(() -> new ResourceNotFoundException(Street.class, id));
+    }
 
-    Page<StreetDTO> findAll(Pageable pageable);
+    public List<Street> findAll() {
+        return repository.findAll();
+    }
 
-    StreetDTO updateById(Long id);
+    public Page<Street> findAll(Pageable pageable) {
+        return repository.findAll(pageable);
+    }
+
+    public Street update(Long id, final Street street) {
+        var target = repository.findById(id).orElseThrow(() -> new ResourceNotFoundException(Street.class, id));
+        target = dataMapper.mapObject(street, target, Street.class);
+        return repository.save(target);
+    }
 }

@@ -6,7 +6,7 @@ import com.construction.persistence.exception.ResourceNotFoundException;
 import com.construction.user.authentication.domain.AppUser;
 import com.construction.user.authentication.repository.AppUserRepository;
 import com.construction.user.authorization.domain.Permission;
-import com.construction.user.authorization.repositories.PermissionRepository;
+import com.construction.user.authorization.repository.PermissionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.crypto.password.PasswordEncoder;

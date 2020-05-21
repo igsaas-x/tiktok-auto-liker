@@ -17,7 +17,7 @@ import javax.persistence.ManyToOne;
 @Getter
 @Setter
 @Accessors(chain = true)
-@Filter(name = "assignedObjectFilter" ,
+@Filter(name = "assignedObjectFilter",
         condition = "exists(select 1 from boq_assign ba where ba.boq_id = id and ba.app_user_id = :id)")
 @Filter(name = "myObjectFilter")
 public class BOQ extends VersionEntity {

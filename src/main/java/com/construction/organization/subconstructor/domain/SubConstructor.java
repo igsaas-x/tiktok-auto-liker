@@ -1,6 +1,5 @@
 package com.construction.organization.subconstructor.domain;
 
-import com.construction.feature.address.domain.Address;
 import com.construction.persistence.domain.AuditingEntity;
 import lombok.Getter;
 import lombok.Setter;
