@@ -1,6 +1,8 @@
 package com.construction.feature.house.controller;
 
 import com.construction.feature.house.domain.House;
+import com.construction.feature.house.dto.HouseDto;
+import com.construction.feature.house.dto.HouseMapper;
 import com.construction.feature.house.service.HouseService;
 import com.construction.persistence.filter.FilterConfig;
 import com.construction.user.authorization.domain.ActionName;
@@ -20,16 +22,19 @@ public class HouseController {
 
     private final FilterConfig filterConfig;
     private final HouseService houseService;
+    private final HouseMapper mapper;
 
-    public HouseController(FilterConfig filterConfig, HouseService houseService) {
+    public HouseController(FilterConfig filterConfig, HouseService houseService, HouseMapper mapper) {
         this.filterConfig = filterConfig;
         this.houseService = houseService;
+        this.mapper = mapper;
     }
 
     @ApiOperation("Add new data")
     @PostMapping
     @PreAuthorize("hasAuthority('CREATE_ALL_HOUSE')")
-    public House save(@RequestBody House house) {
+    public House save(@RequestBody HouseDto dto) {
+        var house = mapper.toEntity(dto);
         return houseService.save(house);
     }
 
@@ -62,9 +67,10 @@ public class HouseController {
 
     @ApiOperation("Update one data")
     @PutMapping("/update/{id}")
-    public House update(@PathVariable Long id, @RequestBody House dto) {
+    public House update(@PathVariable Long id, @RequestBody HouseDto dto) {
+        var house = mapper.toEntity(dto);
         filterConfig.configureFilter(ActionName.UPDATE, "house");
-        return houseService.updateById(id, dto);
+        return houseService.updateById(id, house);
     }
 
     @PostMapping("/{id}/verify")
