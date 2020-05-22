@@ -1,6 +1,8 @@
 package com.construction.feature.street.controller;
 
 import com.construction.feature.street.domain.Street;
+import com.construction.feature.street.dto.StreetDto;
+import com.construction.feature.street.dto.StreetMapper;
 import com.construction.feature.street.service.StreetService;
 import com.construction.persistence.filter.FilterConfig;
 import com.construction.user.authorization.domain.ActionName;
@@ -23,11 +25,14 @@ public class StreetController {
     private StreetService service;
     @Autowired
     private FilterConfig filterConfig;
+    @Autowired
+    private StreetMapper mapper;
 
     @ApiOperation("Add new data")
     @PostMapping
     @PreAuthorize("hasAuthority('CREATE_ALL_STREET')")
-    public Street save(@RequestBody Street street) {
+    public Street save(@RequestBody StreetDto dto) {
+        var street = mapper.toEntity(dto);
         return service.save(street);
     }
 
@@ -60,9 +65,10 @@ public class StreetController {
 
     @ApiOperation("Update one data")
     @PutMapping("/update/{id}")
-    public Street update(@PathVariable Long id, @RequestBody Street dto) {
+    public Street update(@PathVariable Long id, @RequestBody StreetDto dto) {
+        var street = mapper.toEntity(dto);
         filterConfig.configureFilter(ActionName.UPDATE, "street");
-        return service.update(id, dto);
+        return service.update(id, street);
     }
 
     @PostMapping("/{id}/verify")
