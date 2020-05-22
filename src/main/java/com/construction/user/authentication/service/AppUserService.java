@@ -43,6 +43,18 @@ public class AppUserService {
         return repository.findByEmail(email).orElseThrow(() -> new ResourceNotFoundException(AppUser.class, email));
     }
 
+    public AppUser getById(Long id) {
+        return repository.findById(id).orElseThrow(() -> new ResourceNotFoundException(AppUser.class, id));
+    }
+
+    public List<AppUser> getAll() {
+        return repository.findAll();
+    }
+
+    public void deleteById(Long id){
+        repository.deleteById(id);
+    }
+
     public AppUser changePassword(final String oldPass, final String newPass) {
         final var user = context.authenticatedUser();
         if (user != null && encoder.matches(oldPass, user.getPassword())) {

@@ -1,15 +1,20 @@
 package com.construction.feature.street.service;
 
+import com.construction.appconfiguration.utils.ApplicationSecurityContext;
 import com.construction.feature.street.domain.Street;
 import com.construction.feature.street.repository.StreetRepository;
+import com.construction.persistence.domain.ObjectStatus;
 import com.construction.persistence.exception.ResourceNotFoundException;
 import com.construction.persistence.service.EntityDataMapper;
+import com.construction.persistence.utils.ObjectStatusValidator;
+import com.construction.user.authorization.domain.ActionName;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -20,6 +25,10 @@ public class StreetService {
     private StreetRepository repository;
     @Autowired
     private EntityDataMapper dataMapper;
+    @Autowired
+    private ObjectStatusValidator<Street> validator;
+    @Autowired
+    private ApplicationSecurityContext context;
 
     public Street save(Street dto) {
         return repository.save(dto);
@@ -29,7 +38,7 @@ public class StreetService {
         repository.deleteById(id);
     }
 
-    public Street findById(Long id) {
+    public Street getById(Long id) {
         return repository.findById(id).orElseThrow(() -> new ResourceNotFoundException(Street.class, id));
     }
 
@@ -42,8 +51,27 @@ public class StreetService {
     }
 
     public Street update(Long id, final Street street) {
-        var target = repository.findById(id).orElseThrow(() -> new ResourceNotFoundException(Street.class, id));
+        var target = getById(id);
+        validator.validateStatus(target, ActionName.UPDATE);
         target = dataMapper.mapObject(street, target, Street.class);
+        return repository.save(target);
+    }
+
+    public Street verify(Long id) {
+        var target = getById(id);
+        validator.validateStatus(target, ActionName.VERIFY);
+        target.setStatus(ObjectStatus.VERIFIED);
+        target.setVerifiedAt(LocalDateTime.now());
+        target.setVerifiedBy(context.authenticatedUser());
+        return repository.save(target);
+    }
+
+    public Street approve(Long id) {
+        var target = getById(id);
+        validator.validateStatus(target, ActionName.APPROVE);
+        target.setStatus(ObjectStatus.APPROVED);
+        target.setApprovedAt(LocalDateTime.now());
+        target.setApprovedBy(context.authenticatedUser());
         return repository.save(target);
     }
 }

@@ -1,4 +1,4 @@
-package com.construction.persistence.utils;
+package com.construction.persistence.converter;
 
 import com.fasterxml.jackson.annotation.ObjectIdGenerator;
 import com.fasterxml.jackson.annotation.ObjectIdResolver;

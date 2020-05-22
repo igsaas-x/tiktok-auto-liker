@@ -1,6 +1,7 @@
 package com.construction.feature.project.controllers;
 
 import com.construction.feature.project.domain.Project;
+import com.construction.feature.project.domain.ProjectAssign;
 import com.construction.feature.project.services.ProjectService;
 import com.construction.persistence.filter.FilterConfig;
 import com.construction.user.authorization.domain.ActionName;
@@ -25,31 +26,31 @@ public class ProjectController {
     }
 
     @GetMapping("/search")
-    ResponseEntity<Object> search(Project project, Pageable pageable) {
+    public ResponseEntity<Object> search(Project project, Pageable pageable) {
         filterConfig.configureFilter(ActionName.READ, "project");
         return service.search(project, pageable);
     }
 
     @GetMapping
-    Page<Project> getAllProject(Pageable pageable) {
+    public Page<Project> getAllProject(Pageable pageable) {
         filterConfig.configureFilter(ActionName.READ, "project");
         return service.getAll(pageable);
     }
 
     @GetMapping("/{id}")
-    Project getProjectById(@PathVariable Long id) {
+    public Project getProjectById(@PathVariable Long id) {
         filterConfig.configureFilter(ActionName.READ, "project");
         return service.getById(id);
     }
 
     @PostMapping
     @PreAuthorize("hasAuthority('CREATE_ALL_PROJECT')")
-    Project create(@RequestBody Project project) {
+    public Project create(@RequestBody Project project) {
         return service.create(project);
     }
 
     @PutMapping("/{id}")
-    Object update(@PathVariable Long id, @RequestBody Project project) {
+    public Project update(@PathVariable Long id, @RequestBody Project project) {
         filterConfig.configureFilter(ActionName.UPDATE, "project");
         return service.update(id, project);
     }
@@ -61,22 +62,36 @@ public class ProjectController {
     }
 
     @GetMapping("/pending")
-    List<Project> getPendingProject(Pageable pageable) {
+    public List<Project> getPendingProject(Pageable pageable) {
         filterConfig.configureFilter(ActionName.READ, "project");
         return service.getPendingProject(pageable);
     }
 
     @PostMapping("/{id}/verify")
     @PreAuthorize("hasAuthority('VERIFY_ALL_PROJECT') or hasAuthority('VERIFY_ASSIGNED_PROJECT')")
-    Project verify(@PathVariable Long id) {
+    public Project verify(@PathVariable Long id) {
         filterConfig.configureFilter(ActionName.VERIFY, "project");
         return service.verify(id);
     }
 
     @PostMapping("/{id}/approve")
     @PreAuthorize("hasAuthority('APPROVE_ALL_PROJECT') or hasAuthority('APPROVE_ASSIGNED_PROJECT')")
-    Project approve(@PathVariable Long id) {
+    public Project approve(@PathVariable Long id) {
         filterConfig.configureFilter(ActionName.APPROVE, "project");
         return service.approve(id);
+    }
+
+    @PostMapping("/{id}/assign/{userId}")
+    @PreAuthorize("hasAuthority('ASSIGN_ALL_PROJECT') or hasAuthority('ASSIGN_ASSIGNED_PROJECT')")
+    public ProjectAssign assignProject(@PathVariable Long id, @PathVariable Long userId) {
+        filterConfig.configureFilter(ActionName.ASSIGN, "project");
+        return service.assign(id, userId);
+    }
+
+    @PostMapping("/{id}/unassign/{userId}")
+    @PreAuthorize("hasAuthority('ASSIGN_ALL_PROJECT') or hasAuthority('ASSIGN_ASSIGNED_PROJECT')")
+    public boolean unAssignProject(@PathVariable Long id, @PathVariable Long userId) {
+        filterConfig.configureFilter(ActionName.ASSIGN, "project");
+        return service.unAssign(id, userId);
     }
 }

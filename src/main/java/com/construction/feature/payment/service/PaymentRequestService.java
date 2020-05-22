@@ -2,6 +2,7 @@ package com.construction.feature.payment.service;
 
 import com.construction.feature.payment.domain.PaymentRequest;
 import com.construction.feature.payment.repository.PaymentRequestRepository;
+import com.construction.persistence.exception.ResourceNotFoundException;
 import com.construction.persistence.service.EntityDataMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -32,8 +33,8 @@ public class PaymentRequestService {
         repository.deleteById(id);
     }
 
-    public PaymentRequest findById(Long id) {
-        return repository.findById(id).orElseThrow();
+    public PaymentRequest getById(Long id) {
+        return repository.findById(id).orElseThrow(() -> new ResourceNotFoundException(PaymentRequest.class, id));
     }
 
     public List<PaymentRequest> findAll() {
@@ -45,7 +46,7 @@ public class PaymentRequestService {
     }
 
     public PaymentRequest updateById(Long id, PaymentRequest source) {
-        var target = repository.findById(id).orElseThrow();
+        var target = getById(id);
         target = dataMapper.mapObject(source, target, PaymentRequest.class);
         return repository.save(target);
     }

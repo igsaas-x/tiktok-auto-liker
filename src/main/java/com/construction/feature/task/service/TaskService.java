@@ -1,14 +1,26 @@
 package com.construction.feature.task.service;
 
+import com.construction.appconfiguration.utils.ApplicationSecurityContext;
+import com.construction.feature.task.domain.BOQ;
 import com.construction.feature.task.domain.Task;
+import com.construction.feature.task.domain.TaskAssign;
+import com.construction.feature.task.repository.TaskAssignRepository;
 import com.construction.feature.task.repository.TaskRepository;
+import com.construction.persistence.domain.AssignStatus;
+import com.construction.persistence.domain.ObjectStatus;
+import com.construction.persistence.exception.ResourceNotFoundException;
 import com.construction.persistence.service.EntityDataMapper;
+import com.construction.persistence.utils.ObjectStatusValidator;
+import com.construction.user.authentication.domain.AppUser;
+import com.construction.user.authentication.service.AppUserService;
+import com.construction.user.authorization.domain.ActionName;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -19,6 +31,14 @@ public class TaskService {
     private TaskRepository repository;
     @Autowired
     private EntityDataMapper dataMapper;
+    @Autowired
+    private ObjectStatusValidator<Task> validator;
+    @Autowired
+    private ApplicationSecurityContext context;
+    @Autowired
+    private AppUserService userService;
+    @Autowired
+    private TaskAssignRepository assignRepository;
 
     public Task save(Task dto) {
         return repository.save(dto);
@@ -29,12 +49,16 @@ public class TaskService {
     }
 
     public void deleteById(Long id) {
-        var task = repository.findById(id).orElseThrow();
+        var task = getById(id);
         repository.delete(task);
     }
 
-    public Task findById(Long id) {
-        return repository.findById(id).orElseThrow();
+    public Task getById(Long id) {
+        return repository.findById(id).orElseThrow(() -> new ResourceNotFoundException(Task.class, id));
+    }
+
+    public List<Task> findByBoq(BOQ boq) {
+        return repository.findAllByBoq(boq);
     }
 
     public List<Task> findAll() {
@@ -46,8 +70,61 @@ public class TaskService {
     }
 
     public Task updateById(Long id, Task task) {
-        var target = repository.findById(id).orElseThrow();
+        var target = getById(id);
+        validator.validateStatus(target, ActionName.UPDATE);
         target = dataMapper.mapObject(task, target, Task.class);
         return repository.save(target);
+    }
+
+    public Task verify(Long id) {
+        var task = getById(id);
+        return verify(task);
+    }
+
+    public Task verify(Task task) {
+        validator.validateStatus(task, ActionName.VERIFY);
+        task.setStatus(ObjectStatus.VERIFIED);
+        task.setVerifiedAt(LocalDateTime.now());
+        task.setVerifiedBy(context.authenticatedUser());
+        return repository.save(task);
+    }
+
+    public Task approve(Long id) {
+        var task = getById(id);
+        return approve(task);
+    }
+
+    public Task approve(Task task) {
+        validator.validateStatus(task, ActionName.APPROVE);
+        task.setStatus(ObjectStatus.APPROVED);
+        task.setApprovedAt(LocalDateTime.now());
+        task.setApprovedBy(context.authenticatedUser());
+        return repository.save(task);
+    }
+
+    public TaskAssign assign(Long id, Long userId) {
+        var task = getById(id);
+        var user = userService.getById(userId);
+        return assign(task, user);
+    }
+
+    public TaskAssign assign(Task task, AppUser user) {
+        var taskAssign = new TaskAssign();
+        taskAssign.setTask(task);
+        taskAssign.setAppUser(user);
+        taskAssign.setStatus(AssignStatus.ACTIVE);
+        return assignRepository.save(taskAssign);
+    }
+
+    public boolean unAssign(Long id, Long userId) {
+        var task = getById(id);
+        var user = userService.getById(userId);
+        return unAssign(task, user);
+    }
+
+    public boolean unAssign(Task task, AppUser user) {
+        var taskAssign = assignRepository.findByTaskAndAppUser(task, user).orElseThrow();
+        taskAssign.setStatus(AssignStatus.DELETED);
+        return true;
     }
 }

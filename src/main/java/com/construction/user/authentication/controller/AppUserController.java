@@ -1,10 +1,8 @@
 package com.construction.user.authentication.controller;
 
 import com.construction.appconfiguration.utils.ApplicationSecurityContext;
-import com.construction.persistence.exception.ResourceNotFoundException;
 import com.construction.persistence.service.EntityDataMapper;
 import com.construction.user.authentication.domain.AppUser;
-import com.construction.user.authentication.repository.AppUserRepository;
 import com.construction.user.authentication.service.AppUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -21,8 +19,6 @@ import java.util.List;
 public class AppUserController {
 
     @Autowired
-    private AppUserRepository repository;
-    @Autowired
     private AppUserService service;
     @Autowired
     private EntityDataMapper entityDataMapper;
@@ -34,13 +30,13 @@ public class AppUserController {
     @GetMapping
     @PreAuthorize("hasAuthority('READ_ALL_USER')")
     public List<AppUser> getAllUser() {
-        return repository.findAll();
+        return service.getAll();
     }
 
     @GetMapping("/{id}")
     @PreAuthorize("hasAuthority('READ_ALL_USER')")
     public AppUser getUserById(@NotNull @PathVariable("id") final Long id) {
-        return repository.findById(id).orElseThrow(() -> new ResourceNotFoundException(AppUser.class, id));
+        return service.getById(id);
     }
 
     @GetMapping("/current")
@@ -60,7 +56,7 @@ public class AppUserController {
 
     @PutMapping("/{id}")
     public AppUser updateUser(@NotNull @PathVariable final Long id, @RequestBody final AppUser sourceUser) {
-        final var targetUser = repository.findById(id).orElseThrow(() -> new ResourceNotFoundException(AppUser.class, id));
+        final var targetUser = service.getById(id);
         try {
             final var user = entityDataMapper.mapObject(sourceUser, targetUser, AppUser.class);
             return service.updateUser(user);
@@ -76,6 +72,6 @@ public class AppUserController {
 
     @DeleteMapping("/{id}")
     public void deleteUser(@NotNull @PathVariable("id") final Long id) {
-        repository.deleteById(id);
+        service.deleteById(id);
     }
 }

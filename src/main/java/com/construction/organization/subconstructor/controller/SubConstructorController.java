@@ -5,6 +5,7 @@ import com.construction.organization.subconstructor.services.SubConstructorServi
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -39,5 +40,17 @@ public class SubConstructorController {
     @DeleteMapping("/{id}")
     public void delete(@PathVariable Long id) {
         service.delete(id);
+    }
+
+    @PostMapping("/{id}/verify")
+    @PreAuthorize("hasAuthority('VERIFY_ALL_SUBCONSTRUCTOR')")
+    public SubConstructor verify(@PathVariable Long id) {
+        return service.verify(id);
+    }
+
+    @PostMapping("/{id}/approve")
+    @PreAuthorize("hasAuthority('APPROVE_ALL_SUBCONSTRUCTOR')")
+    public SubConstructor approve(@PathVariable Long id) {
+        return service.approve(id);
     }
 }

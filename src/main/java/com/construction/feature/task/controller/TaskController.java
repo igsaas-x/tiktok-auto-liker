@@ -1,56 +1,96 @@
 package com.construction.feature.task.controller;
 
 import com.construction.feature.task.domain.Task;
+import com.construction.feature.task.domain.TaskAssign;
 import com.construction.feature.task.service.TaskService;
+import com.construction.persistence.filter.FilterConfig;
+import com.construction.user.authorization.domain.ActionName;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@RequestMapping("/api/task")
+@RequestMapping("/task")
 @RestController
 @Api(tags = "Task API")
 public class TaskController {
 
     @Autowired
     private TaskService service;
+    @Autowired
+    private FilterConfig filterConfig;
 
     @ApiOperation("Add new data")
-    @PostMapping("/save")
+    @PostMapping
+    @PreAuthorize("hasAuthority('CREATE_ALL_TASK')")
     public void save(@RequestBody Task task) {
         service.save(task);
     }
 
     @GetMapping("/{id}")
     public Task findById(@PathVariable("id") Long id) {
-        return service.findById(id);
+        filterConfig.configureFilter(ActionName.READ, "task");
+        return service.getById(id);
     }
 
     @ApiOperation("Find by Id")
-    @DeleteMapping("/delete/{id}")
+    @DeleteMapping("/{id}")
     public void delete(@PathVariable("id") Long id) {
+        filterConfig.configureFilter(ActionName.DELETE, "task");
         service.deleteById(id);
     }
 
     @ApiOperation("Find all data")
     @GetMapping("/list")
     public List<Task> list() {
+        filterConfig.configureFilter(ActionName.READ, "task");
         return service.findAll();
     }
 
     @ApiOperation("Pagination request")
-    @GetMapping("/page-query")
+    @GetMapping("/page")
     public Page<Task> pageQuery(Pageable pageable) {
+        filterConfig.configureFilter(ActionName.READ, "task");
         return service.findAll(pageable);
     }
 
     @ApiOperation("Update one data")
-    @PutMapping("/update/{id}")
+    @PutMapping("/{id}")
     public Task update(@PathVariable Long id, @RequestBody Task dto) {
+        filterConfig.configureFilter(ActionName.UPDATE, "task");
         return service.updateById(id, dto);
+    }
+
+    @PostMapping("/{id}/verify")
+    @PreAuthorize("hasAuthority('VERIFY_ALL_TASK') or hasAuthority('VERIFY_ASSIGNED_TASK')")
+    public Task verify(@PathVariable Long id){
+        filterConfig.configureFilter(ActionName.VERIFY, "task");
+        return service.verify(id);
+    }
+
+    @PostMapping("/{id}/approve")
+    @PreAuthorize("hasAuthority('APPROVE_ALL_TASK') or hasAuthority('APPROVE_ASSIGNED_TASK')")
+    public Task approve(@PathVariable Long id){
+        filterConfig.configureFilter(ActionName.APPROVE, "task");
+        return service.verify(id);
+    }
+
+    @PostMapping("/{id}/assign/{userId}")
+    @PreAuthorize("hasAuthority('ASSIGN_ALL_TASK') or hasAuthority('ASSIGN_ASSIGNED_TASK')")
+    public TaskAssign assign(@PathVariable Long id, @PathVariable Long userId) {
+        filterConfig.configureFilter(ActionName.ASSIGN, "task");
+        return service.assign(id, userId);
+    }
+
+    @PostMapping("/{id}/unassign/{userId}")
+    @PreAuthorize("hasAuthority('ASSIGN_ALL_TASK') or hasAuthority('ASSIGN_ASSIGNED_TASK')")
+    public boolean unAssign(@PathVariable Long id, @PathVariable Long userId) {
+        filterConfig.configureFilter(ActionName.ASSIGN, "task");
+        return service.unAssign(id, userId);
     }
 }

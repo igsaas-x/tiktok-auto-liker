@@ -27,7 +27,7 @@ public class HouseController {
     }
 
     @ApiOperation("Add new data")
-    @PostMapping("/save")
+    @PostMapping
     @PreAuthorize("hasAuthority('CREATE_ALL_HOUSE')")
     public House save(@RequestBody House house) {
         return houseService.save(house);
@@ -36,7 +36,7 @@ public class HouseController {
     @GetMapping("/{id}")
     public House findById(@PathVariable("id") Long id) {
         filterConfig.configureFilter(ActionName.READ, "house");
-        return houseService.findById(id);
+        return houseService.getById(id);
     }
 
     @ApiOperation("Find by Id")

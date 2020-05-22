@@ -2,26 +2,30 @@ package com.construction.feature.project.services;
 
 import com.construction.appconfiguration.utils.ApplicationSecurityContext;
 import com.construction.feature.project.domain.Project;
+import com.construction.feature.project.domain.ProjectAssign;
 import com.construction.feature.project.repositories.ProjectAssignRepository;
 import com.construction.feature.project.repositories.ProjectRepository;
 import com.construction.persistence.domain.ObjectStatus;
-import com.construction.persistence.exception.ResourceNotFoundException;
 import com.construction.persistence.service.EntityDataMapper;
+import com.construction.persistence.utils.ObjectStatusValidator;
 import com.construction.persistence.utils.SFWhere;
+import com.construction.user.authentication.service.AppUserService;
+import com.construction.user.authorization.domain.ActionName;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
 
+import javax.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
 
 @Service
+@Transactional
 public class ProjectService {
 
     @Autowired
@@ -32,6 +36,10 @@ public class ProjectService {
     private EntityDataMapper mapper;
     @Autowired
     private ApplicationSecurityContext context;
+    @Autowired
+    private ObjectStatusValidator<Project> validator;
+    @Autowired
+    private AppUserService userService;
 
     public ResponseEntity<Object> search(Project project, Pageable pageable) {
         Page<Project> all = repository.findAll(SFWhere.and(project)
@@ -44,13 +52,8 @@ public class ProjectService {
     }
 
     public Project update(Long id, Project project) {
-        var target = repository.findById(id).orElseThrow(() -> new ResourceNotFoundException(Project.class, id));
-        var user = context.authenticatedUser();
-        if (target.getCreatedBy().equals(user)) {
-            if (target.getStatus().equals(ObjectStatus.VERIFIED) || target.getStatus().equals(ObjectStatus.APPROVED)) {
-                throw new RuntimeException("your project has been verified or approved, please delete and re-create request");
-            }
-        }
+        var target = getById(id);
+        validator.validateStatus(target, ActionName.UPDATE);
         target = mapper.mapObject(project, target, Project.class);
         return repository.save(target);
     }
@@ -79,9 +82,7 @@ public class ProjectService {
 
     public Project verify(Long id) {
         var project = getById(id);
-        if (!project.getStatus().equals(ObjectStatus.OPEN)) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "project is not on open status");
-        }
+        validator.validateStatus(project, ActionName.VERIFY);
         project.setStatus(ObjectStatus.VERIFIED);
         project.setVerifiedBy(context.authenticatedUser());
         project.setVerifiedAt(LocalDateTime.now());
@@ -90,12 +91,27 @@ public class ProjectService {
 
     public Project approve(Long id) {
         var project = getById(id);
-        if (!project.getStatus().equals(ObjectStatus.VERIFIED)) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "project is not on verify status");
-        }
+        validator.validateStatus(project, ActionName.APPROVE);
         project.setStatus(ObjectStatus.APPROVED);
         project.setVerifiedBy(context.authenticatedUser());
         project.setVerifiedAt(LocalDateTime.now());
         return repository.save(project);
+    }
+
+    public ProjectAssign assign(Long id, Long userId) {
+        var project = getById(id);
+        var user = userService.getById(userId);
+        var projectAssign = new ProjectAssign();
+        projectAssign.setProject(project);
+        projectAssign.setAppUser(user);
+        return assignRepository.save(projectAssign);
+    }
+
+    public boolean unAssign(Long id, Long userId) {
+        var project = getById(id);
+        var user = userService.getById(userId);
+        var projectAssign = assignRepository.findByProjectAndAppUser(project, user).orElseThrow();
+        assignRepository.delete(projectAssign);
+        return true;
     }
 }
