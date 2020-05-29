@@ -4,6 +4,7 @@ import com.construction.feature.house.domain.House;
 import com.construction.feature.house.dto.HouseDto;
 import com.construction.feature.house.dto.HouseMapper;
 import com.construction.feature.house.service.HouseService;
+import com.construction.persistence.dto.IdList;
 import com.construction.persistence.filter.FilterConfig;
 import com.construction.user.authorization.domain.ActionName;
 import io.swagger.annotations.Api;
@@ -80,10 +81,24 @@ public class HouseController {
         return houseService.verify(id);
     }
 
+    @PostMapping("/batch/verify")
+    @PreAuthorize("hasAuthority('VERIFY_ALL_HOUSE') or hasAuthority('VERIFY_ASSIGNED_HOUSE')")
+    public List<House> verifyAll(@RequestBody IdList ids) {
+        filterConfig.configureFilter(ActionName.VERIFY, "house");
+        return houseService.verifyAll(ids.getIds());
+    }
+
     @PostMapping("/{id}/approve")
     @PreAuthorize("hasAuthority('APPROVE_ALL_HOUSE') or hasAuthority('APPROVE_ASSIGNED_HOUSE')")
     public House approve(@PathVariable Long id) {
         filterConfig.configureFilter(ActionName.APPROVE, "house");
         return houseService.approve(id);
+    }
+
+    @PostMapping("/batch/approve")
+    @PreAuthorize("hasAuthority('APPROVE_ALL_HOUSE') or hasAuthority('APPROVE_ASSIGNED_HOUSE')")
+    public List<House> approveAll(@RequestBody IdList ids) {
+        filterConfig.configureFilter(ActionName.APPROVE, "house");
+        return houseService.approveAll(ids.getIds());
     }
 }

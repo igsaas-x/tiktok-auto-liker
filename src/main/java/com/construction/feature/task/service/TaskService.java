@@ -22,6 +22,7 @@ import org.springframework.stereotype.Service;
 import javax.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -81,6 +82,10 @@ public class TaskService {
         return verify(task);
     }
 
+    public List<Task> verifyAll(List<Long> ids) {
+        return ids.stream().map(this::verify).collect(Collectors.toList());
+    }
+
     public Task verify(Task task) {
         validator.validateStatus(task, ActionName.VERIFY);
         task.setStatus(ObjectStatus.VERIFIED);
@@ -92,6 +97,10 @@ public class TaskService {
     public Task approve(Long id) {
         var task = getById(id);
         return approve(task);
+    }
+
+    public List<Task> approveAll(List<Long> ids) {
+        return ids.stream().map(this::approve).collect(Collectors.toList());
     }
 
     public Task approve(Task task) {

@@ -2,7 +2,7 @@ package com.construction.feature.street.dto;
 
 import com.construction.feature.project.services.ProjectService;
 import com.construction.feature.street.domain.Street;
-import com.construction.persistence.utils.DtoMapper;
+import com.construction.persistence.mapper.DtoMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 

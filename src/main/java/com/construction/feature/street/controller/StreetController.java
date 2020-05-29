@@ -4,6 +4,7 @@ import com.construction.feature.street.domain.Street;
 import com.construction.feature.street.dto.StreetDto;
 import com.construction.feature.street.dto.StreetMapper;
 import com.construction.feature.street.service.StreetService;
+import com.construction.persistence.dto.IdList;
 import com.construction.persistence.filter.FilterConfig;
 import com.construction.user.authorization.domain.ActionName;
 import io.swagger.annotations.Api;
@@ -73,15 +74,29 @@ public class StreetController {
 
     @PostMapping("/{id}/verify")
     @PreAuthorize("hasAuthority('VERIFY_ALL_STREET') or hasAuthority('VERIFY_ASSIGNED_STREET')")
-    public Street verify(@PathVariable Long id){
+    public Street verify(@PathVariable Long id) {
         filterConfig.configureFilter(ActionName.VERIFY, "street");
         return service.verify(id);
     }
 
+    @PostMapping("/batch/verify")
+    @PreAuthorize("hasAuthority('VERIFY_ALL_STREET') or hasAuthority('VERIFY_ASSIGNED_STREET')")
+    public List<Street> verifyAll(@RequestBody IdList ids) {
+        filterConfig.configureFilter(ActionName.VERIFY, "street");
+        return service.verifyAll(ids.getIds());
+    }
+
     @PostMapping("/{id}/approve")
     @PreAuthorize("hasAuthority('APPROVE_ALL_STREET') or hasAuthority('APPROVE_ASSIGNED_STREET')")
-    public Street approve(@PathVariable Long id){
+    public Street approve(@PathVariable Long id) {
         filterConfig.configureFilter(ActionName.APPROVE, "street");
         return service.approve(id);
+    }
+
+    @PostMapping("/batch/approve")
+    @PreAuthorize("hasAuthority('APPROVE_ALL_STREET') or hasAuthority('APPROVE_ASSIGNED_STREET')")
+    public List<Street> approveAll(@RequestBody IdList ids) {
+        filterConfig.configureFilter(ActionName.APPROVE, "street");
+        return service.approveAll(ids.getIds());
     }
 }

@@ -3,6 +3,7 @@ package com.construction.feature.project.controllers;
 import com.construction.feature.project.domain.Project;
 import com.construction.feature.project.domain.ProjectAssign;
 import com.construction.feature.project.services.ProjectService;
+import com.construction.persistence.dto.IdList;
 import com.construction.persistence.filter.FilterConfig;
 import com.construction.user.authorization.domain.ActionName;
 import org.springframework.data.domain.Page;
@@ -74,11 +75,25 @@ public class ProjectController {
         return service.verify(id);
     }
 
+    @PostMapping("/batch/verify")
+    @PreAuthorize("hasAuthority('VERIFY_ALL_PROJECT') or hasAuthority('VERIFY_ASSIGNED_PROJECT')")
+    public List<Project> verifyAll(@RequestBody IdList ids) {
+        filterConfig.configureFilter(ActionName.VERIFY, "project");
+        return service.verifyAll(ids.getIds());
+    }
+
     @PostMapping("/{id}/approve")
     @PreAuthorize("hasAuthority('APPROVE_ALL_PROJECT') or hasAuthority('APPROVE_ASSIGNED_PROJECT')")
     public Project approve(@PathVariable Long id) {
         filterConfig.configureFilter(ActionName.APPROVE, "project");
         return service.approve(id);
+    }
+
+    @PostMapping("/batch/approve")
+    @PreAuthorize("hasAuthority('APPROVE_ALL_PROJECT') or hasAuthority('APPROVE_ASSIGNED_PROJECT')")
+    public List<Project> approveAll(@RequestBody IdList ids) {
+        filterConfig.configureFilter(ActionName.APPROVE, "project");
+        return service.approveAll(ids.getIds());
     }
 
     @PostMapping("/{id}/assign/{userId}")

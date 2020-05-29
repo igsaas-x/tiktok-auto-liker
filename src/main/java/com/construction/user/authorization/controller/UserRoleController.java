@@ -2,12 +2,14 @@ package com.construction.user.authorization.controller;
 
 import com.construction.user.authorization.domain.Permission;
 import com.construction.user.authorization.domain.UserRole;
+import com.construction.user.authorization.dto.RoleDto;
 import com.construction.user.authorization.service.UserRoleService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -15,15 +17,16 @@ import java.util.List;
 @RequestMapping("/role")
 @RestController
 @Api(tags = "UserRole API")
+@PreAuthorize("hasAuthority('ALL_ALL_ALL')")
 public class UserRoleController {
 
     @Autowired
     private UserRoleService service;
 
     @ApiOperation("Add new data")
-    @PostMapping("/save")
-    public UserRole save(@RequestBody UserRole userRole) {
-        return service.save(userRole);
+    @PostMapping
+    public UserRole save(@RequestBody RoleDto roleDto) {
+        return service.save(roleDto);
     }
 
     @GetMapping("/{id}")
@@ -51,7 +54,7 @@ public class UserRoleController {
 
     @ApiOperation("Update one data")
     @PutMapping("/update/{id}")
-    public UserRole update(@PathVariable Long id, @RequestBody UserRole dto) {
+    public UserRole update(@PathVariable Long id, @RequestBody RoleDto dto) {
         return service.updateById(id, dto);
     }
 

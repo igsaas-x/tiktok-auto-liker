@@ -1,4 +1,4 @@
-package com.construction.persistence.utils;
+package com.construction.persistence.mapper;
 
 public interface DtoMapper<I, O> {
     O toEntity(I i);

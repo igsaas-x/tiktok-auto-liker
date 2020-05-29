@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 import javax.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -66,6 +67,10 @@ public class StreetService {
         return repository.save(target);
     }
 
+    public List<Street> verifyAll(List<Long> ids) {
+        return ids.stream().map(this::verify).collect(Collectors.toList());
+    }
+
     public Street approve(Long id) {
         var target = getById(id);
         validator.validateStatus(target, ActionName.APPROVE);
@@ -74,4 +79,10 @@ public class StreetService {
         target.setApprovedBy(context.authenticatedUser());
         return repository.save(target);
     }
+
+    public List<Street> approveAll(List<Long> ids) {
+        return ids.stream().map(this::approve).collect(Collectors.toList());
+    }
+
+
 }

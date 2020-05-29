@@ -4,7 +4,6 @@ import com.construction.appconfiguration.utils.ApplicationSecurityContext;
 import com.construction.feature.house.domain.House;
 import com.construction.feature.house.repository.HouseRepository;
 import com.construction.persistence.domain.ObjectStatus;
-import com.construction.persistence.exception.ResourceNotFoundException;
 import com.construction.persistence.service.EntityDataMapper;
 import com.construction.persistence.utils.ObjectStatusValidator;
 import com.construction.user.authorization.domain.ActionName;
@@ -15,6 +14,7 @@ import org.springframework.stereotype.Service;
 import javax.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -72,6 +72,10 @@ public class HouseService {
         return repository.save(house);
     }
 
+    public List<House> verifyAll(List<Long> ids) {
+        return ids.stream().map(this::verify).collect(Collectors.toList());
+    }
+
     public House approve(Long id) {
         var house = getById(id);
         validator.validateStatus(house, ActionName.APPROVE);
@@ -79,5 +83,9 @@ public class HouseService {
         house.setApprovedAt(LocalDateTime.now());
         house.setApprovedBy(context.authenticatedUser());
         return repository.save(house);
+    }
+
+    public List<House> approveAll(List<Long> ids) {
+        return ids.stream().map(this::approve).collect(Collectors.toList());
     }
 }

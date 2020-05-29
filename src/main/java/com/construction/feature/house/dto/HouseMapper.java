@@ -4,7 +4,7 @@ import com.construction.feature.house.domain.House;
 import com.construction.feature.house.repository.TypeOfHouseRepository;
 import com.construction.feature.project.services.ProjectService;
 import com.construction.feature.street.service.StreetService;
-import com.construction.persistence.utils.DtoMapper;
+import com.construction.persistence.mapper.DtoMapper;
 import org.springframework.stereotype.Component;
 
 @Component

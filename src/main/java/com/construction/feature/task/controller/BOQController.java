@@ -87,6 +87,7 @@ public class BOQController {
         return service.verifyAllTask(id);
     }
 
+
     @PostMapping("/{id}/tasks/approve")
     @PreAuthorize("hasAuthority('APPROVE_ALL_TASK') or hasAuthority('APPROVE_ASSIGNED_TASK')")
     public boolean approveAllTaskInBoq(@PathVariable Long id) {

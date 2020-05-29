@@ -80,6 +80,10 @@ public class ProjectService {
         repository.delete(project);
     }
 
+    public List<Project> verifyAll(List<Long> ids) {
+        return ids.stream().map(this::verify).collect(Collectors.toList());
+    }
+
     public Project verify(Long id) {
         var project = getById(id);
         validator.validateStatus(project, ActionName.VERIFY);
@@ -87,6 +91,10 @@ public class ProjectService {
         project.setVerifiedBy(context.authenticatedUser());
         project.setVerifiedAt(LocalDateTime.now());
         return repository.save(project);
+    }
+
+    public List<Project> approveAll(List<Long> ids) {
+        return ids.stream().map(this::approve).collect(Collectors.toList());
     }
 
     public Project approve(Long id) {

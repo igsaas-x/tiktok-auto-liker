@@ -3,6 +3,7 @@ package com.construction.feature.task.controller;
 import com.construction.feature.task.domain.Task;
 import com.construction.feature.task.domain.TaskAssign;
 import com.construction.feature.task.service.TaskService;
+import com.construction.persistence.dto.IdList;
 import com.construction.persistence.filter.FilterConfig;
 import com.construction.user.authorization.domain.ActionName;
 import io.swagger.annotations.Api;
@@ -68,16 +69,30 @@ public class TaskController {
 
     @PostMapping("/{id}/verify")
     @PreAuthorize("hasAuthority('VERIFY_ALL_TASK') or hasAuthority('VERIFY_ASSIGNED_TASK')")
-    public Task verify(@PathVariable Long id){
+    public Task verify(@PathVariable Long id) {
         filterConfig.configureFilter(ActionName.VERIFY, "task");
         return service.verify(id);
     }
 
+    @PostMapping("/batch/verify")
+    @PreAuthorize("hasAuthority('VERIFY_ALL_TASK') or hasAuthority('VERIFY_ASSIGNED_TASK')")
+    public List<Task> verifyAll(@RequestBody IdList ids) {
+        filterConfig.configureFilter(ActionName.VERIFY, "task");
+        return service.verifyAll(ids.getIds());
+    }
+
     @PostMapping("/{id}/approve")
     @PreAuthorize("hasAuthority('APPROVE_ALL_TASK') or hasAuthority('APPROVE_ASSIGNED_TASK')")
-    public Task approve(@PathVariable Long id){
+    public Task approve(@PathVariable Long id) {
         filterConfig.configureFilter(ActionName.APPROVE, "task");
         return service.verify(id);
+    }
+
+    @PostMapping("/batch/approve")
+    @PreAuthorize("hasAuthority('APPROVE_ALL_TASK') or hasAuthority('APPROVE_ASSIGNED_TASK')")
+    public List<Task> approveAll(@PathVariable IdList ids) {
+        filterConfig.configureFilter(ActionName.APPROVE, "task");
+        return service.verifyAll(ids.getIds());
     }
 
     @PostMapping("/{id}/assign/{userId}")

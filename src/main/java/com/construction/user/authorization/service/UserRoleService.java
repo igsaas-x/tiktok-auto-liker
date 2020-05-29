@@ -2,6 +2,8 @@ package com.construction.user.authorization.service;
 
 import com.construction.persistence.service.EntityDataMapper;
 import com.construction.user.authorization.domain.UserRole;
+import com.construction.user.authorization.dto.RoleDto;
+import com.construction.user.authorization.dto.RoleMapper;
 import com.construction.user.authorization.repository.UserRoleRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -19,9 +21,12 @@ public class UserRoleService {
     private UserRoleRepository repository;
     @Autowired
     private EntityDataMapper dataMapper;
+    @Autowired
+    private RoleMapper roleMapper;
 
-    public UserRole save(UserRole dto) {
-        return repository.save(dto);
+    public UserRole save(RoleDto roleDto) {
+        var role = roleMapper.toEntity(roleDto);
+        return repository.save(role);
     }
 
     public void save(List<UserRole> dtos) {
@@ -44,9 +49,10 @@ public class UserRoleService {
         return repository.findAll(pageable);
     }
 
-    public UserRole updateById(Long id, UserRole dto) {
+    public UserRole updateById(Long id, RoleDto roleDto) {
         var target = repository.findById(id).orElseThrow();
-        target = dataMapper.mapObject(dto, target, UserRole.class);
+        var role = roleMapper.toEntity(roleDto);
+        target = dataMapper.mapObject(role, target, UserRole.class);
         return repository.save(target);
     }
 }
