@@ -1,9 +1,9 @@
 package com.construction.feature.street.controller;
 
 import com.construction.feature.street.domain.Street;
-import com.construction.feature.street.dto.StreetDto;
-import com.construction.feature.street.dto.StreetMapper;
+import com.construction.feature.street.domain.StreetAssign;
 import com.construction.feature.street.service.StreetService;
+import com.construction.persistence.domain.AssignFor;
 import com.construction.persistence.dto.IdList;
 import com.construction.persistence.filter.FilterConfig;
 import com.construction.user.authorization.domain.ActionName;
@@ -26,14 +26,11 @@ public class StreetController {
     private StreetService service;
     @Autowired
     private FilterConfig filterConfig;
-    @Autowired
-    private StreetMapper mapper;
 
     @ApiOperation("Add new data")
     @PostMapping
     @PreAuthorize("hasAuthority('CREATE_ALL_STREET')")
-    public Street save(@RequestBody StreetDto dto) {
-        var street = mapper.toEntity(dto);
+    public Street save(@RequestBody Street street) {
         return service.save(street);
     }
 
@@ -51,25 +48,52 @@ public class StreetController {
     }
 
     @ApiOperation("Find all data")
-    @GetMapping("/list")
+    @GetMapping
     public List<Street> list() {
         filterConfig.configureFilter(ActionName.READ, "street");
         return service.findAll();
     }
 
+    @ApiOperation("Find all data")
+    @GetMapping("/pending/verify")
+    public Page<Street> getPendingVerify(Pageable pageable) {
+        filterConfig.configureFilter(ActionName.READ, "street");
+        return service.getPendingForVerify(pageable);
+    }
+
+    @ApiOperation("Find approve data")
+    @GetMapping("/pending/approve")
+    public Page<Street> getPendingApprove(Pageable pageable) {
+        filterConfig.configureFilter(ActionName.READ, "street");
+        return service.getPendingForApprove(pageable);
+    }
+
     @ApiOperation("Pagination request")
-    @GetMapping("/page-query")
+    @GetMapping("/page")
     public Page<Street> pageQuery(Pageable pageable) {
         filterConfig.configureFilter(ActionName.READ, "street");
         return service.findAll(pageable);
     }
 
     @ApiOperation("Update one data")
-    @PutMapping("/update/{id}")
-    public Street update(@PathVariable Long id, @RequestBody StreetDto dto) {
-        var street = mapper.toEntity(dto);
+    @PutMapping("/{id}")
+    public Street update(@PathVariable Long id, @RequestBody Street street) {
         filterConfig.configureFilter(ActionName.UPDATE, "street");
         return service.update(id, street);
+    }
+
+    @PostMapping("/{id}/assign/{userId}")
+    @PreAuthorize("hasAuthority('ASSIGN_ALL_STREET') or hasAuthority('ASSIGN_ASSIGNED_STREET')")
+    public StreetAssign assign(@PathVariable Long id, @PathVariable Long userId, @RequestParam AssignFor assignFor) {
+        filterConfig.configureFilter(ActionName.ASSIGN, "street");
+        return service.assign(id, userId, assignFor);
+    }
+
+    @PostMapping("/{id}/unassign/{userId}")
+    @PreAuthorize("hasAuthority('ASSIGN_ALL_STREET') or hasAuthority('ASSIGN_ASSIGNED_STREET')")
+    public void unAssign(@PathVariable Long id, @PathVariable Long userId) {
+        filterConfig.configureFilter(ActionName.ASSIGN, "street");
+        service.unAssign(id, userId);
     }
 
     @PostMapping("/{id}/verify")

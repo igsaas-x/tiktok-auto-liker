@@ -2,11 +2,15 @@ package com.construction.feature.street.service;
 
 import com.construction.appconfiguration.utils.ApplicationSecurityContext;
 import com.construction.feature.street.domain.Street;
+import com.construction.feature.street.domain.StreetAssign;
+import com.construction.feature.street.repository.StreetAssignRepository;
 import com.construction.feature.street.repository.StreetRepository;
+import com.construction.persistence.domain.AssignFor;
 import com.construction.persistence.domain.ObjectStatus;
 import com.construction.persistence.exception.ResourceNotFoundException;
 import com.construction.persistence.service.EntityDataMapper;
 import com.construction.persistence.utils.ObjectStatusValidator;
+import com.construction.user.authentication.service.AppUserService;
 import com.construction.user.authorization.domain.ActionName;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -30,6 +34,10 @@ public class StreetService {
     private ObjectStatusValidator<Street> validator;
     @Autowired
     private ApplicationSecurityContext context;
+    @Autowired
+    private StreetAssignRepository assignRepository;
+    @Autowired
+    private AppUserService userService;
 
     public Street save(Street dto) {
         return repository.save(dto);
@@ -47,6 +55,14 @@ public class StreetService {
         return repository.findAll();
     }
 
+    public Page<Street> getPendingForVerify(Pageable pageable) {
+        return repository.getPendingForVerify(context.authenticatedUser().getId(), pageable);
+    }
+
+    public Page<Street> getPendingForApprove(Pageable pageable) {
+        return repository.getPendingForApprove(context.authenticatedUser().getId(), pageable);
+    }
+
     public Page<Street> findAll(Pageable pageable) {
         return repository.findAll(pageable);
     }
@@ -56,6 +72,22 @@ public class StreetService {
         validator.validateStatus(target, ActionName.UPDATE);
         target = dataMapper.mapObject(street, target, Street.class);
         return repository.save(target);
+    }
+
+    public StreetAssign assign(Long id, Long uid, AssignFor assignFor) {
+        var street = getById(id);
+        var user = userService.getById(uid);
+        var streetAssign = new StreetAssign().setStreet(street);
+        streetAssign.setAppUser(user);
+        streetAssign.setCreatedAt(LocalDateTime.now());
+        streetAssign.setCreatedBy(context.authenticatedUser());
+        streetAssign.setAssignFor(assignFor);
+        return assignRepository.save(streetAssign);
+    }
+
+    public void unAssign(Long id, Long uid) {
+        var streetAssign = assignRepository.findByStreetIdAndAppUserId(id, uid).orElseThrow();
+        assignRepository.delete(streetAssign);
     }
 
     public Street verify(Long id) {
@@ -83,6 +115,5 @@ public class StreetService {
     public List<Street> approveAll(List<Long> ids) {
         return ids.stream().map(this::approve).collect(Collectors.toList());
     }
-
 
 }

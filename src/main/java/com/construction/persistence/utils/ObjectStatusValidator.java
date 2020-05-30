@@ -28,7 +28,8 @@ public class ObjectStatusValidator<T extends AuditingEntity> {
                 }
                 break;
             case UPDATE:
-                if (t.getCreatedBy().equals(context.authenticatedUser())) {
+                assert t.getCreatedBy().getId() != null;
+                if (t.getCreatedBy().getId().equals(context.authenticatedUser().getId())) {
                     if (t.getStatus().equals(ObjectStatus.VERIFIED) || t.getStatus().equals(ObjectStatus.APPROVED)) {
                         throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "your project has been verified or approved, please delete and re-create request");
                     }
