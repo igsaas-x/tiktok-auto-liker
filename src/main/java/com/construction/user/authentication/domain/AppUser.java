@@ -38,7 +38,7 @@ public class AppUser extends VersionEntity {
     @Column(nullable = false)
     private String password;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn
     private UserRole role;
 

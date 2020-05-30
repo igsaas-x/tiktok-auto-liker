@@ -65,6 +65,11 @@ public class AppUserController {
         }
     }
 
+    @PutMapping("/{id}/role/{roleId}")
+    public AppUser assignRole(@PathVariable Long id, @PathVariable Long roleId) {
+        return service.assignRole(id, roleId);
+    }
+
     @PostMapping
     public AppUser createUser(@NotNull @RequestBody final AppUser appUser) {
         return service.createUser(appUser);

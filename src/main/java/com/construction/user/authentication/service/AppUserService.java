@@ -7,6 +7,7 @@ import com.construction.user.authentication.domain.AppUser;
 import com.construction.user.authentication.repository.AppUserRepository;
 import com.construction.user.authorization.domain.Permission;
 import com.construction.user.authorization.repository.PermissionRepository;
+import com.construction.user.authorization.repository.UserRoleRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -31,6 +32,8 @@ public class AppUserService {
     @Autowired
     private PermissionRepository permissionRepository;
     @Autowired
+    private UserRoleRepository roleRepository;
+    @Autowired
     private ApplicationSecurityContext context;
     @Autowired
     private PasswordEncoder encoder;
@@ -51,8 +54,15 @@ public class AppUserService {
         return repository.findAll();
     }
 
-    public void deleteById(Long id){
+    public void deleteById(Long id) {
         repository.deleteById(id);
+    }
+
+    public AppUser assignRole(Long userId, Long roleId) {
+        var role = roleRepository.findById(roleId).orElseThrow();
+        var user = repository.findById(userId).orElseThrow();
+        user.setRole(role);
+        return repository.save(user);
     }
 
     public AppUser changePassword(final String oldPass, final String newPass) {
