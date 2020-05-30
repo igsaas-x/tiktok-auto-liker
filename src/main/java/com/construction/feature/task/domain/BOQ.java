@@ -3,7 +3,7 @@ package com.construction.feature.task.domain;
 import com.construction.feature.house.domain.House;
 import com.construction.feature.project.domain.Project;
 import com.construction.feature.street.domain.Street;
-import com.construction.persistence.domain.VersionEntity;
+import com.construction.persistence.domain.SimpleAuditingEntity;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -19,8 +19,8 @@ import javax.persistence.ManyToOne;
 @Accessors(chain = true)
 @Filter(name = "assignedObjectFilter",
         condition = "exists(select 1 from boq_assign ba where ba.boq_id = id and ba.app_user_id = :id)")
-@Filter(name = "myObjectFilter")
-public class BOQ extends VersionEntity {
+@Filter(name = "myObjectFilter", condition = "created_by = :id")
+public class BOQ extends SimpleAuditingEntity {
 
     private String code;
 

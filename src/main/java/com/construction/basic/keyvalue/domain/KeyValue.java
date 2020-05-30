@@ -1,7 +1,7 @@
 package com.construction.basic.keyvalue.domain;
 
-import com.construction.persistence.domain.AuditingEntity;
 import com.construction.persistence.converter.JsonObjectConverter;
+import com.construction.persistence.domain.VersionEntity;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -18,7 +18,7 @@ import java.util.Map;
 @Table(name = "key_value")
 @Accessors(chain = true)
 @SQLDelete(sql = "delete from key_value where removable <> 0 and id = ? and version = ?", check = ResultCheckStyle.COUNT)
-public class KeyValue extends AuditingEntity {
+public class KeyValue extends VersionEntity {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "key_value_group")
