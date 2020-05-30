@@ -5,6 +5,7 @@ import com.construction.feature.project.domain.Project;
 import com.construction.feature.project.domain.ProjectAssign;
 import com.construction.feature.project.repositories.ProjectAssignRepository;
 import com.construction.feature.project.repositories.ProjectRepository;
+import com.construction.persistence.domain.AssignFor;
 import com.construction.persistence.domain.ObjectStatus;
 import com.construction.persistence.service.EntityDataMapper;
 import com.construction.persistence.utils.ObjectStatusValidator;
@@ -62,20 +63,14 @@ public class ProjectService {
         return repository.findAll(pageable);
     }
 
-    public List<Project> getPendingForVerify(Pageable pageable) {
+    public Page<Project> getPendingForVerify(Pageable pageable) {
         var user = context.authenticatedUser();
-        var projects = repository.findUserPendingProject(user.getId(), pageable);
-        return projects.stream()
-                .filter(project -> project.getStatus().equals(ObjectStatus.OPEN))
-                .collect(Collectors.toList());
+        return repository.findPendingForVerify(user.getId(), pageable);
     }
 
-    public List<Project> getPendingForApprove(Pageable pageable) {
+    public Page<Project> getPendingForApprove(Pageable pageable) {
         var user = context.authenticatedUser();
-        var projects = repository.findUserPendingProject(user.getId(), pageable);
-        return projects.stream()
-                .filter(project -> project.getStatus().equals(ObjectStatus.VERIFIED))
-                .collect(Collectors.toList());
+        return repository.findPendingForApprove(user.getId(), pageable);
     }
 
     public Project getById(Long id) {
@@ -108,17 +103,18 @@ public class ProjectService {
         var project = getById(id);
         validator.validateStatus(project, ActionName.APPROVE);
         project.setStatus(ObjectStatus.APPROVED);
-        project.setVerifiedBy(context.authenticatedUser());
-        project.setVerifiedAt(LocalDateTime.now());
+        project.setApprovedBy(context.authenticatedUser());
+        project.setApprovedAt(LocalDateTime.now());
         return repository.save(project);
     }
 
-    public ProjectAssign assign(Long id, Long userId) {
+    public ProjectAssign assign(Long id, Long userId, AssignFor assignFor) {
         var project = getById(id);
         var user = userService.getById(userId);
         var projectAssign = new ProjectAssign();
         projectAssign.setProject(project);
         projectAssign.setAppUser(user);
+        projectAssign.setAssignFor(assignFor);
         return assignRepository.save(projectAssign);
     }
 

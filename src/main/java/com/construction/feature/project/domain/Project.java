@@ -21,8 +21,14 @@ import javax.persistence.Entity;
 @FilterDef(name = "myObjectFilter",
         defaultCondition = "created_by = :id",
         parameters = @ParamDef(name = "id", type = "long"))
+@FilterDef(name = "readableObjectFilter",
+        defaultCondition = "created_by = :id or " +
+                "id in (SELECT pa.project_id FROM project_assign pa WHERE pa.app_user_id = :id) or " +
+                "id in (SELECT t.project_id FROM task t,task_assign ta WHERE t.id = ta.task_id AND ta.app_user_id = :id)",
+        parameters = @ParamDef(name = "id", type = "long"))
 @Filter(name = "assignedObjectFilter")
 @Filter(name = "myObjectFilter")
+@Filter(name = "readableObjectFilter")
 public class Project extends AuditingEntity {
 
     @Column(nullable = false)

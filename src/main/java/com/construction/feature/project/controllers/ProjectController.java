@@ -3,6 +3,7 @@ package com.construction.feature.project.controllers;
 import com.construction.feature.project.domain.Project;
 import com.construction.feature.project.domain.ProjectAssign;
 import com.construction.feature.project.services.ProjectService;
+import com.construction.persistence.domain.AssignFor;
 import com.construction.persistence.dto.IdList;
 import com.construction.persistence.filter.FilterConfig;
 import com.construction.user.authorization.domain.ActionName;
@@ -63,13 +64,13 @@ public class ProjectController {
     }
 
     @GetMapping("/pending/verify")
-    public List<Project> getPendingVerify(Pageable pageable) {
+    public Page<Project> getPendingVerify(Pageable pageable) {
         filterConfig.configureFilter(ActionName.READ, "project");
         return service.getPendingForVerify(pageable);
     }
 
     @GetMapping("/pending/approve")
-    public List<Project> getPendingApprove(Pageable pageable) {
+    public Page<Project> getPendingApprove(Pageable pageable) {
         filterConfig.configureFilter(ActionName.READ, "project");
         return service.getPendingForApprove(pageable);
     }
@@ -104,9 +105,9 @@ public class ProjectController {
 
     @PostMapping("/{id}/assign/{userId}")
     @PreAuthorize("hasAuthority('ASSIGN_ALL_PROJECT') or hasAuthority('ASSIGN_ASSIGNED_PROJECT')")
-    public ProjectAssign assignProject(@PathVariable Long id, @PathVariable Long userId) {
+    public ProjectAssign assignProject(@PathVariable Long id, @PathVariable Long userId, @RequestParam AssignFor assignFor) {
         filterConfig.configureFilter(ActionName.ASSIGN, "project");
-        return service.assign(id, userId);
+        return service.assign(id, userId, assignFor);
     }
 
     @PostMapping("/{id}/unassign/{userId}")

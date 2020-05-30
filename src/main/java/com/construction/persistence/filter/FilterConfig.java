@@ -20,10 +20,14 @@ public class FilterConfig {
             filterUtils.enableNoAccessFilter();
         } else if (user.hasPermissionTo(action.name() + "_ALL_" + entityName)) {
             return;
-        } else if (user.hasPermissionTo(action.name() + "_ASSIGNED_" + entityName)) {
-            filterUtils.enableAssignedObjectFilter(user.getId());
+        } else if (!action.equals(ActionName.READ)) {
+            if (user.hasPermissionTo(action.name() + "_ASSIGNED_" + entityName)) {
+                filterUtils.enableAssignedObjectFilter(user.getId());
+            }else {
+                filterUtils.enableMyObjectFilter(user.getId());
+            }
         } else {
-            filterUtils.enableMyObjectFilter(user.getId());
+            filterUtils.enableReadableObjectFilter(user.getId());
         }
     }
 }

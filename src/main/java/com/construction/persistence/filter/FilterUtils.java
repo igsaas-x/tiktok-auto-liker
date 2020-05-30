@@ -26,4 +26,9 @@ public class FilterUtils {
         var session = entityManager.unwrap(Session.class);
         session.enableFilter("myObjectFilter").setParameter("id", id);
     }
+
+    public void enableReadableObjectFilter(final Long id){
+        var session = entityManager.unwrap(Session.class);
+        session.enableFilter("readableObjectFilter").setParameter("id", id);
+    }
 }

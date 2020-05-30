@@ -50,5 +50,8 @@ public abstract class AssignEntity extends VersionEntity {
     private AppUser appUser;
 
     @Enumerated(EnumType.STRING)
+    private AssignFor assignFor;
+
+    @Enumerated(EnumType.STRING)
     private AssignStatus status = AssignStatus.ACTIVE;
 }
