@@ -2,15 +2,14 @@ package com.construction.feature.task.domain;
 
 import com.construction.feature.house.domain.House;
 import com.construction.feature.project.domain.Project;
+import com.construction.feature.street.domain.Street;
 import com.construction.persistence.domain.AuditingEntity;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.hibernate.annotations.Filter;
 
-import javax.persistence.Entity;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
+import javax.persistence.*;
 import java.math.BigDecimal;
 
 @Entity
@@ -24,13 +23,20 @@ public class Task extends AuditingEntity {
 
     private String typeOfWork;
 
-    @ManyToOne
-    @JoinColumn
-    private House house;
+    @Enumerated(EnumType.STRING)
+    private TaskBelongTo belongTo;
 
     @ManyToOne
     @JoinColumn
     private Project project;
+
+    @ManyToOne
+    @JoinColumn
+    private Street street;
+
+    @ManyToOne
+    @JoinColumn
+    private House house;
 
     private String code;
 

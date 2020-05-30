@@ -62,12 +62,19 @@ public class ProjectService {
         return repository.findAll(pageable);
     }
 
-    public List<Project> getPendingProject(Pageable pageable) {
+    public List<Project> getPendingForVerify(Pageable pageable) {
         var user = context.authenticatedUser();
         var projects = repository.findUserPendingProject(user.getId(), pageable);
         return projects.stream()
-                .filter(project -> project.getStatus().equals(ObjectStatus.OPEN) || project.getStatus().equals(ObjectStatus.VERIFIED))
-                .filter(project -> !user.equals(project.getVerifiedBy()))
+                .filter(project -> project.getStatus().equals(ObjectStatus.OPEN))
+                .collect(Collectors.toList());
+    }
+
+    public List<Project> getPendingForApprove(Pageable pageable) {
+        var user = context.authenticatedUser();
+        var projects = repository.findUserPendingProject(user.getId(), pageable);
+        return projects.stream()
+                .filter(project -> project.getStatus().equals(ObjectStatus.VERIFIED))
                 .collect(Collectors.toList());
     }
 

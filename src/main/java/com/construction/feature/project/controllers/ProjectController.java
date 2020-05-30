@@ -62,10 +62,16 @@ public class ProjectController {
         service.delete(id);
     }
 
-    @GetMapping("/pending")
-    public List<Project> getPendingProject(Pageable pageable) {
+    @GetMapping("/pending/verify")
+    public List<Project> getPendingVerify(Pageable pageable) {
         filterConfig.configureFilter(ActionName.READ, "project");
-        return service.getPendingProject(pageable);
+        return service.getPendingForVerify(pageable);
+    }
+
+    @GetMapping("/pending/approve")
+    public List<Project> getPendingApprove(Pageable pageable) {
+        filterConfig.configureFilter(ActionName.READ, "project");
+        return service.getPendingForApprove(pageable);
     }
 
     @PostMapping("/{id}/verify")
