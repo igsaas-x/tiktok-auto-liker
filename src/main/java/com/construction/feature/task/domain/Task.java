@@ -18,7 +18,7 @@ import java.math.BigDecimal;
 @Accessors(chain = true)
 @Filter(name = "assignedObjectFilter",
         condition = "exists(select 1 from task_assign ta where ta.task_id = id and ta.app_user_id = :id)")
-@Filter(name = "myObjectFilter")
+@Filter(name = "myObjectFilter", condition = "created_by = :id")
 public class Task extends AuditingEntity {
 
     private String typeOfWork;
