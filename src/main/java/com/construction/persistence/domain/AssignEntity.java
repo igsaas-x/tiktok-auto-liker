@@ -22,7 +22,7 @@ import java.time.LocalDateTime;
 @EntityListeners(AuditingEntityListener.class)
 @JsonIgnoreProperties(value = {"createdAt", "updatedAt", "status"}, allowGetters = true)
 @Where(clause = "status <> 'DELETED'")
-@Filter(name = "myObjectFilter")
+@Filter(name = "myObjectFilter", condition = "created_by = :id")
 public abstract class AssignEntity extends VersionEntity {
 
     @JsonIgnore
