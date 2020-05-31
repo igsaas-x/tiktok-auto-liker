@@ -1,7 +1,6 @@
 package com.construction.persistence.domain;
 
 import com.construction.user.authentication.domain.AppUser;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Getter;
 import lombok.Setter;
@@ -21,7 +20,6 @@ import java.time.LocalDateTime;
 @JsonIgnoreProperties(value = {"createdAt", "updatedAt", "verifiedAt", "approvedAt", "status"}, allowGetters = true)
 public abstract class AuditingEntity extends VersionEntity {
 
-    @JsonIgnore
     @CreatedBy
     @ManyToOne
     @JoinColumn(name = "created_by", updatable = false)
@@ -31,7 +29,6 @@ public abstract class AuditingEntity extends VersionEntity {
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;
 
-    @JsonIgnore
     @LastModifiedBy
     @ManyToOne
     @JoinColumn(name = "updated_by")
@@ -41,7 +38,6 @@ public abstract class AuditingEntity extends VersionEntity {
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
-    @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "verified_by")
     private AppUser verifiedBy;
@@ -49,7 +45,6 @@ public abstract class AuditingEntity extends VersionEntity {
     @Column(name = "verified_at")
     private LocalDateTime verifiedAt;
 
-    @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "approved_by")
     private AppUser approvedBy;

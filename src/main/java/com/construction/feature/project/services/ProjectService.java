@@ -63,6 +63,10 @@ public class ProjectService {
         return repository.findAll(pageable);
     }
 
+    public List<Project> getAll() {
+        return repository.findAll();
+    }
+
     public Page<Project> getPendingForVerify(Pageable pageable) {
         var user = context.authenticatedUser();
         return repository.findPendingForVerify(user.getId(), pageable);

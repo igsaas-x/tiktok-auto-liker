@@ -33,10 +33,16 @@ public class ProjectController {
         return service.search(project, pageable);
     }
 
-    @GetMapping
+    @GetMapping("/page")
     public Page<Project> getAllProject(Pageable pageable) {
         filterConfig.configureFilter(ActionName.READ, "project");
         return service.getAll(pageable);
+    }
+
+    @GetMapping
+    public List<Project> getAll(){
+        filterConfig.configureFilter(ActionName.READ, "project");
+        return service.getAll();
     }
 
     @GetMapping("/{id}")
