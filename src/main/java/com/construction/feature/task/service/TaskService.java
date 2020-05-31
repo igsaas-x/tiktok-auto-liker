@@ -6,6 +6,7 @@ import com.construction.feature.task.domain.Task;
 import com.construction.feature.task.domain.TaskAssign;
 import com.construction.feature.task.repository.TaskAssignRepository;
 import com.construction.feature.task.repository.TaskRepository;
+import com.construction.persistence.domain.AssignFor;
 import com.construction.persistence.domain.AssignStatus;
 import com.construction.persistence.domain.ObjectStatus;
 import com.construction.persistence.exception.ResourceNotFoundException;
@@ -111,17 +112,18 @@ public class TaskService {
         return repository.save(task);
     }
 
-    public TaskAssign assign(Long id, Long userId) {
+    public TaskAssign assign(Long id, Long userId, AssignFor assignFor) {
         var task = getById(id);
         var user = userService.getById(userId);
-        return assign(task, user);
+        return assign(task, user, assignFor);
     }
 
-    public TaskAssign assign(Task task, AppUser user) {
+    public TaskAssign assign(Task task, AppUser user, AssignFor assignFor) {
         var taskAssign = new TaskAssign();
         taskAssign.setTask(task);
         taskAssign.setAppUser(user);
         taskAssign.setStatus(AssignStatus.ACTIVE);
+        taskAssign.setAssignFor(assignFor);
         return assignRepository.save(taskAssign);
     }
 

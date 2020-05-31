@@ -3,6 +3,7 @@ package com.construction.feature.task.controller;
 import com.construction.feature.task.domain.Task;
 import com.construction.feature.task.domain.TaskAssign;
 import com.construction.feature.task.service.TaskService;
+import com.construction.persistence.domain.AssignFor;
 import com.construction.persistence.dto.IdList;
 import com.construction.persistence.filter.FilterConfig;
 import com.construction.user.authorization.domain.ActionName;
@@ -97,9 +98,9 @@ public class TaskController {
 
     @PostMapping("/{id}/assign/{userId}")
     @PreAuthorize("hasAuthority('ASSIGN_ALL_TASK') or hasAuthority('ASSIGN_ASSIGNED_TASK')")
-    public TaskAssign assign(@PathVariable Long id, @PathVariable Long userId) {
+    public TaskAssign assign(@PathVariable Long id, @PathVariable Long userId, @RequestParam AssignFor assignFor) {
         filterConfig.configureFilter(ActionName.ASSIGN, "task");
-        return service.assign(id, userId);
+        return service.assign(id, userId, assignFor);
     }
 
     @PostMapping("/{id}/unassign/{userId}")

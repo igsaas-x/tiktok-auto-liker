@@ -2,11 +2,11 @@ package com.construction.feature.task.service;
 
 import com.construction.appconfiguration.utils.ApplicationSecurityContext;
 import com.construction.feature.task.domain.BOQ;
-import com.construction.feature.task.domain.BOQAssign;
 import com.construction.feature.task.domain.Task;
-import com.construction.feature.task.repository.BOQAssignRepository;
+import com.construction.feature.task.dto.BOQDto;
+import com.construction.feature.task.dto.BOQMapper;
 import com.construction.feature.task.repository.BOQRepository;
-import com.construction.persistence.domain.AssignStatus;
+import com.construction.persistence.domain.AssignFor;
 import com.construction.persistence.exception.ResourceNotFoundException;
 import com.construction.persistence.service.EntityDataMapper;
 import com.construction.persistence.utils.ObjectStatusValidator;
@@ -36,14 +36,11 @@ public class BOQService {
     @Autowired
     private ApplicationSecurityContext context;
     @Autowired
-    private BOQAssignRepository assignRepository;
+    private BOQMapper mapper;
 
-    public BOQ save(BOQ dto) {
-        return repository.save(dto);
-    }
-
-    public void save(List<BOQ> dtos) {
-        repository.saveAll(dtos);
+    public BOQ save(BOQDto dto) {
+        var boq = mapper.toEntity(dto);
+        return repository.save(boq);
     }
 
     public void deleteById(Long id) {
@@ -63,7 +60,8 @@ public class BOQService {
         return repository.findAll(pageable);
     }
 
-    public BOQ updateById(Long id, BOQ boq) {
+    public BOQ updateById(Long id, BOQDto dto) {
+        var boq = mapper.toEntity(dto);
         var target = getById(id);
         target = dataMapper.mapObject(boq, target, BOQ.class);
         return repository.save(target);
@@ -81,27 +79,17 @@ public class BOQService {
         return true;
     }
 
-    public BOQAssign assign(Long boqId, Long userId) {
+    public boolean assign(Long boqId, Long userId, AssignFor assignFor) {
         var user = userService.getById(userId);
         var boq = getById(boqId);
-        var boqAssign = new BOQAssign();
-        boqAssign.setAppUser(user);
-        boqAssign.setBoq(boq);
-        boqAssign.setStatus(AssignStatus.ACTIVE);
-
-        // auto assign task within boq to user
-        taskService.findByBoq(boq).forEach(task -> taskService.assign(task, user));
-        return assignRepository.save(boqAssign);
+        taskService.findByBoq(boq).forEach(task -> taskService.assign(task, user, assignFor));
+        return true;
     }
 
     public boolean unAssign(Long id, Long userId) {
         var boq = getById(id);
         var user = userService.getById(userId);
-        var boqAssign = assignRepository.findByBoqAndAppUser(boq, user).orElseThrow();
-
-        // auto unAssign task
         taskService.findByBoq(boq).forEach(task -> taskService.unAssign(task, user));
-        assignRepository.delete(boqAssign);
         return true;
     }
 }

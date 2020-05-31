@@ -1,10 +1,12 @@
 package com.construction.feature.task.controller;
 
 import com.construction.feature.task.domain.BOQ;
-import com.construction.feature.task.domain.BOQAssign;
 import com.construction.feature.task.domain.Task;
+import com.construction.feature.task.domain.TaskAssign;
+import com.construction.feature.task.dto.BOQDto;
 import com.construction.feature.task.service.BOQService;
 import com.construction.feature.task.service.TaskService;
+import com.construction.persistence.domain.AssignFor;
 import com.construction.persistence.filter.FilterConfig;
 import com.construction.user.authentication.service.AppUserService;
 import com.construction.user.authorization.domain.ActionName;
@@ -32,11 +34,10 @@ public class BOQController {
     @Autowired
     private AppUserService userService;
 
-    @ApiOperation("Add new data")
     @PostMapping
     @PreAuthorize("hasAuthority('CREATE_ALL_BOQ')")
-    public void save(@RequestBody BOQ bOQ) {
-        service.save(bOQ);
+    public BOQ create(@RequestBody BOQDto dto){
+        return service.save(dto);
     }
 
     @GetMapping("/{id}")
@@ -47,7 +48,7 @@ public class BOQController {
 
     @GetMapping("/{id}/tasks")
     public List<Task> findTaskByBoqId(@PathVariable("id") Long id) {
-        filterConfig.configureFilter(ActionName.READ, "boq");
+        filterConfig.configureFilter(ActionName.READ, "task");
         var boq = service.getById(id);
         return taskService.findByBoq(boq);
     }
@@ -75,20 +76,21 @@ public class BOQController {
 
     @ApiOperation("Update one data")
     @PutMapping("/{id}")
-    public BOQ update(@PathVariable Long id, @RequestBody BOQ dto) {
+    public BOQ update(@PathVariable Long id, @RequestBody BOQDto dto) {
         filterConfig.configureFilter(ActionName.UPDATE, "boq");
         return service.updateById(id, dto);
     }
 
-    @PostMapping("/{id}/tasks/verify")
+    @ApiOperation("verify BOQ mean to verify all task in BOQ")
+    @PostMapping("/{id}/verify")
     @PreAuthorize("hasAuthority('VERIFY_ALL_TASK') or hasAuthority('VERIFY_ASSIGNED_TASK')")
     public boolean verifyAllTaskInBoq(@PathVariable Long id) {
         filterConfig.configureFilter(ActionName.VERIFY, "task");
         return service.verifyAllTask(id);
     }
 
-
-    @PostMapping("/{id}/tasks/approve")
+    @ApiOperation("approve BOQ mean to approve all task in BOQ")
+    @PostMapping("/{id}/approve")
     @PreAuthorize("hasAuthority('APPROVE_ALL_TASK') or hasAuthority('APPROVE_ASSIGNED_TASK')")
     public boolean approveAllTaskInBoq(@PathVariable Long id) {
         filterConfig.configureFilter(ActionName.APPROVE, "task");
@@ -96,16 +98,16 @@ public class BOQController {
     }
 
     @PostMapping("/{id}/assign/{userId}")
-    @PreAuthorize("hasAuthority('ASSIGN_ALL_BOQ') or hasAuthority('ASSIGN_ASSIGNED_BOQ')")
-    public BOQAssign assign(@PathVariable Long id, @PathVariable Long userId) {
-        filterConfig.configureFilter(ActionName.ASSIGN, "boq");
-        return service.assign(id, userId);
+    @PreAuthorize("hasAuthority('ASSIGN_ALL_TASK') or hasAuthority('ASSIGN_ASSIGNED_TASK')")
+    public boolean assign(@PathVariable Long id, @PathVariable Long userId, @RequestParam AssignFor assignFor) {
+        filterConfig.configureFilter(ActionName.ASSIGN, "task");
+        return service.assign(id, userId, assignFor);
     }
 
     @PostMapping("/{id}/unassign/{userId}")
-    @PreAuthorize("hasAuthority('ASSIGN_ALL_BOQ') or hasAuthority('ASSIGN_ASSIGNED_BOQ')")
+    @PreAuthorize("hasAuthority('ASSIGN_ALL_TASK') or hasAuthority('ASSIGN_ASSIGNED_TASK')")
     public boolean unAssign(@PathVariable Long id, @PathVariable Long userId) {
-        filterConfig.configureFilter(ActionName.ASSIGN, "boq");
+        filterConfig.configureFilter(ActionName.ASSIGN, "task");
         return service.unAssign(id, userId);
     }
 }
