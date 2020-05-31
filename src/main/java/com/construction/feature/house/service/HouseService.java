@@ -2,13 +2,17 @@ package com.construction.feature.house.service;
 
 import com.construction.appconfiguration.utils.ApplicationSecurityContext;
 import com.construction.feature.house.domain.House;
+import com.construction.feature.house.domain.HouseAssign;
+import com.construction.feature.house.repository.HouseAssignRepository;
 import com.construction.feature.house.repository.HouseRepository;
 import com.construction.feature.task.domain.Task;
 import com.construction.feature.task.domain.TaskAssign;
 import com.construction.feature.task.repository.TaskAssignRepository;
+import com.construction.persistence.domain.AssignFor;
 import com.construction.persistence.domain.ObjectStatus;
 import com.construction.persistence.service.EntityDataMapper;
 import com.construction.persistence.utils.ObjectStatusValidator;
+import com.construction.user.authentication.service.AppUserService;
 import com.construction.user.authorization.domain.ActionName;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -30,17 +34,23 @@ public class HouseService {
     private final EntityDataMapper dataMapper;
     private final ApplicationSecurityContext context;
     private final ObjectStatusValidator<House> validator;
+    private final HouseAssignRepository assignRepository;
+    private final AppUserService userService;
 
     public HouseService(HouseRepository repository,
                         TaskAssignRepository taskAssignRepository,
                         EntityDataMapper dataMapper,
                         ApplicationSecurityContext context,
-                        ObjectStatusValidator<House> validator) {
+                        ObjectStatusValidator<House> validator,
+                        HouseAssignRepository assignRepository,
+                        AppUserService userService) {
         this.repository = repository;
         this.taskAssignRepository = taskAssignRepository;
         this.dataMapper = dataMapper;
         this.context = context;
         this.validator = validator;
+        this.assignRepository = assignRepository;
+        this.userService = userService;
     }
 
     public House save(House house) {
@@ -60,6 +70,14 @@ public class HouseService {
         var houses = repository.findAll();
         houses.addAll(fromAssignedTask());
         return houses.stream().distinct().collect(Collectors.toList());
+    }
+
+    public Page<House> getPendingForVerify(Pageable pageable) {
+        return repository.findPendingForVerify(context.authenticatedUser().getId(), pageable);
+    }
+
+    public Page<House> getPendingForApprove(Pageable pageable) {
+        return repository.findPendingForApprove(context.authenticatedUser().getId(), pageable);
     }
 
     private List<House> fromAssignedTask() {
@@ -82,6 +100,20 @@ public class HouseService {
         validator.validateStatus(target, ActionName.UPDATE);
         target = dataMapper.mapObject(source, target, House.class);
         return repository.save(target);
+    }
+
+    public HouseAssign assign(Long id, Long userId, AssignFor assignFor) {
+        var house = getById(id);
+        var user = userService.getById(userId);
+        var houseAssign = new HouseAssign().setHouse(house);
+        houseAssign.setAppUser(user);
+        houseAssign.setAssignFor(assignFor);
+        return assignRepository.save(houseAssign);
+    }
+
+    public void unAssign(Long id, Long userId) {
+        var houseAssign = assignRepository.findByHouseIdAndAppUserId(id, userId).orElseThrow();
+        assignRepository.delete(houseAssign);
     }
 
     public House verify(Long id) {

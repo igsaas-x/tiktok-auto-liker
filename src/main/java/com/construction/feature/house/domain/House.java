@@ -24,11 +24,11 @@ import javax.persistence.ManyToOne;
         condition = "created_by = :id or id in (SELECT ha.house_id FROM house_assign ha WHERE ha.app_user_id = :id)")
 public class House extends AuditingEntity {
 
-    @ManyToOne
+    @ManyToOne(optional = false)
     @JoinColumn
     private Project project;
 
-    @ManyToOne
+    @ManyToOne(optional = false)
     @JoinColumn
     private Street street;
 

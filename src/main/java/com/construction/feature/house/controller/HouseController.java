@@ -1,9 +1,11 @@
 package com.construction.feature.house.controller;
 
 import com.construction.feature.house.domain.House;
+import com.construction.feature.house.domain.HouseAssign;
 import com.construction.feature.house.dto.HouseDto;
 import com.construction.feature.house.dto.HouseMapper;
 import com.construction.feature.house.service.HouseService;
+import com.construction.persistence.domain.AssignFor;
 import com.construction.persistence.dto.IdList;
 import com.construction.persistence.filter.FilterConfig;
 import com.construction.user.authorization.domain.ActionName;
@@ -59,8 +61,20 @@ public class HouseController {
         return houseService.findAll();
     }
 
+    @GetMapping("/pending/verify")
+    public Page<House> getPendingForVerify(Pageable pageable) {
+        filterConfig.configureFilter(ActionName.READ, "house");
+        return houseService.getPendingForVerify(pageable);
+    }
+
+    @GetMapping("/pending/approve")
+    public Page<House> getPendingForApprove(Pageable pageable) {
+        filterConfig.configureFilter(ActionName.READ, "house");
+        return houseService.getPendingForApprove(pageable);
+    }
+
     @ApiOperation("Pagination request")
-    @GetMapping("/page-query")
+    @GetMapping("/page")
     public Page<House> pageQuery(Pageable pageable) {
         filterConfig.configureFilter(ActionName.READ, "house");
         return houseService.findAll(pageable);
@@ -79,6 +93,20 @@ public class HouseController {
     public House verify(@PathVariable Long id) {
         filterConfig.configureFilter(ActionName.VERIFY, "house");
         return houseService.verify(id);
+    }
+
+    @PostMapping("/{id}/assign/{userId}")
+    @PreAuthorize("hasAuthority('ASSIGN_ALL_HOUSE') or hasAuthority('ASSIGN_ASSIGNED_HOUSE')")
+    public HouseAssign assign(@PathVariable Long id, @PathVariable Long userId, @RequestParam AssignFor assignFor) {
+        filterConfig.configureFilter(ActionName.VERIFY, "house");
+        return houseService.assign(id, userId, assignFor);
+    }
+
+    @PostMapping("/{id}/unassign/{userId}")
+    @PreAuthorize("hasAuthority('ASSIGN_ALL_HOUSE') or hasAuthority('ASSIGN_ASSIGNED_HOUSE')")
+    public void unAssign(@PathVariable Long id, @PathVariable Long userId) {
+        filterConfig.configureFilter(ActionName.VERIFY, "house");
+        houseService.unAssign(id, userId);
     }
 
     @PostMapping("/batch/verify")
