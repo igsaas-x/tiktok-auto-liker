@@ -2,6 +2,7 @@ package com.construction.feature.task.controller;
 
 import com.construction.feature.task.domain.Task;
 import com.construction.feature.task.domain.TaskAssign;
+import com.construction.feature.task.dto.TaskDto;
 import com.construction.feature.task.service.TaskService;
 import com.construction.persistence.domain.AssignFor;
 import com.construction.persistence.dto.IdList;
@@ -30,8 +31,8 @@ public class TaskController {
     @ApiOperation("Add new data")
     @PostMapping
     @PreAuthorize("hasAuthority('CREATE_ALL_TASK')")
-    public void save(@RequestBody Task task) {
-        service.save(task);
+    public Task save(@RequestBody TaskDto task) {
+        return service.save(task);
     }
 
     @GetMapping("/{id}")
@@ -48,7 +49,7 @@ public class TaskController {
     }
 
     @ApiOperation("Find all data")
-    @GetMapping("/list")
+    @GetMapping
     public List<Task> list() {
         filterConfig.configureFilter(ActionName.READ, "task");
         return service.findAll();
@@ -61,9 +62,19 @@ public class TaskController {
         return service.findAll(pageable);
     }
 
+    @GetMapping("/pending/verify")
+    public List<Task> getPendingForVerifyTask() {
+        return service.getPendingForVerify();
+    }
+
+    @GetMapping("/pending/approve")
+    public List<Task> getPendingForApproveTask() {
+        return service.getPendingForApprove();
+    }
+
     @ApiOperation("Update one data")
     @PutMapping("/{id}")
-    public Task update(@PathVariable Long id, @RequestBody Task dto) {
+    public Task update(@PathVariable Long id, @RequestBody TaskDto dto) {
         filterConfig.configureFilter(ActionName.UPDATE, "task");
         return service.updateById(id, dto);
     }
@@ -86,14 +97,14 @@ public class TaskController {
     @PreAuthorize("hasAuthority('APPROVE_ALL_TASK') or hasAuthority('APPROVE_ASSIGNED_TASK')")
     public Task approve(@PathVariable Long id) {
         filterConfig.configureFilter(ActionName.APPROVE, "task");
-        return service.verify(id);
+        return service.approve(id);
     }
 
     @PostMapping("/batch/approve")
     @PreAuthorize("hasAuthority('APPROVE_ALL_TASK') or hasAuthority('APPROVE_ASSIGNED_TASK')")
     public List<Task> approveAll(@PathVariable IdList ids) {
         filterConfig.configureFilter(ActionName.APPROVE, "task");
-        return service.verifyAll(ids.getIds());
+        return service.approveAll(ids.getIds());
     }
 
     @PostMapping("/{id}/assign/{userId}")

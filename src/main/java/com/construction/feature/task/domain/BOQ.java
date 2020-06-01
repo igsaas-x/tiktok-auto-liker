@@ -17,8 +17,9 @@ import javax.persistence.ManyToOne;
 @Getter
 @Setter
 @Accessors(chain = true)
-@Filter(name = "assignedObjectFilter",
-        condition = "exists(select 1 from boq_assign ba where ba.boq_id = id and ba.app_user_id = :id)")
+@Filter(name = "readableObjectFilter",
+        condition = "created_by = :id or " +
+                "exists (select t.id from task t, task_assign ta where t.id = ta.task_id and t.boq_id = id and ta.app_user_id = :id)")
 @Filter(name = "myObjectFilter", condition = "created_by = :id")
 public class BOQ extends SimpleAuditingEntity {
 

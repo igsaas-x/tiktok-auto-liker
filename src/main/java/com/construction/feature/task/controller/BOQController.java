@@ -61,7 +61,7 @@ public class BOQController {
     }
 
     @ApiOperation("Find all data")
-    @GetMapping("/list")
+    @GetMapping
     public List<BOQ> list() {
         filterConfig.configureFilter(ActionName.READ, "boq");
         return service.findAll();

@@ -4,6 +4,8 @@ import com.construction.appconfiguration.utils.ApplicationSecurityContext;
 import com.construction.feature.task.domain.BOQ;
 import com.construction.feature.task.domain.Task;
 import com.construction.feature.task.domain.TaskAssign;
+import com.construction.feature.task.dto.TaskDto;
+import com.construction.feature.task.dto.TaskMapper;
 import com.construction.feature.task.repository.TaskAssignRepository;
 import com.construction.feature.task.repository.TaskRepository;
 import com.construction.persistence.domain.AssignFor;
@@ -41,13 +43,17 @@ public class TaskService {
     private AppUserService userService;
     @Autowired
     private TaskAssignRepository assignRepository;
+    @Autowired
+    private TaskMapper mapper;
 
-    public Task save(Task dto) {
-        return repository.save(dto);
+    public Task save(TaskDto dto) {
+        var task = mapper.toEntity(dto);
+        return repository.save(task);
     }
 
-    public void save(List<Task> dtos) {
-        repository.saveAll(dtos);
+    public void save(List<TaskDto> dtos) {
+        var tasks = dtos.stream().map(mapper::toEntity).collect(Collectors.toList());
+        repository.saveAll(tasks);
     }
 
     public void deleteById(Long id) {
@@ -71,8 +77,17 @@ public class TaskService {
         return repository.findAll(pageable);
     }
 
-    public Task updateById(Long id, Task task) {
+    public List<Task> getPendingForVerify() {
+        return repository.getPendingTask(context.authenticatedUser().getId(), AssignFor.VERIFY.name(), ObjectStatus.OPEN.name());
+    }
+
+    public List<Task> getPendingForApprove() {
+        return repository.getPendingTask(context.authenticatedUser().getId(), AssignFor.APPROVE.name(), ObjectStatus.VERIFIED.name());
+    }
+
+    public Task updateById(Long id, TaskDto dto) {
         var target = getById(id);
+        var task = mapper.toEntity(dto);
         validator.validateStatus(target, ActionName.UPDATE);
         target = dataMapper.mapObject(task, target, Task.class);
         return repository.save(target);

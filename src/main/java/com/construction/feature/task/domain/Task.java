@@ -74,6 +74,7 @@ public class Task extends AuditingEntity {
 
     @PrePersist
     private void validate() {
+        if (parent == null) return;
         if (parent.isLeaf()) {
             throw new ValidationErrorException(this.getClass(), "parent", "parent is leaf");
         }
