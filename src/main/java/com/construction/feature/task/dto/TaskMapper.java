@@ -4,7 +4,7 @@ import com.construction.feature.house.service.HouseService;
 import com.construction.feature.project.services.ProjectService;
 import com.construction.feature.street.service.StreetService;
 import com.construction.feature.task.domain.Task;
-import com.construction.feature.task.service.BOQService;
+import com.construction.feature.task.repository.BOQRepository;
 import com.construction.persistence.mapper.DtoMapper;
 import org.springframework.stereotype.Component;
 
@@ -14,16 +14,16 @@ public class TaskMapper implements DtoMapper<TaskDto, Task> {
     private final ProjectService projectService;
     private final StreetService streetService;
     private final HouseService houseService;
-    private final BOQService boqService;
+    private final BOQRepository boqRepository;
 
     public TaskMapper(ProjectService projectService,
                       StreetService streetService,
                       HouseService houseService,
-                      BOQService boqService) {
+                      BOQRepository boqRepository) {
         this.projectService = projectService;
         this.streetService = streetService;
         this.houseService = houseService;
-        this.boqService = boqService;
+        this.boqRepository = boqRepository;
     }
 
     @Override
@@ -53,7 +53,7 @@ public class TaskMapper implements DtoMapper<TaskDto, Task> {
             task.setHouse(houseService.getById(taskDto.getHouseId()));
         }
         if (taskDto.getBoqId() != null) {
-            task.setBoq(boqService.getById(taskDto.getBoqId()));
+            task.setBoq(boqRepository.findById(taskDto.getBoqId()).orElseThrow());
         }
         return task;
     }
