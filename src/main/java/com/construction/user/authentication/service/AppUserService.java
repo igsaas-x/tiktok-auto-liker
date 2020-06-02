@@ -46,6 +46,10 @@ public class AppUserService {
         return repository.findByEmail(email).orElseThrow(() -> new ResourceNotFoundException(AppUser.class, email));
     }
 
+    public List<AppUser> getByRole(Long id){
+        return repository.findAllByRoleId(id);
+    }
+
     public AppUser getById(Long id) {
         return repository.findById(id).orElseThrow(() -> new ResourceNotFoundException(AppUser.class, id));
     }
