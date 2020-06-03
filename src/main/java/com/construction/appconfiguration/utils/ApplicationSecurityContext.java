@@ -43,13 +43,17 @@ public class ApplicationSecurityContext {
         }
     }
 
+    public boolean hasPermission(final String permission) {
+        var permissions = userPermissions();
+        if (permissions == null) return false;
+        return permissions.contains(permission);
+    }
+
     public List<String> userPermissions() {
         var authentication = getAuth();
         if (authentication == null) {
             return null;
         }
-        return SecurityContextHolder.getContext().getAuthentication().getAuthorities().stream()
-                .map(GrantedAuthority::getAuthority)
-                .collect(Collectors.toList());
+        return getAuth().getAuthorities().stream().map(GrantedAuthority::getAuthority).collect(Collectors.toList());
     }
 }

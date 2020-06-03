@@ -1,9 +1,13 @@
 package com.construction.user.authorization.service;
 
+import com.construction.persistence.exception.ResourceNotFoundException;
 import com.construction.persistence.service.EntityDataMapper;
+import com.construction.user.authorization.domain.Permission;
+import com.construction.user.authorization.domain.RolePermission;
 import com.construction.user.authorization.domain.UserRole;
 import com.construction.user.authorization.dto.RoleDto;
-import com.construction.user.authorization.dto.RoleMapper;
+import com.construction.user.authorization.repository.PermissionRepository;
+import com.construction.user.authorization.repository.RolePermissionRepository;
 import com.construction.user.authorization.repository.UserRoleRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -12,6 +16,7 @@ import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -20,13 +25,29 @@ public class UserRoleService {
     @Autowired
     private UserRoleRepository repository;
     @Autowired
-    private EntityDataMapper dataMapper;
+    private RolePermissionRepository rolePermissionRepository;
     @Autowired
-    private RoleMapper roleMapper;
+    private PermissionRepository permissionRepository;
+    @Autowired
+    private EntityDataMapper dataMapper;
 
     public UserRole save(RoleDto roleDto) {
-        var role = roleMapper.toEntity(roleDto);
-        return repository.save(role);
+        var role = new UserRole().setName(roleDto.getName());
+        var permissions = roleDto.getPermissionIds().stream().map(this::getPermissionById).collect(Collectors.toList());
+        role = repository.save(role);
+        var rolePermissions = newRolePermission(role, permissions);
+        rolePermissionRepository.saveAll(rolePermissions);
+        return role;
+    }
+
+    private Permission getPermissionById(Long id) {
+        return permissionRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException(Permission.class, id));
+    }
+
+    private List<RolePermission> newRolePermission(final UserRole role, List<Permission> permissions) {
+        return permissions.stream()
+                .map(permission -> new RolePermission().setPermission(permission).setRole(role))
+                .collect(Collectors.toList());
     }
 
     public void save(List<UserRole> dtos) {
@@ -37,22 +58,28 @@ public class UserRoleService {
         repository.deleteById(id);
     }
 
-    public UserRole findById(Long id) {
+    public UserRole getById(Long id) {
         return repository.findById(id).orElseThrow();
     }
 
-    public List<UserRole> findAll() {
+    public List<UserRole> getAll() {
         return repository.findAll();
     }
 
-    public Page<UserRole> findAll(Pageable pageable) {
+    public Page<UserRole> getAll(Pageable pageable) {
         return repository.findAll(pageable);
     }
 
-    public UserRole updateById(Long id, RoleDto roleDto) {
-        var target = repository.findById(id).orElseThrow();
-        var role = roleMapper.toEntity(roleDto);
-        target = dataMapper.mapObject(role, target, UserRole.class);
+    public List<Permission> getRolePermission(Long id) {
+        return rolePermissionRepository.findAllByRoleId(id)
+                .stream()
+                .map(RolePermission::getPermission)
+                .collect(Collectors.toList());
+    }
+
+    public UserRole updateById(Long id, UserRole role) {
+        var target = getById(id);
+        target.setName(role.getName());
         return repository.save(target);
     }
 }

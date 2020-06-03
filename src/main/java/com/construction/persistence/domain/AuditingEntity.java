@@ -4,6 +4,7 @@ import com.construction.user.authentication.domain.AppUser;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.Where;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedBy;
@@ -17,6 +18,7 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 @EntityListeners(AuditingEntityListener.class)
+@Where(clause = "status <> 'DELETED'")
 @JsonIgnoreProperties(value = {"createdAt", "updatedAt", "verifiedAt", "approvedAt", "status"}, allowGetters = true)
 public abstract class AuditingEntity extends VersionEntity {
 

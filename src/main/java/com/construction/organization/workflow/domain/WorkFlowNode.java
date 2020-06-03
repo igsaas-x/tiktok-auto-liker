@@ -19,7 +19,7 @@ import javax.validation.constraints.NotNull;
 @Accessors(chain = true)
 public class WorkFlowNode extends SimpleAuditingEntity {
 
-    @ManyToOne(optional = false)
+    @ManyToOne
     @JoinColumn(nullable = false)
     @JsonIgnore
     private WorkFlow workFlow;

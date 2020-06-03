@@ -18,12 +18,12 @@ public class FilterConfig {
         var user = context.authenticatedUser();
         if (user == null) {
             filterUtils.enableNoAccessFilter();
-        } else if (user.hasPermissionTo(action.name() + "_ALL_" + entityName)) {
+        } else if (context.hasPermission(action.name() + "_ALL_" + entityName)) {
             return;
         } else if (!action.equals(ActionName.READ)) {
-            if (user.hasPermissionTo(action.name() + "_ASSIGNED_" + entityName)) {
+            if (context.hasPermission(action.name() + "_ASSIGNED_" + entityName)) {
                 filterUtils.enableAssignedObjectFilter(user.getId());
-            }else {
+            } else {
                 filterUtils.enableMyObjectFilter(user.getId());
             }
         } else {

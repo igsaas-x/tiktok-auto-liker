@@ -24,7 +24,7 @@ public class WorkFlowNodeMapper implements DtoMapper<WorkFlowNodeDto, WorkFlowNo
                 .setName(workFlowNodeDto.getName())
                 .setDescription(workFlowNodeDto.getDescription())
                 .setWorkFlow(flowRepository.findById(workFlowNodeDto.getWorkFlowId()).orElseThrow())
-                .setRole(roleService.findById(workFlowNodeDto.getRoleId()));
+                .setRole(roleService.getById(workFlowNodeDto.getRoleId()));
         if (workFlowNodeDto.getParentId() != null) {
             var parent = repository.findById(workFlowNodeDto.getParentId()).orElseThrow();
             node.setParent(parent);

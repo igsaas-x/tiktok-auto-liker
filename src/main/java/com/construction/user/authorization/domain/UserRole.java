@@ -18,9 +18,4 @@ public class UserRole extends VersionEntity {
 
     @Column(nullable = false)
     private String name;
-
-    @JsonIgnore
-    @OneToMany(fetch = FetchType.EAGER)
-    @JoinTable(name = "role_permission")
-    private List<Permission> permissions = new ArrayList<>();
 }

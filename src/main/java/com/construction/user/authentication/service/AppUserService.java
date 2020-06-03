@@ -7,7 +7,7 @@ import com.construction.user.authentication.domain.AppUser;
 import com.construction.user.authentication.repository.AppUserRepository;
 import com.construction.user.authorization.domain.Permission;
 import com.construction.user.authorization.repository.PermissionRepository;
-import com.construction.user.authorization.repository.UserRoleRepository;
+import com.construction.user.authorization.service.UserRoleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -32,9 +32,9 @@ public class AppUserService {
     @Autowired
     private PermissionRepository permissionRepository;
     @Autowired
-    private UserRoleRepository roleRepository;
-    @Autowired
     private ApplicationSecurityContext context;
+    @Autowired
+    private UserRoleService roleService;
     @Autowired
     private PasswordEncoder encoder;
 
@@ -46,7 +46,7 @@ public class AppUserService {
         return repository.findByEmail(email).orElseThrow(() -> new ResourceNotFoundException(AppUser.class, email));
     }
 
-    public List<AppUser> getByRole(Long id){
+    public List<AppUser> getByRole(Long id) {
         return repository.findAllByRoleId(id);
     }
 
@@ -63,7 +63,7 @@ public class AppUserService {
     }
 
     public AppUser assignRole(Long userId, Long roleId) {
-        var role = roleRepository.findById(roleId).orElseThrow();
+        var role = roleService.getById(roleId);
         var user = repository.findById(userId).orElseThrow();
         user.setRole(role);
         return repository.save(user);
@@ -97,7 +97,7 @@ public class AppUserService {
         if (role == null) {
             return Collections.EMPTY_LIST;
         }
-        var permissions = user.getRole().getPermissions();
+        var permissions = roleService.getRolePermission(role.getId());
         if (!permissions.isEmpty()) {
             if (permissions.stream().map(Permission::getCodeName).anyMatch(name -> name.equals(ALL_PERMISSION))) {
                 return allAuthorities();

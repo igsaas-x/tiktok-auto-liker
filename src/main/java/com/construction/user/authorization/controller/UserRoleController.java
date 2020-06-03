@@ -31,7 +31,7 @@ public class UserRoleController {
 
     @GetMapping("/{id}")
     public UserRole findById(@PathVariable("id") Long id) {
-        return service.findById(id);
+        return service.getById(id);
     }
 
     @ApiOperation("Find by Id")
@@ -43,23 +43,23 @@ public class UserRoleController {
     @ApiOperation("Find all data")
     @GetMapping
     public List<UserRole> list() {
-        return service.findAll();
+        return service.getAll();
     }
 
     @ApiOperation("Pagination request")
     @GetMapping("/page")
     public Page<UserRole> pageQuery(Pageable pageable) {
-        return service.findAll(pageable);
+        return service.getAll(pageable);
     }
 
     @ApiOperation("Update one data")
     @PutMapping("/update/{id}")
-    public UserRole update(@PathVariable Long id, @RequestBody RoleDto dto) {
+    public UserRole update(@PathVariable Long id, @RequestBody UserRole dto) {
         return service.updateById(id, dto);
     }
 
     @GetMapping("/{id}/permissions")
     public List<Permission> getPermissionByRoleId(@PathVariable Long id) {
-        return service.findById(id).getPermissions();
+        return service.getRolePermission(id);
     }
 }
