@@ -10,6 +10,7 @@ import com.construction.feature.task.domain.TaskAssign;
 import com.construction.feature.task.repository.TaskAssignRepository;
 import com.construction.persistence.domain.AssignFor;
 import com.construction.persistence.domain.ObjectStatus;
+import com.construction.persistence.exception.ResourceNotFoundException;
 import com.construction.persistence.service.EntityDataMapper;
 import com.construction.persistence.utils.ObjectStatusValidator;
 import com.construction.user.authentication.service.AppUserService;
@@ -58,12 +59,12 @@ public class HouseService {
     }
 
     public void deleteById(Long id) {
-        var house = repository.findById(id).orElseThrow();
+        var house = getById(id);
         repository.delete(house);
     }
 
     public House getById(Long id) {
-        return repository.findById(id).orElseThrow();
+        return repository.findById(id).orElseThrow(() -> new ResourceNotFoundException(House.class, id));
     }
 
     public List<House> findAll() {
