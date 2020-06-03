@@ -2,6 +2,7 @@ package com.construction.feature.payment.domain;
 
 import com.construction.feature.task.domain.Task;
 import com.construction.persistence.domain.AuditingEntity;
+import com.construction.persistence.domain.SimpleAuditingEntity;
 import com.construction.user.authentication.domain.AppUser;
 import lombok.Getter;
 import lombok.Setter;
@@ -18,7 +19,7 @@ import java.time.LocalDateTime;
 @Setter
 @Accessors(chain = true)
 @Filter(name = "myObjectFilter", condition = "created_by = :id")
-public class PaymentRequest extends AuditingEntity {
+public class PaymentRequest extends SimpleAuditingEntity {
 
     @ManyToOne
     @JoinColumn(name = "reviewed_by")

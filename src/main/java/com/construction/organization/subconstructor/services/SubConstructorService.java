@@ -50,6 +50,14 @@ public class SubConstructorService {
         repository.delete(target);
     }
 
+    public List<SubConstructor> getPendingForVerify(){
+        return repository.findAllByStatus(ObjectStatus.OPEN);
+    }
+
+    public List<SubConstructor> getPendingForApprove(){
+        return repository.findAllByStatus(ObjectStatus.VERIFIED);
+    }
+
     public SubConstructor update(Long id, SubConstructor source) {
         var target = getById(id);
         validator.validateStatus(target, ActionName.UPDATE);
@@ -74,5 +82,4 @@ public class SubConstructorService {
         project.setVerifiedAt(LocalDateTime.now());
         return repository.save(project);
     }
-
 }
