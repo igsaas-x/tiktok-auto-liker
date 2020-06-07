@@ -1,6 +1,6 @@
 package com.construction.organization.payment.domain;
 
-import com.construction.user.authentication.domain.AppUser;
+import com.construction.persistence.domain.SimpleAuditingEntity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -8,22 +8,23 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 import lombok.experimental.FieldDefaults;
 
-import javax.persistence.Embeddable;
+import javax.persistence.Entity;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import java.time.LocalDateTime;
 
 @Setter
 @Getter
+@Entity
 @Accessors(chain = true)
-@Embeddable
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class RequestStatus {
-
-    boolean done;
-
-    LocalDateTime doneAt;
+public class StatusHistory extends SimpleAuditingEntity {
 
     @ManyToOne
+    @JoinColumn
     @JsonIgnore
-    private AppUser doneBy;
+    PaymentRequest paymentRequest;
+
+    CommandType commandType;
+
+    String comment;
 }

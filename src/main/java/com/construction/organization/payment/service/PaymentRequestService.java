@@ -1,9 +1,11 @@
 package com.construction.organization.payment.service;
 
-import com.construction.organization.payment.domain.PaymentCommand;
+import com.construction.organization.payment.domain.CommandType;
 import com.construction.organization.payment.domain.PaymentRequest;
-import com.construction.organization.payment.domain.RequestStatus;
+import com.construction.organization.payment.domain.PaymentRequestStatus;
+import com.construction.organization.payment.domain.StatusHistory;
 import com.construction.organization.payment.repository.PaymentRequestRepository;
+import com.construction.organization.payment.repository.StatusHistoryRepository;
 import com.construction.persistence.exception.ResourceNotFoundException;
 import com.construction.persistence.service.EntityDataMapper;
 import com.construction.user.authentication.domain.AppUser;
@@ -17,7 +19,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import javax.transaction.Transactional;
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -28,6 +29,7 @@ public class PaymentRequestService {
 
     final EntityDataMapper dataMapper;
     final PaymentRequestRepository repository;
+    final StatusHistoryRepository historyRepository;
 
     public PaymentRequest save(PaymentRequest dto) {
         return repository.save(dto);
@@ -49,49 +51,82 @@ public class PaymentRequestService {
         return repository.findAll();
     }
 
-    public List<PaymentRequest> findPendingFor(final PaymentCommand pendingFor) {
+    public List<PaymentRequest> findPendingFor(final CommandType pendingFor) {
         switch (pendingFor) {
             case SUBMIT:
-                return repository.findPending(false, false, false, false, false);
+                return repository.findAllByStatus(PaymentRequestStatus.OPEN);
             case VERIFY:
-                return repository.findPending(true, false, false, false, false);
+                return repository.findAllByStatus(PaymentRequestStatus.SUBMITTED);
             case CONFIRM:
-                return repository.findPending(true, true, false, false, false);
+                return repository.findAllByStatus(PaymentRequestStatus.VERIFIED);
             case REVIEW:
-                return repository.findPending(true, true, true, false, false);
+                return repository.findAllByStatus(PaymentRequestStatus.CONFIRMED);
             case APPROVE:
-                return repository.findPending(true, true, true, true, false);
+                return repository.findAllByStatus(PaymentRequestStatus.REVIEWED);
             case CASH_OUT:
-                return repository.findPending(true, true, true, true, true);
+                return repository.findAllByStatus(PaymentRequestStatus.APPROVED);
         }
         return List.of();
     }
 
-    public PaymentRequest handleCommand(final PaymentRequest paymentRequest, final PaymentCommand command, final AppUser user) {
-        var done = new RequestStatus().setDone(true).setDoneAt(LocalDateTime.now()).setDoneBy(user);
+    public List<PaymentRequest> getAllPending(){
+        return repository.findAllPending();
+    }
+
+    public PaymentRequest handleCommand(final PaymentRequest request, final CommandType command, final AppUser user, final String comment) {
+        addHistory(request, command, user, comment);
         switch (command) {
             case SUBMIT:
-                paymentRequest.setSubmitted(done);
+                if (!request.getStatus().equals(PaymentRequestStatus.OPEN)) {
+                    throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "payment request is not in open status");
+                }
+                request.setStatus(PaymentRequestStatus.SUBMITTED);
                 break;
             case VERIFY:
-                paymentRequest.setVerified(done);
+                if (!request.getStatus().equals(PaymentRequestStatus.SUBMITTED)) {
+                    throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "payment request is not in submitted status");
+                }
+                request.setStatus(PaymentRequestStatus.VERIFIED);
                 break;
             case CONFIRM:
-                paymentRequest.setConfirmed(done);
+                if (!request.getStatus().equals(PaymentRequestStatus.VERIFIED)) {
+                    throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "payment request is not in verified status");
+                }
+                request.setStatus(PaymentRequestStatus.CONFIRMED);
                 break;
             case REVIEW:
-                paymentRequest.setReviewed(done);
+                if (!request.getStatus().equals(PaymentRequestStatus.CONFIRMED)) {
+                    throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "payment request is not in confirmed status");
+                }
+                request.setStatus(PaymentRequestStatus.REVIEWED);
                 break;
             case APPROVE:
-                paymentRequest.setApproved(done);
+                if (!request.getStatus().equals(PaymentRequestStatus.REVIEWED)) {
+                    throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "payment request is not in reviewed status");
+                }
+                request.setStatus(PaymentRequestStatus.APPROVED);
                 break;
             case CASH_OUT:
-                paymentRequest.setPaid(done);
+                if (!request.getStatus().equals(PaymentRequestStatus.APPROVED)) {
+                    throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "payment request is not in approved status");
+                }
+                request.setStatus(PaymentRequestStatus.PAID);
+                break;
+            case REJECT:
+                request.setStatus(PaymentRequestStatus.OPEN);
                 break;
             default:
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "command not found");
         }
-        return repository.save(paymentRequest);
+        return repository.save(request);
+    }
+
+    private void addHistory(PaymentRequest request, CommandType commandType, AppUser doneBy, String comment) {
+        var history = new StatusHistory()
+                .setPaymentRequest(request)
+                .setCommandType(commandType)
+                .setComment(comment);
+        historyRepository.save(history);
     }
 
     public Page<PaymentRequest> findAll(Pageable pageable) {

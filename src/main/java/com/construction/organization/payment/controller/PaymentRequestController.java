@@ -1,8 +1,9 @@
 package com.construction.organization.payment.controller;
 
 import com.construction.appconfiguration.utils.ApplicationSecurityContext;
-import com.construction.organization.payment.domain.PaymentCommand;
+import com.construction.organization.payment.domain.CommandType;
 import com.construction.organization.payment.domain.PaymentRequest;
+import com.construction.organization.payment.domain.PaymentRequestStatus;
 import com.construction.organization.payment.dto.PaymentRequestDto;
 import com.construction.organization.payment.dto.PaymentRequestDtoMapper;
 import com.construction.organization.payment.service.PaymentRequestService;
@@ -30,8 +31,8 @@ import java.util.List;
 @AllArgsConstructor
 public class PaymentRequestController {
 
-    static final List<PaymentCommand> ALLOWED_PENDING_FOR = Arrays.asList(PaymentCommand.values());
-    static final String ALLOWED_PARAM = "submit/verify/confirm/review/approve/cash-out";
+    static final List<CommandType> ALLOWED_PENDING_FOR = Arrays.asList(CommandType.values());
+    static final String ALLOWED_PARAM = "SUBMIT/VERIFY/CONFIRM/REVIEW/APPROVE/CASH-OUT/REJECT";
 
     final PaymentRequestService service;
     final PaymentRequestDtoMapper mapper;
@@ -54,7 +55,7 @@ public class PaymentRequestController {
     @ApiOperation("delete by Id")
     @DeleteMapping("/{id}")
     public void delete(@PathVariable("id") Long id) {
-        filterConfig.configureFilter(ActionName.DELETE,"payment");
+        filterConfig.configureFilter(ActionName.DELETE, "payment");
         service.deleteById(id);
     }
 
@@ -67,7 +68,7 @@ public class PaymentRequestController {
 
     @ApiOperation("Find data pending. Parameters are:" + ALLOWED_PARAM)
     @GetMapping("/pending")
-    public List<PaymentRequest> listPending(@RequestParam PaymentCommand pendingFor) {
+    public List<PaymentRequest> listPending(@RequestParam CommandType pendingFor) {
         if (!ALLOWED_PENDING_FOR.contains(pendingFor)) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "unsupported 'pendingFor', supported commands are: " + ALLOWED_PARAM);
         }
@@ -77,31 +78,44 @@ public class PaymentRequestController {
         throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "User has no permission to " + pendingFor + " payment request");
     }
 
+    @ApiOperation("Find data pending wait user to deal with")
+    @GetMapping("/pending/all")
+    public List<PaymentRequest> getAllPending() {
+        return service.getAllPending();
+    }
+
     @ApiOperation("Submit command to payment request. Parameters are:" + ALLOWED_PARAM)
     @PutMapping("/{id}/command")
-    public PaymentRequest handleCommand(@PathVariable Long id, @RequestParam PaymentCommand command) {
+    public PaymentRequest handleCommand(@PathVariable Long id, @RequestParam CommandType command, @RequestParam String comment) {
         if (!ALLOWED_PENDING_FOR.contains(command)) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "unsupported 'command', supported commands are: " + ALLOWED_PARAM);
+        }
+        if (command.equals(CommandType.REJECT)) {
+            var request = service.getById(id);
+            if (request.getStatus().equals(PaymentRequestStatus.APPROVED)) {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "request is approved, cannot be rejected");
+            }
+            return service.handleCommand(request, command, context.authenticatedUser(), comment);
         }
         var pendingRequests = listPending(command);
         var request = pendingRequests.stream()
                 .filter(paymentRequest -> id.equals(paymentRequest.getId()))
                 .findFirst()
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "payment is not in state for: " + command));
-        return service.handleCommand(request, command, context.authenticatedUser());
+        return service.handleCommand(request, command, context.authenticatedUser(), comment);
     }
 
     @ApiOperation("Pagination request")
     @GetMapping("/page")
     public Page<PaymentRequest> pageQuery(Pageable pageable) {
-        filterConfig.configureFilter(ActionName.READ,"payment");
+        filterConfig.configureFilter(ActionName.READ, "payment");
         return service.findAll(pageable);
     }
 
     @ApiOperation("Update one data")
     @PutMapping("/{id}")
     public PaymentRequest update(@PathVariable Long id, @RequestBody PaymentRequestDto dto) {
-        filterConfig.configureFilter(ActionName.UPDATE,"payment");
+        filterConfig.configureFilter(ActionName.UPDATE, "payment");
         return service.updateById(id, mapper.toEntity(dto));
     }
 }
