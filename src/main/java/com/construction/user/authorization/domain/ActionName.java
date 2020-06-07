@@ -9,5 +9,8 @@ public enum ActionName {
     ASSIGN,
     VERIFY,
     REVIEW,
-    APPROVE
+    APPROVE,
+    SUBMIT,
+    CONFIRM,
+    CASH_OUT
 }

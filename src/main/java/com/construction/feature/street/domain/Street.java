@@ -17,7 +17,8 @@ import javax.persistence.Entity;
 @Filter(name = "myObjectFilter",
         condition = "created_by = :id")
 @Filter(name = "readableObjectFilter",
-        condition = "created_by = :id or id in (SELECT sa.street_id FROM street_assign sa WHERE sa.app_user_id = :id)")
+        condition = "created_by = :id or id in (SELECT sa.street_id FROM street_assign sa WHERE sa.app_user_id = :id) " +
+                "or id in (select t.street_id from task t, task_assign ta where t.id = ta.task_id and ta.app_user_id = :id)")
 public class Street extends AuditingEntity {
 
     private String code;

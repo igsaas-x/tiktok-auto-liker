@@ -4,6 +4,7 @@ import com.construction.persistence.domain.AuditingEntity;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
+import org.hibernate.annotations.Filter;
 
 import javax.persistence.*;
 
@@ -11,6 +12,8 @@ import javax.persistence.*;
 @Getter
 @Setter
 @Accessors(chain = true)
+@Filter(name = "myObjectFilter", condition = "created_by = :id")
+@Filter(name = "readableObjectFilter", condition = "created_by = :id")
 public class SubConstructor extends AuditingEntity {
 
     @Column(unique = true)

@@ -12,4 +12,9 @@ public class HealthController {
     public String sayOk() {
         return "ok";
     }
+
+    @GetMapping("/isloggedin")
+    public boolean isLoggedIn(){
+        return true;
+    }
 }

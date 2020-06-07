@@ -42,15 +42,15 @@ public class Task extends AuditingEntity {
     @JoinColumn
     private House house;
 
+    @ManyToOne
+    @JoinColumn(name = "parent_id")
+    private Task parent;
+
     private String code;
 
     private String name;
 
     private String description;
-
-    @ManyToOne
-    @JoinColumn(name = "parent_id")
-    private Task parent;
 
     private boolean leaf;
 
