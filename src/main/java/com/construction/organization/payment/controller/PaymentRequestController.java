@@ -86,7 +86,7 @@ public class PaymentRequestController {
 
     @ApiOperation("Submit command to payment request. Parameters are:" + ALLOWED_PARAM)
     @PutMapping("/{id}/command")
-    public PaymentRequest handleCommand(@PathVariable Long id, @RequestParam CommandType command, @RequestParam String comment) {
+    public PaymentRequest handleCommand(@PathVariable Long id, @RequestParam CommandType command, @RequestParam(required = false) String comment) {
         if (!ALLOWED_PENDING_FOR.contains(command)) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "unsupported 'command', supported commands are: " + ALLOWED_PARAM);
         }
