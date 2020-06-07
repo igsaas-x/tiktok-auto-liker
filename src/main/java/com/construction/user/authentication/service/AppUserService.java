@@ -26,14 +26,9 @@ import java.util.stream.Collectors;
 @Service
 @AllArgsConstructor
 @Transactional
-@SuppressWarnings("unchecked")
 public class AppUserService {
 
-    public static final String ALL_PERMISSION = "ALL_ALL_ALL";
-    public static final String READ_ALL_PERMISSION = "READ_ALL_ALL";
-
     private final AppUserRepository repository;
-    private final PermissionRepository permissionRepository;
     private final UserRoleService roleService;
     private final PasswordEncoder encoder;
     private final EntityDataMapper entityDataMapper;
@@ -95,39 +90,5 @@ public class AppUserService {
 
     public AppUser createUser(final AppUser appUser) {
         return repository.save(appUser);
-    }
-
-    public List<SimpleGrantedAuthority> grantedAuthorities(AppUser user) {
-        var role = user.getRole();
-        if (role == null) {
-            return Collections.EMPTY_LIST;
-        }
-        var permissions = roleService.getRolePermission(role.getId());
-        if (!permissions.isEmpty()) {
-            if (permissions.stream().anyMatch(permission -> permission.getCodeName().equals(ALL_PERMISSION))) {
-                return allAuthorities();
-            }
-            if (permissions.stream().anyMatch(permission -> permission.getCodeName().equals(READ_ALL_PERMISSION))) {
-                return readAllAuthorities();
-            }
-            return permissions.stream().map(this::getAuthorityFromPermission).collect(Collectors.toList());
-        }
-        return Collections.EMPTY_LIST;
-    }
-
-    private List<SimpleGrantedAuthority> allAuthorities() {
-        return permissionRepository.findAll().stream()
-                .map(this::getAuthorityFromPermission)
-                .collect(Collectors.toList());
-    }
-
-    private List<SimpleGrantedAuthority> readAllAuthorities() {
-        return permissionRepository.findAllByActionName(ActionName.READ).stream()
-                .map(this::getAuthorityFromPermission)
-                .collect(Collectors.toList());
-    }
-
-    private SimpleGrantedAuthority getAuthorityFromPermission(Permission permission) {
-        return new SimpleGrantedAuthority(permission.getCodeName());
     }
 }
