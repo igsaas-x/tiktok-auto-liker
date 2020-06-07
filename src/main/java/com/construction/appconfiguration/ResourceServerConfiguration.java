@@ -26,7 +26,6 @@ public class ResourceServerConfiguration extends ResourceServerConfigurerAdapter
 
         http.antMatcher("/**").authorizeRequests()
                 .antMatchers("/health", "/api/**", "/swagger-resources/**", "/v2/**").permitAll()
-                .antMatchers(HttpMethod.POST, "/user").permitAll()
                 .antMatchers(HttpMethod.POST, "/upload").permitAll()
                 .antMatchers(HttpMethod.POST, "/feedback").permitAll()
                 .anyRequest().authenticated();
