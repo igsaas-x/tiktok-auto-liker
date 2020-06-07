@@ -1,17 +1,20 @@
 package com.construction.user.authentication.service;
 
-import com.construction.appconfiguration.utils.ApplicationSecurityContext;
 import com.construction.exception.PasswordInvalidException;
 import com.construction.persistence.exception.ResourceNotFoundException;
+import com.construction.persistence.service.EntityDataMapper;
 import com.construction.user.authentication.domain.AppUser;
 import com.construction.user.authentication.repository.AppUserRepository;
+import com.construction.user.authorization.domain.ActionName;
 import com.construction.user.authorization.domain.Permission;
 import com.construction.user.authorization.repository.PermissionRepository;
 import com.construction.user.authorization.service.UserRoleService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import javax.transaction.Transactional;
 import javax.validation.constraints.Email;
@@ -21,22 +24,19 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
+@AllArgsConstructor
 @Transactional
 @SuppressWarnings("unchecked")
 public class AppUserService {
 
     public static final String ALL_PERMISSION = "ALL_ALL_ALL";
+    public static final String READ_ALL_PERMISSION = "READ_ALL_ALL";
 
-    @Autowired
-    private AppUserRepository repository;
-    @Autowired
-    private PermissionRepository permissionRepository;
-    @Autowired
-    private ApplicationSecurityContext context;
-    @Autowired
-    private UserRoleService roleService;
-    @Autowired
-    private PasswordEncoder encoder;
+    private final AppUserRepository repository;
+    private final PermissionRepository permissionRepository;
+    private final UserRoleService roleService;
+    private final PasswordEncoder encoder;
+    private final EntityDataMapper entityDataMapper;
 
     public AppUser getUserByUserName(final String name) {
         return repository.findByUserName(name).orElseThrow(() -> new ResourceNotFoundException(AppUser.class, name));
@@ -69,8 +69,7 @@ public class AppUserService {
         return repository.save(user);
     }
 
-    public AppUser changePassword(final String oldPass, final String newPass) {
-        final var user = context.authenticatedUser();
+    public AppUser changePassword(final AppUser user, final String oldPass, final String newPass) {
         if (user != null && encoder.matches(oldPass, user.getPassword())) {
             assert user.getId() != null;
             final var appUser = repository.findById(user.getId()).orElseThrow();
@@ -80,15 +79,21 @@ public class AppUserService {
         throw new PasswordInvalidException();
     }
 
-    public AppUser updateUser(final AppUser appUser) {
-        if (appUser.getPassword() != null) {
-            appUser.setPassword(encoder.encode(appUser.getPassword()));
+    public AppUser updateUser(Long id, final AppUser sourceUser) {
+        final var targetUser = getById(id);
+        final var password = targetUser.getPassword();
+        try {
+            final var user = entityDataMapper.mapObject(sourceUser, targetUser, AppUser.class);
+            if (sourceUser.getPassword() == null) { //keep password
+                user.setPassword(password);
+            }
+            return repository.save(user);
+        } catch (Exception exception) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, exception.getMessage(), exception);
         }
-        return repository.save(appUser);
     }
 
     public AppUser createUser(final AppUser appUser) {
-        appUser.setPassword(encoder.encode(appUser.getPassword()));
         return repository.save(appUser);
     }
 
@@ -99,8 +104,11 @@ public class AppUserService {
         }
         var permissions = roleService.getRolePermission(role.getId());
         if (!permissions.isEmpty()) {
-            if (permissions.stream().map(Permission::getCodeName).anyMatch(name -> name.equals(ALL_PERMISSION))) {
+            if (permissions.stream().anyMatch(permission -> permission.getCodeName().equals(ALL_PERMISSION))) {
                 return allAuthorities();
+            }
+            if (permissions.stream().anyMatch(permission -> permission.getCodeName().equals(READ_ALL_PERMISSION))) {
+                return readAllAuthorities();
             }
             return permissions.stream().map(this::getAuthorityFromPermission).collect(Collectors.toList());
         }
@@ -109,6 +117,12 @@ public class AppUserService {
 
     private List<SimpleGrantedAuthority> allAuthorities() {
         return permissionRepository.findAll().stream()
+                .map(this::getAuthorityFromPermission)
+                .collect(Collectors.toList());
+    }
+
+    private List<SimpleGrantedAuthority> readAllAuthorities() {
+        return permissionRepository.findAllByActionName(ActionName.READ).stream()
                 .map(this::getAuthorityFromPermission)
                 .collect(Collectors.toList());
     }

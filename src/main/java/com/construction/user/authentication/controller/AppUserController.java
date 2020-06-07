@@ -1,13 +1,13 @@
 package com.construction.user.authentication.controller;
 
 import com.construction.appconfiguration.utils.ApplicationSecurityContext;
-import com.construction.persistence.service.EntityDataMapper;
 import com.construction.user.authentication.domain.AppUser;
+import com.construction.user.authentication.dto.UserDataMapper;
+import com.construction.user.authentication.dto.UserDto;
 import com.construction.user.authentication.service.AppUserService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -16,16 +16,12 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/user")
+@AllArgsConstructor
 public class AppUserController {
 
-    @Autowired
-    private AppUserService service;
-    @Autowired
-    private EntityDataMapper entityDataMapper;
-    @Autowired
-    private PasswordEncoder encoder;
-    @Autowired
-    private ApplicationSecurityContext context;
+    private final AppUserService service;
+    private final UserDataMapper mapper;
+    private final ApplicationSecurityContext context;
 
     @GetMapping
     @PreAuthorize("hasAuthority('READ_ALL_USER')")
@@ -57,18 +53,12 @@ public class AppUserController {
     @PutMapping("/changePassword")
     public AppUser changePassword(@RequestParam("old") final String oldPassword,
                                   @RequestParam("new") final String newPassword) {
-        return service.changePassword(oldPassword, newPassword);
+        return service.changePassword(context.authenticatedUser(), oldPassword, newPassword);
     }
 
     @PutMapping("/{id}")
-    public AppUser updateUser(@NotNull @PathVariable final Long id, @RequestBody final AppUser sourceUser) {
-        final var targetUser = service.getById(id);
-        try {
-            final var user = entityDataMapper.mapObject(sourceUser, targetUser, AppUser.class);
-            return service.updateUser(user);
-        } catch (Exception exception) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, exception.getMessage(), exception);
-        }
+    public AppUser updateUser(@NotNull @PathVariable final Long id, @RequestBody final UserDto dto) {
+        return service.updateUser(id, mapper.toEntity(dto));
     }
 
     @PutMapping("/{id}/role/{roleId}")
@@ -77,8 +67,8 @@ public class AppUserController {
     }
 
     @PostMapping
-    public AppUser createUser(@NotNull @RequestBody final AppUser appUser) {
-        return service.createUser(appUser);
+    public AppUser createUser(@NotNull @RequestBody final UserDto dto) {
+        return service.createUser(mapper.toEntity(dto));
     }
 
     @DeleteMapping("/{id}")

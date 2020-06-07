@@ -54,7 +54,7 @@ public class UserRoleController {
 
     @ApiOperation("Update one data")
     @PutMapping("/update/{id}")
-    public UserRole update(@PathVariable Long id, @RequestBody UserRole dto) {
+    public UserRole update(@PathVariable Long id, @RequestBody RoleDto dto) {
         return service.updateById(id, dto);
     }
 

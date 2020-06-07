@@ -77,9 +77,15 @@ public class UserRoleService {
                 .collect(Collectors.toList());
     }
 
-    public UserRole updateById(Long id, UserRole role) {
-        var target = getById(id);
-        target.setName(role.getName());
-        return repository.save(target);
+    public UserRole updateById(Long id, RoleDto dto) {
+        var role = getById(id);
+        role.setName(dto.getName());
+        var permissions = dto.getPermissionIds().stream().map(this::getPermissionById).collect(Collectors.toList());
+        role = repository.save(role);
+        var rolePermissions = newRolePermission(role, permissions);
+        var oldPermissions = rolePermissionRepository.findAllByRole(role);
+        rolePermissionRepository.deleteAll(oldPermissions);
+        rolePermissionRepository.saveAll(rolePermissions);
+        return role;
     }
 }
