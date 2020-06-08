@@ -8,9 +8,7 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 import lombok.experimental.FieldDefaults;
 
-import javax.persistence.Entity;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
+import javax.persistence.*;
 
 @Setter
 @Getter
@@ -24,6 +22,7 @@ public class StatusHistory extends SimpleAuditingEntity {
     @JsonIgnore
     PaymentRequest paymentRequest;
 
+    @Enumerated(EnumType.STRING)
     CommandType commandType;
 
     String comment;

@@ -69,7 +69,7 @@ public class PaymentRequestService {
         return List.of();
     }
 
-    public List<PaymentRequest> getAllPending(){
+    public List<PaymentRequest> getAllPending() {
         return repository.findAllPending();
     }
 
@@ -127,6 +127,10 @@ public class PaymentRequestService {
                 .setCommandType(commandType)
                 .setComment(comment);
         historyRepository.save(history);
+    }
+
+    public List<StatusHistory> getByPaymentId(Long id) {
+        return historyRepository.findAllByPaymentRequestId(id);
     }
 
     public Page<PaymentRequest> findAll(Pageable pageable) {

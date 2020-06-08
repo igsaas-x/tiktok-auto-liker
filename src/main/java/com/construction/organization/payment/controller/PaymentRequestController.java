@@ -4,6 +4,7 @@ import com.construction.appconfiguration.utils.ApplicationSecurityContext;
 import com.construction.organization.payment.domain.CommandType;
 import com.construction.organization.payment.domain.PaymentRequest;
 import com.construction.organization.payment.domain.PaymentRequestStatus;
+import com.construction.organization.payment.domain.StatusHistory;
 import com.construction.organization.payment.dto.PaymentRequestDto;
 import com.construction.organization.payment.dto.PaymentRequestDtoMapper;
 import com.construction.organization.payment.service.PaymentRequestService;
@@ -117,5 +118,10 @@ public class PaymentRequestController {
     public PaymentRequest update(@PathVariable Long id, @RequestBody PaymentRequestDto dto) {
         filterConfig.configureFilter(ActionName.UPDATE, "payment");
         return service.updateById(id, mapper.toEntity(dto));
+    }
+
+    @GetMapping("/{id}/history")
+    public List<StatusHistory> getPaymentRequestHistory(@PathVariable Long id){
+        return service.getByPaymentId(id);
     }
 }
