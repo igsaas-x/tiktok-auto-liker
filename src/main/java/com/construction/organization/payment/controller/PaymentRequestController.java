@@ -42,8 +42,8 @@ public class PaymentRequestController {
     @ApiOperation("Add new data")
     @PostMapping
     @PreAuthorize("hasAuthority('CREATE_ALL_PAYMENT')")
-    public void save(@RequestBody PaymentRequestDto dto) {
-        service.save(mapper.toEntity(dto));
+    public PaymentRequest save(@RequestBody PaymentRequestDto dto) {
+        return service.save(mapper.toEntity(dto));
     }
 
     @GetMapping("/{id}")

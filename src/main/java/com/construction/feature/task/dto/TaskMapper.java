@@ -5,26 +5,20 @@ import com.construction.feature.project.services.ProjectService;
 import com.construction.feature.street.service.StreetService;
 import com.construction.feature.task.domain.Task;
 import com.construction.feature.task.repository.BOQRepository;
+import com.construction.feature.task.repository.TaskRepository;
 import com.construction.persistence.mapper.DtoMapper;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
 
 @Component
+@AllArgsConstructor
 public class TaskMapper implements DtoMapper<TaskDto, Task> {
 
     private final ProjectService projectService;
     private final StreetService streetService;
     private final HouseService houseService;
     private final BOQRepository boqRepository;
-
-    public TaskMapper(ProjectService projectService,
-                      StreetService streetService,
-                      HouseService houseService,
-                      BOQRepository boqRepository) {
-        this.projectService = projectService;
-        this.streetService = streetService;
-        this.houseService = houseService;
-        this.boqRepository = boqRepository;
-    }
+    private final TaskRepository repository;
 
     @Override
     public Task toEntity(TaskDto taskDto) {
@@ -54,6 +48,9 @@ public class TaskMapper implements DtoMapper<TaskDto, Task> {
         }
         if (taskDto.getBoqId() != null) {
             task.setBoq(boqRepository.findById(taskDto.getBoqId()).orElseThrow());
+        }
+        if (taskDto.getParentId() != null) {
+            task.setParent(repository.findById(taskDto.getParentId()).orElseThrow());
         }
         return task;
     }
