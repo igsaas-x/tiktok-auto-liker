@@ -50,6 +50,7 @@ public class HouseMapper implements DtoMapper<HouseDto, House> {
                 .setUpdatedAt(entity.getUpdatedAt())
                 .setVerifiedAt(entity.getVerifiedAt())
                 .setApprovedAt(entity.getApprovedAt())
+                .setHouseNo(entity.getHouseNo())
                 .setHouseLong(entity.getHouseLong())
                 .setHouseWidth(entity.getHouseWidth())
                 .setLandLong(entity.getLandLong())
