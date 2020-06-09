@@ -16,7 +16,7 @@ public class ApplicationConfiguration {
             .disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
 
     @Bean
-    public ObjectMapper objectMapper() {
+    public ObjectMapper includeTransientObjectMapper() {
         return OBJECT_MAPPER;
     }
 }

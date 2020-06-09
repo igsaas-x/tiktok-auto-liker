@@ -3,6 +3,7 @@ package com.construction.feature.task.controller;
 import com.construction.feature.task.domain.Task;
 import com.construction.feature.task.domain.TaskAssign;
 import com.construction.feature.task.dto.TaskDto;
+import com.construction.feature.task.dto.TaskMapper;
 import com.construction.feature.task.service.TaskService;
 import com.construction.persistence.domain.AssignFor;
 import com.construction.persistence.dto.IdList;
@@ -10,35 +11,36 @@ import com.construction.persistence.filter.FilterConfig;
 import com.construction.user.authorization.domain.ActionName;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RequestMapping("/task")
 @RestController
 @Api(tags = "Task API")
+@AllArgsConstructor
 public class TaskController {
 
-    @Autowired
-    private TaskService service;
-    @Autowired
-    private FilterConfig filterConfig;
+    private final TaskService service;
+    private final FilterConfig filterConfig;
+    private final TaskMapper mapper;
 
     @ApiOperation("Add new data")
     @PostMapping
     @PreAuthorize("hasAuthority('CREATE_ALL_TASK')")
-    public Task save(@RequestBody TaskDto task) {
-        return service.save(task);
+    public TaskDto save(@RequestBody TaskDto task) {
+        return mapper.toDto(service.save(mapper.toEntity(task)));
     }
 
     @GetMapping("/{id}")
-    public Task findById(@PathVariable("id") Long id) {
+    public TaskDto findById(@PathVariable("id") Long id) {
         filterConfig.configureFilter(ActionName.READ, "task");
-        return service.getById(id);
+        return mapper.toDto(service.getById(id));
     }
 
     @ApiOperation("Find by Id")
@@ -50,61 +52,61 @@ public class TaskController {
 
     @ApiOperation("Find all data")
     @GetMapping
-    public List<Task> list() {
+    public List<TaskDto> list() {
         filterConfig.configureFilter(ActionName.READ, "task");
-        return service.findAll();
+        return service.getAll().stream().map(mapper::toDto).collect(Collectors.toList());
     }
 
     @ApiOperation("Pagination request")
     @GetMapping("/page")
     public Page<Task> pageQuery(Pageable pageable) {
         filterConfig.configureFilter(ActionName.READ, "task");
-        return service.findAll(pageable);
+        return service.getAll(pageable);
     }
 
     @GetMapping("/pending/verify")
-    public List<Task> getPendingForVerifyTask() {
-        return service.getPendingForVerify();
+    public List<TaskDto> getPendingForVerifyTask() {
+        return service.getPendingForVerify().stream().map(mapper::toDto).collect(Collectors.toList());
     }
 
     @GetMapping("/pending/approve")
-    public List<Task> getPendingForApproveTask() {
-        return service.getPendingForApprove();
+    public List<TaskDto> getPendingForApproveTask() {
+        return service.getPendingForApprove().stream().map(mapper::toDto).collect(Collectors.toList());
     }
 
     @ApiOperation("Update one data")
     @PutMapping("/{id}")
-    public Task update(@PathVariable Long id, @RequestBody TaskDto dto) {
+    public TaskDto update(@PathVariable Long id, @RequestBody TaskDto dto) {
         filterConfig.configureFilter(ActionName.UPDATE, "task");
-        return service.updateById(id, dto);
+        return mapper.toDto(service.updateById(id, mapper.toEntity(dto)));
     }
 
     @PostMapping("/{id}/verify")
     @PreAuthorize("hasAuthority('VERIFY_ALL_TASK') or hasAuthority('VERIFY_ASSIGNED_TASK')")
-    public Task verify(@PathVariable Long id) {
+    public TaskDto verify(@PathVariable Long id) {
         filterConfig.configureFilter(ActionName.VERIFY, "task");
-        return service.verify(id);
+        return mapper.toDto(service.verify(id));
     }
 
     @PostMapping("/batch/verify")
     @PreAuthorize("hasAuthority('VERIFY_ALL_TASK') or hasAuthority('VERIFY_ASSIGNED_TASK')")
-    public List<Task> verifyAll(@RequestBody IdList ids) {
+    public List<TaskDto> verifyAll(@RequestBody IdList ids) {
         filterConfig.configureFilter(ActionName.VERIFY, "task");
-        return service.verifyAll(ids.getIds());
+        return service.verifyAll(ids.getIds()).stream().map(mapper::toDto).collect(Collectors.toList());
     }
 
     @PostMapping("/{id}/approve")
     @PreAuthorize("hasAuthority('APPROVE_ALL_TASK') or hasAuthority('APPROVE_ASSIGNED_TASK')")
-    public Task approve(@PathVariable Long id) {
+    public TaskDto approve(@PathVariable Long id) {
         filterConfig.configureFilter(ActionName.APPROVE, "task");
-        return service.approve(id);
+        return mapper.toDto(service.approve(id));
     }
 
     @PostMapping("/batch/approve")
     @PreAuthorize("hasAuthority('APPROVE_ALL_TASK') or hasAuthority('APPROVE_ASSIGNED_TASK')")
-    public List<Task> approveAll(@PathVariable IdList ids) {
+    public List<TaskDto> approveAll(@PathVariable IdList ids) {
         filterConfig.configureFilter(ActionName.APPROVE, "task");
-        return service.approveAll(ids.getIds());
+        return service.approveAll(ids.getIds()).stream().map(mapper::toDto).collect(Collectors.toList());
     }
 
     @PostMapping("/{id}/assign/{userId}")

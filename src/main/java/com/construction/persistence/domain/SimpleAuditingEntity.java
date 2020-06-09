@@ -18,7 +18,7 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 @EntityListeners(AuditingEntityListener.class)
-@JsonIgnoreProperties(value = {"createdAt", "updatedAt", "verifiedAt", "approvedAt"}, allowGetters = true)
+@JsonIgnoreProperties(value = {"createdAt", "updatedAt"}, allowGetters = true)
 public abstract class SimpleAuditingEntity extends VersionEntity {
 
     @JsonIgnore

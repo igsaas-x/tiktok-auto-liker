@@ -1,42 +1,39 @@
 package com.construction.feature.task.controller;
 
 import com.construction.feature.task.domain.BOQ;
-import com.construction.feature.task.domain.Task;
-import com.construction.feature.task.domain.TaskAssign;
 import com.construction.feature.task.dto.BOQDto;
+import com.construction.feature.task.dto.TaskDto;
+import com.construction.feature.task.dto.TaskMapper;
 import com.construction.feature.task.service.BOQService;
 import com.construction.feature.task.service.TaskService;
 import com.construction.persistence.domain.AssignFor;
 import com.construction.persistence.filter.FilterConfig;
-import com.construction.user.authentication.service.AppUserService;
 import com.construction.user.authorization.domain.ActionName;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RequestMapping("/boq")
 @RestController
 @Api(tags = "BOQ API")
+@AllArgsConstructor
 public class BOQController {
 
-    @Autowired
-    private BOQService service;
-    @Autowired
-    private FilterConfig filterConfig;
-    @Autowired
-    private TaskService taskService;
-    @Autowired
-    private AppUserService userService;
+    private final BOQService service;
+    private final FilterConfig filterConfig;
+    private final TaskService taskService;
+    private final TaskMapper mapper;
 
     @PostMapping
     @PreAuthorize("hasAuthority('CREATE_ALL_BOQ')")
-    public BOQ create(@RequestBody BOQDto dto){
+    public BOQ create(@RequestBody BOQDto dto) {
         return service.save(dto);
     }
 
@@ -47,10 +44,10 @@ public class BOQController {
     }
 
     @GetMapping("/{id}/tasks")
-    public List<Task> findTaskByBoqId(@PathVariable("id") Long id) {
+    public List<TaskDto> findTaskByBoqId(@PathVariable("id") Long id) {
         filterConfig.configureFilter(ActionName.READ, "task");
         var boq = service.getById(id);
-        return taskService.findByBoq(boq);
+        return taskService.getByBoq(boq).stream().map(mapper::toDto).collect(Collectors.toList());
     }
 
     @ApiOperation("Find by Id")

@@ -1,13 +1,19 @@
 package com.construction.feature.task.dto;
 
 import com.construction.feature.task.domain.TaskBelongTo;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;
+import lombok.experimental.Accessors;
 
 import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 
 @Data
+@Accessors(chain = true)
+@JsonIgnoreProperties(value = {"id", "createdBy", "updatedBy", "verifiedBy", "approvedBy"}, allowGetters = true)
 public class TaskDto {
+    private Long id;
     private String typeOfWork;
     @NotNull
     private TaskBelongTo belongTo;
@@ -27,4 +33,12 @@ public class TaskDto {
     private BigDecimal unitPrice;
     private BigDecimal totalPrice;
     private BigDecimal actualPrice;
+    private String createdBy;
+    private String updatedBy;
+    private String verifiedBy;
+    private String approvedBy;
+    private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
+    private LocalDateTime verifiedAt;
+    private LocalDateTime approvedAt;
 }

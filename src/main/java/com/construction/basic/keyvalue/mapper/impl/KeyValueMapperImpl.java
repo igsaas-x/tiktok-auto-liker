@@ -16,7 +16,6 @@ public class KeyValueMapperImpl implements KeyValueMapper {
         entity.setGroup(dto.getGroup());
         entity.setKey(dto.getKey());
         entity.setValue(dto.getValue());
-        entity.setJsonValue(dto.getJsonValue());
         entity.setRemarks(dto.getRemarks());
         return entity;
     }
@@ -27,7 +26,6 @@ public class KeyValueMapperImpl implements KeyValueMapper {
         dto.setGroup(entity.getGroup());
         dto.setKey(entity.getKey());
         dto.setValue(entity.getValue());
-        dto.setJsonValue(entity.getJsonValue());
         dto.setRemarks(entity.getRemarks());
         return dto;
     }

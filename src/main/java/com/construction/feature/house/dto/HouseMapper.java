@@ -36,4 +36,25 @@ public class HouseMapper implements DtoMapper<HouseDto, House> {
                 .setProject(project)
                 .setStreet(street);
     }
+
+    @Override
+    public HouseDto toDto(House entity) {
+        return new HouseDto()
+                .setId(entity.getId())
+                .setCreatedBy(entity.getCreatedBy() == null ? null : entity.getCreatedBy().getUserName())
+                .setUpdatedBy(entity.getUpdatedBy() == null ? null : entity.getUpdatedBy().getUserName())
+                .setVerifiedBy(entity.getVerifiedBy() == null ? null : entity.getVerifiedBy().getUserName())
+                .setApprovedBy(entity.getApprovedBy() == null ? null : entity.getApprovedBy().getUserName())
+                .setTypeOfHouseId(entity.getTypeOfHouse() == null ? null : entity.getTypeOfHouse().getId())
+                .setCreatedAt(entity.getCreatedAt())
+                .setUpdatedAt(entity.getUpdatedAt())
+                .setVerifiedAt(entity.getVerifiedAt())
+                .setApprovedAt(entity.getApprovedAt())
+                .setHouseLong(entity.getHouseLong())
+                .setHouseWidth(entity.getHouseWidth())
+                .setLandLong(entity.getLandLong())
+                .setLandWidth(entity.getLandWidth())
+                .setProjectId(entity.getProject() == null ? null : entity.getProject().getId())
+                .setStreetId(entity.getStreet() == null ? null : entity.getStreet().getId());
+    }
 }

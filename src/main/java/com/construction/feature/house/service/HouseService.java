@@ -67,18 +67,18 @@ public class HouseService {
         return repository.findById(id).orElseThrow(() -> new ResourceNotFoundException(House.class, id));
     }
 
-    public List<House> findAll() {
+    public List<House> getAll() {
         var houses = repository.findAll();
         houses.addAll(fromAssignedTask());
         return houses.stream().distinct().collect(Collectors.toList());
     }
 
-    public Page<House> getPendingForVerify(Pageable pageable) {
-        return repository.findPendingForVerify(context.authenticatedUser().getId(), pageable);
+    public List<House> getPendingForVerify() {
+        return repository.findPendingForVerify(context.authenticatedUser().getId());
     }
 
-    public Page<House> getPendingForApprove(Pageable pageable) {
-        return repository.findPendingForApprove(context.authenticatedUser().getId(), pageable);
+    public List<House> getPendingForApprove() {
+        return repository.findPendingForApprove(context.authenticatedUser().getId());
     }
 
     private List<House> fromAssignedTask() {
@@ -92,7 +92,7 @@ public class HouseService {
                 .collect(Collectors.toList());
     }
 
-    public Page<House> findAll(Pageable pageable) {
+    public Page<House> getAll(Pageable pageable) {
         return repository.findAll(pageable);
     }
 

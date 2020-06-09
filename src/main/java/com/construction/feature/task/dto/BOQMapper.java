@@ -36,4 +36,23 @@ public class BOQMapper implements DtoMapper<BOQDto, BOQ> {
         boq.setDetails(boqDto.getDetails());
         return boq;
     }
+
+    @Override
+    public BOQDto toDto(BOQ entity) {
+        var dto = new BOQDto()
+                .setCreatedBy(entity.getCreatedBy().getUserName())
+                .setUpdatedBy(entity.getUpdatedBy().getUserName())
+                .setCode(entity.getCode())
+                .setDetails(entity.getDetails());
+        if (entity.getProject() != null) {
+            dto.setProjectId(entity.getProject().getId());
+        }
+        if (entity.getStreet() != null) {
+            dto.setStreetId(entity.getStreet().getId());
+        }
+        if (entity.getHouse() != null) {
+            dto.setHouseId(entity.getHouse().getId());
+        }
+        return dto;
+    }
 }

@@ -1,6 +1,5 @@
 package com.construction.basic.keyvalue.domain;
 
-import com.construction.persistence.converter.JsonObjectConverter;
 import com.construction.persistence.domain.VersionEntity;
 import lombok.Getter;
 import lombok.Setter;
@@ -10,7 +9,6 @@ import org.hibernate.annotations.SQLDelete;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
-import java.util.Map;
 
 @Entity
 @Getter
@@ -29,10 +27,6 @@ public class KeyValue extends VersionEntity {
     private String key;
 
     private String value;
-
-    @Column(columnDefinition = "text")
-    @Convert(converter = JsonObjectConverter.class)
-    private Map<String, Object> jsonValue;
 
     private String remarks;
 

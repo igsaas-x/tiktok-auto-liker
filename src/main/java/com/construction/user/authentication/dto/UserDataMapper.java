@@ -27,4 +27,9 @@ public class UserDataMapper implements DtoMapper<UserDto, AppUser> {
         }
         return user;
     }
+
+    @Override
+    public UserDto toDto(AppUser o) {
+        return null;
+    }
 }

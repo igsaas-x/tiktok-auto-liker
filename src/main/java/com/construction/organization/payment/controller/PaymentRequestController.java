@@ -24,6 +24,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RequestMapping("/payment-request")
 @RestController
@@ -62,19 +63,19 @@ public class PaymentRequestController {
 
     @ApiOperation("Find all data")
     @GetMapping
-    public List<PaymentRequest> list() {
+    public List<PaymentRequestDto> list() {
         filterConfig.configureFilter(ActionName.READ, "payment");
-        return service.findAll();
+        return service.findAll().stream().map(mapper::toDto).collect(Collectors.toList());
     }
 
     @ApiOperation("Find data pending. Parameters are:" + ALLOWED_PARAM)
     @GetMapping("/pending")
-    public List<PaymentRequest> listPending(@RequestParam CommandType pendingFor) {
+    public List<PaymentRequestDto> listPending(@RequestParam CommandType pendingFor) {
         if (!ALLOWED_PENDING_FOR.contains(pendingFor)) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "unsupported 'pendingFor', supported commands are: " + ALLOWED_PARAM);
         }
         if (context.hasPermission(pendingFor + "_ALL_PAYMENT")) {
-            return service.findPendingFor(pendingFor);
+            return service.findPendingFor(pendingFor).stream().map(mapper::toDto).collect(Collectors.toList());
         }
         throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "User has no permission to " + pendingFor + " payment request");
     }
@@ -103,7 +104,7 @@ public class PaymentRequestController {
                 .filter(paymentRequest -> id.equals(paymentRequest.getId()))
                 .findFirst()
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "payment is not in state for: " + command));
-        return service.handleCommand(request, command, context.authenticatedUser(), comment);
+        return service.handleCommand(mapper.toEntity(request), command, context.authenticatedUser(), comment);
     }
 
     @ApiOperation("Pagination request")
@@ -121,7 +122,7 @@ public class PaymentRequestController {
     }
 
     @GetMapping("/{id}/history")
-    public List<StatusHistory> getPaymentRequestHistory(@PathVariable Long id){
+    public List<StatusHistory> getPaymentRequestHistory(@PathVariable Long id) {
         return service.getByPaymentId(id);
     }
 }

@@ -1,5 +1,6 @@
 package com.construction.persistence.mapper;
 
-public interface DtoMapper<I, O> {
-    O toEntity(I i);
+public interface DtoMapper<Input, Output> {
+    Output toEntity(Input input);
+    Input toDto(Output output);
 }

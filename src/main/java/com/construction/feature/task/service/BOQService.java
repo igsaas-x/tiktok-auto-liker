@@ -69,27 +69,27 @@ public class BOQService {
 
     public boolean verifyAllTask(Long id) {
         var boq = getById(id);
-        taskService.findByBoq(boq).forEach(task -> taskService.verify(task));
+        taskService.getByBoq(boq).forEach(task -> taskService.verify(task));
         return true;
     }
 
     public boolean approveAllTask(Long id) {
         var boq = getById(id);
-        taskService.findByBoq(boq).forEach(task -> taskService.approve(task));
+        taskService.getByBoq(boq).forEach(task -> taskService.approve(task));
         return true;
     }
 
     public boolean assign(Long boqId, Long userId, AssignFor assignFor) {
         var user = userService.getById(userId);
         var boq = getById(boqId);
-        taskService.findByBoq(boq).forEach(task -> taskService.assign(task, user, assignFor));
+        taskService.getByBoq(boq).forEach(task -> taskService.assign(task, user, assignFor));
         return true;
     }
 
     public boolean unAssign(Long id, Long userId) {
         var boq = getById(id);
         var user = userService.getById(userId);
-        taskService.findByBoq(boq).forEach(task -> taskService.unAssign(task, user));
+        taskService.getByBoq(boq).forEach(task -> taskService.unAssign(task, user));
         return true;
     }
 }

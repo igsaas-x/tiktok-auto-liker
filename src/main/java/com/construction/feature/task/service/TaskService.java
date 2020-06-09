@@ -4,7 +4,6 @@ import com.construction.appconfiguration.utils.ApplicationSecurityContext;
 import com.construction.feature.task.domain.BOQ;
 import com.construction.feature.task.domain.Task;
 import com.construction.feature.task.domain.TaskAssign;
-import com.construction.feature.task.dto.TaskDto;
 import com.construction.feature.task.dto.TaskMapper;
 import com.construction.feature.task.repository.TaskAssignRepository;
 import com.construction.feature.task.repository.TaskRepository;
@@ -17,6 +16,7 @@ import com.construction.persistence.utils.ObjectStatusValidator;
 import com.construction.user.authentication.domain.AppUser;
 import com.construction.user.authentication.service.AppUserService;
 import com.construction.user.authorization.domain.ActionName;
+import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -29,30 +29,21 @@ import java.util.stream.Collectors;
 
 @Service
 @Transactional
+@AllArgsConstructor
 public class TaskService {
 
-    @Autowired
-    private TaskRepository repository;
-    @Autowired
-    private EntityDataMapper dataMapper;
-    @Autowired
-    private ObjectStatusValidator<Task> validator;
-    @Autowired
-    private ApplicationSecurityContext context;
-    @Autowired
-    private AppUserService userService;
-    @Autowired
-    private TaskAssignRepository assignRepository;
-    @Autowired
-    private TaskMapper mapper;
+    private final TaskRepository repository;
+    private final EntityDataMapper dataMapper;
+    private final ObjectStatusValidator<Task> validator;
+    private final ApplicationSecurityContext context;
+    private final AppUserService userService;
+    private final TaskAssignRepository assignRepository;
 
-    public Task save(TaskDto dto) {
-        var task = mapper.toEntity(dto);
+    public Task save(Task task) {
         return repository.save(task);
     }
 
-    public void save(List<TaskDto> dtos) {
-        var tasks = dtos.stream().map(mapper::toEntity).collect(Collectors.toList());
+    public void save(List<Task> tasks) {
         repository.saveAll(tasks);
     }
 
@@ -65,15 +56,15 @@ public class TaskService {
         return repository.findById(id).orElseThrow(() -> new ResourceNotFoundException(Task.class, id));
     }
 
-    public List<Task> findByBoq(BOQ boq) {
+    public List<Task> getByBoq(BOQ boq) {
         return repository.findAllByBoq(boq);
     }
 
-    public List<Task> findAll() {
+    public List<Task> getAll() {
         return repository.findAll();
     }
 
-    public Page<Task> findAll(Pageable pageable) {
+    public Page<Task> getAll(Pageable pageable) {
         return repository.findAll(pageable);
     }
 
@@ -85,9 +76,8 @@ public class TaskService {
         return repository.getPendingTask(context.authenticatedUser().getId(), AssignFor.APPROVE.name(), ObjectStatus.VERIFIED.name());
     }
 
-    public Task updateById(Long id, TaskDto dto) {
+    public Task updateById(Long id, Task task) {
         var target = getById(id);
-        var task = mapper.toEntity(dto);
         validator.validateStatus(target, ActionName.UPDATE);
         target = dataMapper.mapObject(task, target, Task.class);
         return repository.save(target);
