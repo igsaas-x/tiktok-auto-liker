@@ -81,18 +81,22 @@ public class TaskMapper implements DtoMapper<TaskDto, Task> {
                 .setApprovedBy(entity.getApprovedBy() == null ? null : entity.getApprovedBy().getUserName());
         if (entity.getHouse() != null) {
             task.setHouseId(entity.getHouse().getId());
+            task.setHouseNo(entity.getHouse().getHouseNo());
         }
         if (entity.getParent() != null) {
             task.setParentId(entity.getParent().getId());
         }
         if (entity.getProject() != null) {
             task.setProjectId(entity.getProject().getId());
+            task.setProjectObjectName(entity.getProject().getObjectName());
         }
         if (entity.getStreet() != null) {
             task.setStreetId(entity.getStreet().getId());
+            task.setStreetName(entity.getStreet().getName());
         }
         if (entity.getBoq() != null) {
             task.setBoqId(entity.getBoq().getId());
+            task.setBoqCode(entity.getBoq().getCode());
         }
         return task;
     }

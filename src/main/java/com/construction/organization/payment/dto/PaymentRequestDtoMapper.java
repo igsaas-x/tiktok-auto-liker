@@ -36,6 +36,7 @@ public class PaymentRequestDtoMapper implements DtoMapper<PaymentRequestDto, Pay
                 .setUpdatedBy(entity.getUpdatedBy() == null ? null : entity.getUpdatedBy().getUserName());
         if (entity.getTask() != null) {
             payment.setTaskId(entity.getTask().getId());
+            payment.setTaskName(entity.getTask().getName());
         }
         if (entity.getSubConstructor() != null) {
             payment.setSubConstructorId(entity.getSubConstructor().getId());

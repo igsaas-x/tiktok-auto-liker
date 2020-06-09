@@ -15,6 +15,7 @@ import java.time.LocalDateTime;
 public class PaymentRequestDto {
     Long id;
     Long taskId;
+    private String taskName;
     String description;
     Long subConstructorId;
     private String createdBy;

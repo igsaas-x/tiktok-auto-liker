@@ -8,11 +8,13 @@ import java.time.LocalDateTime;
 
 @Data
 @Accessors(chain = true)
-@JsonIgnoreProperties(value = {"id", "createdBy", "updatedBy", "verifiedBy", "approvedBy"}, allowGetters = true)
+@JsonIgnoreProperties(value = {"id", "createdBy", "updatedBy", "verifiedBy", "approvedBy", "projectObjectName", "streetName"}, allowGetters = true)
 public class HouseDto {
     private Long id;
     private Long projectId;
+    private String projectObjectName;
     private Long streetId;
+    private String streetName;
     private Long typeOfHouseId;
     private String houseNo;
     private Float houseWidth;

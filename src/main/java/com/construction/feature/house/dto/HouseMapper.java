@@ -56,6 +56,8 @@ public class HouseMapper implements DtoMapper<HouseDto, House> {
                 .setLandLong(entity.getLandLong())
                 .setLandWidth(entity.getLandWidth())
                 .setProjectId(entity.getProject() == null ? null : entity.getProject().getId())
-                .setStreetId(entity.getStreet() == null ? null : entity.getStreet().getId());
+                .setProjectObjectName(entity.getProject() == null ? null : entity.getProject().getObjectName())
+                .setStreetId(entity.getStreet() == null ? null : entity.getStreet().getId())
+                .setStreetName(entity.getStreet() == null ? null : entity.getStreet().getName());
     }
 }

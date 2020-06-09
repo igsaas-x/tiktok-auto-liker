@@ -18,8 +18,11 @@ public class TaskDto {
     @NotNull
     private TaskBelongTo belongTo;
     private Long projectId;
+    private String projectObjectName;
     private Long streetId;
+    private String streetName;
     private Long houseId;
+    private String houseNo;
     private String code;
     private String name;
     private String description;
@@ -27,6 +30,7 @@ public class TaskDto {
     private boolean leaf;
     private String floor;
     private Long boqId;
+    private String boqCode;
     private String contractType;
     private Integer quantity;
     private String unit;
