@@ -4,5 +4,7 @@ public enum ObjectStatus {
     OPEN,
     VERIFIED,
     APPROVED,
+    CLOSED,
+    EXPIRED,
     DELETED
 }

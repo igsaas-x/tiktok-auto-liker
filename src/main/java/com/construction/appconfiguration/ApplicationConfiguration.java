@@ -1,22 +1,27 @@
 package com.construction.appconfiguration;
 
-import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.util.StdDateFormat;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
+
+import java.text.SimpleDateFormat;
 
 @Configuration
 public class ApplicationConfiguration {
 
-    public static final ObjectMapper OBJECT_MAPPER = new ObjectMapper()
-            .setDateFormat(new StdDateFormat())
-            .registerModules(new JavaTimeModule())
-            .disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
+    private static final String dateFormat = "yyyy-MM-dd";
+    private static final String dateTimeFormat = "yyyy-MM-dd HH:mm:ss";
 
     @Bean
-    public ObjectMapper includeTransientObjectMapper() {
-        return OBJECT_MAPPER;
+    @Primary
+    public ObjectMapper getObjectMapper() {
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
+        mapper.registerModule(new JavaTimeModule());
+        mapper.setDateFormat(new SimpleDateFormat(dateTimeFormat));
+        return mapper;
     }
 }

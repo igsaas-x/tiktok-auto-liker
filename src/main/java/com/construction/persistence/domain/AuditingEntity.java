@@ -1,6 +1,7 @@
 package com.construction.persistence.domain;
 
 import com.construction.user.authentication.domain.AppUser;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Getter;
