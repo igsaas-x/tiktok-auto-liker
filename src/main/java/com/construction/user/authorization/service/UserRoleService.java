@@ -1,15 +1,14 @@
 package com.construction.user.authorization.service;
 
-import com.construction.persistence.exception.ResourceNotFoundException;
-import com.construction.persistence.service.EntityDataMapper;
 import com.construction.user.authorization.domain.Permission;
 import com.construction.user.authorization.domain.RolePermission;
 import com.construction.user.authorization.domain.UserRole;
+import com.construction.user.authorization.dto.PermissionDto;
+import com.construction.user.authorization.dto.PermissionMapper;
 import com.construction.user.authorization.dto.RoleDto;
-import com.construction.user.authorization.repository.PermissionRepository;
 import com.construction.user.authorization.repository.RolePermissionRepository;
 import com.construction.user.authorization.repository.UserRoleRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -20,38 +19,32 @@ import java.util.stream.Collectors;
 
 @Service
 @Transactional
+@AllArgsConstructor
 public class UserRoleService {
 
-    @Autowired
-    private UserRoleRepository repository;
-    @Autowired
-    private RolePermissionRepository rolePermissionRepository;
-    @Autowired
-    private PermissionRepository permissionRepository;
-    @Autowired
-    private EntityDataMapper dataMapper;
+    private final UserRoleRepository repository;
+    private final RolePermissionRepository rolePermissionRepository;
+    private final PermissionMapper permissionMapper;
+    private final PermissionService permissionService;
 
     public UserRole save(RoleDto roleDto) {
         var role = new UserRole().setName(roleDto.getName());
-        var permissions = roleDto.getPermissionIds().stream().map(this::getPermissionById).collect(Collectors.toList());
-        role = repository.save(role);
-        var rolePermissions = newRolePermission(role, permissions);
-        rolePermissionRepository.saveAll(rolePermissions);
-        return role;
+        final var newRole = repository.save(role);
+        if (roleDto.getPermissions() != null) {
+            var permissionIds = roleDto.getPermissions().stream()
+                    .filter(PermissionDto::isSelected)
+                    .map(PermissionDto::getId).collect(Collectors.toList());
+            var permissions = permissionService.getAllByIds(permissionIds);
+            var rolePermissions = permissions.stream()
+                    .map(permission -> newRolePermission(newRole, permission))
+                    .collect(Collectors.toList());
+            rolePermissionRepository.saveAll(rolePermissions);
+        }
+        return newRole;
     }
 
-    private Permission getPermissionById(Long id) {
-        return permissionRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException(Permission.class, id));
-    }
-
-    private List<RolePermission> newRolePermission(final UserRole role, List<Permission> permissions) {
-        return permissions.stream()
-                .map(permission -> new RolePermission().setPermission(permission).setRole(role))
-                .collect(Collectors.toList());
-    }
-
-    public void save(List<UserRole> dtos) {
-        repository.saveAll(dtos);
+    private RolePermission newRolePermission(final UserRole role, Permission permission) {
+        return new RolePermission().setPermission(permission).setRole(role);
     }
 
     public void deleteById(Long id) {
@@ -77,15 +70,33 @@ public class UserRoleService {
                 .collect(Collectors.toList());
     }
 
+    public List<PermissionDto> getRolePermissionDto(Long id) {
+        final var role = getById(id);
+        final var permissions = rolePermissionRepository.findAllByRole(role)
+                .stream()
+                .map(RolePermission::getPermission)
+                .collect(Collectors.toList());
+        return permissionMapper.toRoleDto(role, permissions).getPermissions();
+    }
+
     public UserRole updateById(Long id, RoleDto dto) {
         var role = getById(id);
         role.setName(dto.getName());
-        var permissions = dto.getPermissionIds().stream().map(this::getPermissionById).collect(Collectors.toList());
-        role = repository.save(role);
-        var rolePermissions = newRolePermission(role, permissions);
-        var oldPermissions = rolePermissionRepository.findAllByRole(role);
-        rolePermissionRepository.deleteAll(oldPermissions);
-        rolePermissionRepository.saveAll(rolePermissions);
-        return role;
+        final var newRole = repository.save(role);
+        final var permissionDtos = dto.getPermissions();
+        if (permissionDtos != null) {
+            var permissionIds = permissionDtos.stream()
+                    .filter(PermissionDto::isSelected)
+                    .map(PermissionDto::getId)
+                    .collect(Collectors.toList());
+            var permissions = permissionService.getAllByIds(permissionIds);
+            var newRolePermissions = permissions.stream()
+                    .map(permission -> newRolePermission(newRole, permission))
+                    .collect(Collectors.toList());
+            var oldRolePermissions = rolePermissionRepository.findAllByRole(role);
+            rolePermissionRepository.deleteAll(oldRolePermissions);
+            rolePermissionRepository.saveAll(newRolePermissions);
+        }
+        return newRole;
     }
 }

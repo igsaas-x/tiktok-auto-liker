@@ -1,12 +1,14 @@
 package com.construction.user.authorization.controller;
 
-import com.construction.user.authorization.domain.Permission;
 import com.construction.user.authorization.domain.UserRole;
+import com.construction.user.authorization.dto.PermissionDto;
+import com.construction.user.authorization.dto.PermissionMapper;
 import com.construction.user.authorization.dto.RoleDto;
+import com.construction.user.authorization.repository.PermissionRepository;
 import com.construction.user.authorization.service.UserRoleService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -17,14 +19,16 @@ import java.util.List;
 @RequestMapping("/role")
 @RestController
 @Api(tags = "UserRole API")
-@PreAuthorize("hasAuthority('ALL_ALL_ALL')")
+@AllArgsConstructor
 public class UserRoleController {
 
-    @Autowired
-    private UserRoleService service;
+    private final PermissionMapper mapper;
+    private final UserRoleService service;
+    private final PermissionRepository permissionRepository;
 
     @ApiOperation("Add new data")
     @PostMapping
+    @PreAuthorize("hasAuthority('ALL_ALL_ALL')")
     public UserRole save(@RequestBody RoleDto roleDto) {
         return service.save(roleDto);
     }
@@ -36,6 +40,7 @@ public class UserRoleController {
 
     @ApiOperation("Find by Id")
     @DeleteMapping("/delete/{id}")
+    @PreAuthorize("hasAuthority('ALL_ALL_ALL')")
     public void delete(@PathVariable("id") Long id) {
         service.deleteById(id);
     }
@@ -54,12 +59,13 @@ public class UserRoleController {
 
     @ApiOperation("Update one data")
     @PutMapping("/update/{id}")
+    @PreAuthorize("hasAuthority('ALL_ALL_ALL')")
     public UserRole update(@PathVariable Long id, @RequestBody RoleDto dto) {
         return service.updateById(id, dto);
     }
 
     @GetMapping("/{id}/permissions")
-    public List<Permission> getPermissionByRoleId(@PathVariable Long id) {
-        return service.getRolePermission(id);
+    public List<PermissionDto> getPermissionByRoleId(@PathVariable Long id) {
+        return service.getRolePermissionDto(id);
     }
 }

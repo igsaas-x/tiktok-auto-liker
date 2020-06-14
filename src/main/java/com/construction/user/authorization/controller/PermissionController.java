@@ -13,7 +13,6 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/permission")
-@PreAuthorize("hasAuthority('ALL_ALL_ALL')")
 public class PermissionController {
 
     @Autowired
@@ -37,6 +36,7 @@ public class PermissionController {
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize("hasAuthority('ALL_ALL_ALL')")
     public Permission update(@PathVariable Long id, @RequestBody Permission permission) {
         var target = repository.findById(id).orElseThrow();
         target = dataMapper.mapObject(permission, target, Permission.class);
