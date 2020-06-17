@@ -20,6 +20,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import javax.transaction.Transactional;
 import java.util.List;
+import java.util.Map;
 
 @Service
 @Transactional
@@ -69,8 +70,15 @@ public class PaymentRequestService {
         return List.of();
     }
 
-    public List<PaymentRequest> getAllPending() {
-        return repository.findAllPending();
+    public Map<CommandType, List<PaymentRequest>> getAllPending() {
+        return Map.of(
+                CommandType.SUBMIT, repository.findAllByStatus(PaymentRequestStatus.OPEN),
+                CommandType.VERIFY, repository.findAllByStatus(PaymentRequestStatus.SUBMITTED),
+                CommandType.CONFIRM, repository.findAllByStatus(PaymentRequestStatus.VERIFIED),
+                CommandType.REVIEW, repository.findAllByStatus(PaymentRequestStatus.CONFIRMED),
+                CommandType.APPROVE, repository.findAllByStatus(PaymentRequestStatus.REVIEWED),
+                CommandType.CASH_OUT, repository.findAllByStatus(PaymentRequestStatus.APPROVED)
+        );
     }
 
     public PaymentRequest handleCommand(final PaymentRequest request, final CommandType command, final AppUser user, final String comment) {

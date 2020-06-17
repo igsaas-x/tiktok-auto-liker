@@ -12,16 +12,12 @@ import java.text.SimpleDateFormat;
 @Configuration
 public class ApplicationConfiguration {
 
-    private static final String dateFormat = "yyyy-MM-dd";
-    private static final String dateTimeFormat = "yyyy-MM-dd HH:mm:ss";
-
     @Bean
     @Primary
     public ObjectMapper getObjectMapper() {
         ObjectMapper mapper = new ObjectMapper();
         mapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
         mapper.registerModule(new JavaTimeModule());
-        mapper.setDateFormat(new SimpleDateFormat(dateTimeFormat));
         return mapper;
     }
 }

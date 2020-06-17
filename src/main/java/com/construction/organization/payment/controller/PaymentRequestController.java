@@ -24,6 +24,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @RequestMapping("/payment-request")
@@ -82,7 +83,7 @@ public class PaymentRequestController {
 
     @ApiOperation("Find data pending wait user to deal with")
     @GetMapping("/pending/all")
-    public List<PaymentRequest> getAllPending() {
+    public Map<CommandType, List<PaymentRequest>> getAllPending() {
         return service.getAllPending();
     }
 

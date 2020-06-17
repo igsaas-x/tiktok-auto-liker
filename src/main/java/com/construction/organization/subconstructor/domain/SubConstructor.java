@@ -17,7 +17,7 @@ import javax.persistence.*;
 public class SubConstructor extends AuditingEntity {
 
     @Column(unique = true)
-    private String customerId;
+    private String externalId;
 
     private String engFullName;
 
