@@ -19,7 +19,7 @@ import javax.validation.constraints.NotNull;
 @Table(name = "users", uniqueConstraints = @UniqueConstraint(columnNames = "user_name"))
 @Accessors(chain = true)
 @Where(clause = "status <> 'DELETED'")
-@SQLDelete(sql = "update user set status = 'DELETED' where id = ? and version = ?")
+@SQLDelete(sql = "update users set status = 'DELETED' where id = ? and version = ?")
 @JsonIgnoreProperties(value = "password", allowSetters = true)
 public class AppUser extends VersionEntity {
 
