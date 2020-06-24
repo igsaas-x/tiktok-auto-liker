@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
 @Data
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Accessors(chain = true)
-@JsonIgnoreProperties(value = {"createdBy", "updatedBy", "verifiedBy", "approvedBy"}, allowGetters = true)
+@JsonIgnoreProperties(value = {"createdBy", "updatedBy", "createdAt", "updatedAt"}, allowGetters = true)
 public class PaymentRequestDto {
     Long id;
     Long taskId;

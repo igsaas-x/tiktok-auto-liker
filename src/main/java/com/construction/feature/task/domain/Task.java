@@ -46,6 +46,8 @@ public class Task extends AuditingEntity {
     @JoinColumn(name = "parent_id")
     private Task parent;
 
+    private boolean firstLevel;
+
     private String code;
 
     private String name;
@@ -74,7 +76,10 @@ public class Task extends AuditingEntity {
 
     @PrePersist
     private void validate() {
-        if (parent == null) return;
+        if (parent == null) {
+            firstLevel = true;
+            return;
+        }
         if (parent.isLeaf()) {
             throw new ValidationErrorException(this.getClass(), "parent", "parent is leaf");
         }
