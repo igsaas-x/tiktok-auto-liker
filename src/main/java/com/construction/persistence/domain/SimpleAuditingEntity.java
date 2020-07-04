@@ -1,6 +1,7 @@
 package com.construction.persistence.domain;
 
 import com.construction.user.authentication.domain.AppUser;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Getter;
@@ -29,6 +30,7 @@ public abstract class SimpleAuditingEntity extends VersionEntity {
 
     @CreatedDate
     @Column(name = "created_at", updatable = false)
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime createdAt;
 
     @JsonIgnore
@@ -39,5 +41,6 @@ public abstract class SimpleAuditingEntity extends VersionEntity {
 
     @LastModifiedDate
     @Column(name = "updated_at")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime updatedAt;
 }

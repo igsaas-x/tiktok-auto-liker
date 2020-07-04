@@ -31,6 +31,7 @@ public abstract class AuditingEntity extends VersionEntity {
     private AppUser createdBy;
 
     @CreatedDate
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;
 
@@ -42,6 +43,7 @@ public abstract class AuditingEntity extends VersionEntity {
 
     @LastModifiedDate
     @Column(name = "updated_at")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime updatedAt;
 
     @ManyToOne
@@ -50,6 +52,7 @@ public abstract class AuditingEntity extends VersionEntity {
     private AppUser verifiedBy;
 
     @Column(name = "verified_at")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime verifiedAt;
 
     @ManyToOne
@@ -58,6 +61,7 @@ public abstract class AuditingEntity extends VersionEntity {
     private AppUser approvedBy;
 
     @Column(name = "approved_at")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime approvedAt;
 
     @Column(name = "status")
