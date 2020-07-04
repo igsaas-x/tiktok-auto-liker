@@ -40,9 +40,14 @@ public class ProjectController {
     }
 
     @GetMapping
-    public List<Project> getAll(){
+    public List<Project> getAll() {
         filterConfig.configureFilter(ActionName.READ, "project");
         return service.getAll();
+    }
+
+    @GetMapping("/assigned")
+    public List<Project> getAssignedProject() {
+        return service.getAssigned();
     }
 
     @GetMapping("/{id}")

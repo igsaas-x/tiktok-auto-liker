@@ -68,6 +68,10 @@ public class StreetController {
         return service.getPendingForApprove(pageable);
     }
 
+    public List<Street> getAssignedStreet() {
+        return service.getAssignedStreet();
+    }
+
     @ApiOperation("Pagination request")
     @GetMapping("/page")
     public Page<Street> pageQuery(Pageable pageable) {

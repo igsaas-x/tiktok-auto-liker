@@ -15,6 +15,7 @@ import com.construction.persistence.service.EntityDataMapper;
 import com.construction.persistence.utils.ObjectStatusValidator;
 import com.construction.user.authentication.service.AppUserService;
 import com.construction.user.authorization.domain.ActionName;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -28,6 +29,7 @@ import java.util.stream.Collectors;
 
 @Service
 @Transactional
+@RequiredArgsConstructor
 public class HouseService {
 
     private final HouseRepository repository;
@@ -37,22 +39,6 @@ public class HouseService {
     private final ObjectStatusValidator<House> validator;
     private final HouseAssignRepository assignRepository;
     private final AppUserService userService;
-
-    public HouseService(HouseRepository repository,
-                        TaskAssignRepository taskAssignRepository,
-                        EntityDataMapper dataMapper,
-                        ApplicationSecurityContext context,
-                        ObjectStatusValidator<House> validator,
-                        HouseAssignRepository assignRepository,
-                        AppUserService userService) {
-        this.repository = repository;
-        this.taskAssignRepository = taskAssignRepository;
-        this.dataMapper = dataMapper;
-        this.context = context;
-        this.validator = validator;
-        this.assignRepository = assignRepository;
-        this.userService = userService;
-    }
 
     public House save(House house) {
         return repository.save(house);
@@ -71,6 +57,13 @@ public class HouseService {
         var houses = repository.findAll();
         houses.addAll(fromAssignedTask());
         return houses.stream().distinct().collect(Collectors.toList());
+    }
+
+    public List<House> getAssigned() {
+        return assignRepository.findAllByAppUser(context.authenticatedUser())
+                .stream()
+                .map(HouseAssign::getHouse)
+                .collect(Collectors.toList());
     }
 
     public List<House> getPendingForVerify() {

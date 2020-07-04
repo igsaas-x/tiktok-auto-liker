@@ -51,6 +51,13 @@ public class StreetService {
         return repository.findById(id).orElseThrow(() -> new ResourceNotFoundException(Street.class, id));
     }
 
+    public List<Street> getAssignedStreet() {
+        return assignRepository.findAllByAppUser(context.authenticatedUser())
+                .stream()
+                .map(StreetAssign::getStreet)
+                .collect(Collectors.toList());
+    }
+
     public List<Street> findAll() {
         return repository.findAll();
     }

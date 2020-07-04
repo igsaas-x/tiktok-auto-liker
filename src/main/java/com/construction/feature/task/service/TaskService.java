@@ -4,7 +4,6 @@ import com.construction.appconfiguration.utils.ApplicationSecurityContext;
 import com.construction.feature.task.domain.BOQ;
 import com.construction.feature.task.domain.Task;
 import com.construction.feature.task.domain.TaskAssign;
-import com.construction.feature.task.dto.TaskMapper;
 import com.construction.feature.task.repository.TaskAssignRepository;
 import com.construction.feature.task.repository.TaskRepository;
 import com.construction.persistence.domain.AssignFor;
@@ -17,7 +16,6 @@ import com.construction.user.authentication.domain.AppUser;
 import com.construction.user.authentication.service.AppUserService;
 import com.construction.user.authorization.domain.ActionName;
 import lombok.AllArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -62,6 +60,12 @@ public class TaskService {
 
     public List<Task> getAll() {
         return repository.findAll();
+    }
+
+    public List<Task> getAssignedTask() {
+        return assignRepository.findAllByAppUser(context.authenticatedUser())
+                .stream().map(TaskAssign::getTask)
+                .collect(Collectors.toList());
     }
 
     public Page<Task> getAll(Pageable pageable) {

@@ -67,6 +67,13 @@ public class ProjectService {
         return repository.findAll();
     }
 
+    public List<Project> getAssigned(){
+        return assignRepository.findAllByAppUser(context.authenticatedUser())
+                .stream()
+                .map(ProjectAssign::getProject)
+                .collect(Collectors.toList());
+    }
+
     public Page<Project> getPendingForVerify(Pageable pageable) {
         var user = context.authenticatedUser();
         return repository.findPendingForVerify(user.getId(), pageable);

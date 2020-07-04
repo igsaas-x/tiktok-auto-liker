@@ -74,6 +74,18 @@ public class TaskController {
         return service.getPendingForApprove().stream().map(mapper::toDto).collect(Collectors.toList());
     }
 
+    @GetMapping("/pending/all")
+    public List<TaskDto> getPendingForAll() {
+        final var all = getPendingForVerifyTask();
+        all.addAll(getPendingForApproveTask());
+        return all;
+    }
+
+    @GetMapping("/assigned")
+    public List<TaskDto> getAssignedTask() {
+        return service.getAssignedTask().stream().map(mapper::toDto).collect(Collectors.toList());
+    }
+
     @ApiOperation("Update one data")
     @PutMapping("/{id}")
     public TaskDto update(@PathVariable Long id, @RequestBody TaskDto dto) {

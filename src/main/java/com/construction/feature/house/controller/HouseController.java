@@ -62,6 +62,11 @@ public class HouseController {
         return houseService.getAll().stream().map(mapper::toDto).collect(Collectors.toList());
     }
 
+    @GetMapping("/assigned")
+    public List<HouseDto> getAssignedHouse() {
+        return houseService.getAssigned().stream().map(mapper::toDto).collect(Collectors.toList());
+    }
+
     @GetMapping("/pending/verify")
     public List<HouseDto> getPendingForVerify(Pageable pageable) {
         filterConfig.configureFilter(ActionName.READ, "house");
