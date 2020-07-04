@@ -57,17 +57,16 @@ public class StreetController {
     @ApiOperation("Find all data")
     @GetMapping("/pending/verify")
     public Page<Street> getPendingVerify(Pageable pageable) {
-        filterConfig.configureFilter(ActionName.READ, "street");
         return service.getPendingForVerify(pageable);
     }
 
     @ApiOperation("Find approve data")
     @GetMapping("/pending/approve")
     public Page<Street> getPendingApprove(Pageable pageable) {
-        filterConfig.configureFilter(ActionName.READ, "street");
         return service.getPendingForApprove(pageable);
     }
 
+    @GetMapping("/assigned")
     public List<Street> getAssignedStreet() {
         return service.getAssignedStreet();
     }
