@@ -145,6 +145,7 @@ public class TaskService {
     public boolean unAssign(Task task, AppUser user) {
         var taskAssign = assignRepository.findByTaskAndAppUser(task, user).orElseThrow();
         taskAssign.setStatus(AssignStatus.DELETED);
+        assignRepository.save(taskAssign);
         return true;
     }
 }

@@ -1,6 +1,7 @@
 package com.construction.feature.task.dto;
 
 import com.construction.feature.task.domain.TaskBelongTo;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;
 import lombok.experimental.Accessors;
@@ -41,8 +42,12 @@ public class TaskDto {
     private String updatedBy;
     private String verifiedBy;
     private String approvedBy;
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime createdAt;
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime updatedAt;
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime verifiedAt;
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime approvedAt;
 }
