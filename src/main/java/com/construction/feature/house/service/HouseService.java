@@ -15,12 +15,14 @@ import com.construction.persistence.domain.ObjectStatus;
 import com.construction.persistence.exception.ResourceNotFoundException;
 import com.construction.persistence.service.EntityDataMapper;
 import com.construction.persistence.utils.ObjectStatusValidator;
+import com.construction.persistence.utils.SFWhere;
 import com.construction.user.authentication.service.AppUserService;
 import com.construction.user.authorization.domain.ActionName;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -59,6 +61,11 @@ public class HouseService {
         var houses = repository.findAll();
         houses.addAll(fromAssignedTask());
         return houses.stream().distinct().collect(Collectors.toList());
+    }
+
+    public ResponseEntity<Object> search(House house, Pageable pageable) {
+        Page<House> all = repository.findAll(SFWhere.and(house).build(), pageable);
+        return new ResponseEntity<>(all, HttpStatus.OK);
     }
 
     public List<House> getAssigned() {

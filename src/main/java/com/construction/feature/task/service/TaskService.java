@@ -14,12 +14,15 @@ import com.construction.persistence.domain.ObjectStatus;
 import com.construction.persistence.exception.ResourceNotFoundException;
 import com.construction.persistence.service.EntityDataMapper;
 import com.construction.persistence.utils.ObjectStatusValidator;
+import com.construction.persistence.utils.SFWhere;
 import com.construction.user.authentication.domain.AppUser;
 import com.construction.user.authentication.service.AppUserService;
 import com.construction.user.authorization.domain.ActionName;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -56,6 +59,12 @@ public class TaskService {
         return repository.findById(id).orElseThrow(() -> new ResourceNotFoundException(Task.class, id));
     }
 
+    public ResponseEntity<Object> search(Task task, Pageable pageable) {
+        Page<Task> all = repository.findAll(SFWhere.and(task)
+                .build(), pageable);
+        return new ResponseEntity<>(all, HttpStatus.OK);
+    }
+
     public List<Task> getByBoq(BOQ boq) {
         return repository.findAllByBoq(boq);
     }
@@ -81,9 +90,9 @@ public class TaskService {
         }
         switch (type) {
             case PENDING_FOR_APPROVE:
-                return repository.findPendingTask(user.getId(), "APPROVE", "VERIFIED", pageable);
+                return repository.findPendingTask(user.getId(), AssignFor.APPROVE, ObjectStatus.VERIFIED, pageable);
             case PENDING_FOR_VERIFY:
-                return repository.findPendingTask(user.getId(), "VERIFY", "OPEN", pageable);
+                return repository.findPendingTask(user.getId(), AssignFor.VERIFY, ObjectStatus.OPEN, pageable);
             case ASSIGNED:
                 return repository.findAssignedTask(user.getId(), pageable);
             case OWNED:

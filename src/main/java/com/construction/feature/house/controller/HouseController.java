@@ -14,6 +14,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
@@ -47,6 +48,12 @@ public class HouseController {
     public House findById(@PathVariable("id") Long id) {
         filterConfig.configureFilter(ActionName.READ, "house");
         return houseService.getById(id);
+    }
+
+    @GetMapping("/search")
+    public ResponseEntity<Object> search(House house, Pageable pageable) {
+        filterConfig.configureFilter(ActionName.READ, "house");
+        return houseService.search(house, pageable);
     }
 
     @ApiOperation("Find by Id")

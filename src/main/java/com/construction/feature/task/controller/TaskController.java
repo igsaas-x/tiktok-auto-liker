@@ -15,6 +15,7 @@ import io.swagger.annotations.ApiOperation;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
@@ -49,6 +50,12 @@ public class TaskController {
     public void delete(@PathVariable("id") Long id) {
         filterConfig.configureFilter(ActionName.DELETE, "task");
         service.deleteById(id);
+    }
+
+    @GetMapping("/search")
+    public ResponseEntity<Object> search(Task task, Pageable pageable) {
+        filterConfig.configureFilter(ActionName.READ, "task");
+        return service.search(task, pageable);
     }
 
     @ApiOperation("Find all data")

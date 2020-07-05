@@ -13,6 +13,7 @@ import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
@@ -39,6 +40,12 @@ public class StreetController {
     public Street findById(@PathVariable("id") Long id) {
         filterConfig.configureFilter(ActionName.READ, "street");
         return service.getById(id);
+    }
+
+    @GetMapping("/search")
+    public ResponseEntity<Object> search(Street street, Pageable pageable) {
+        filterConfig.configureFilter(ActionName.READ, "street");
+        return service.search(street, pageable);
     }
 
     @ApiOperation("Delete by Id")

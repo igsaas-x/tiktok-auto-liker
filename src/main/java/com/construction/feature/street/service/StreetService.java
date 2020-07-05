@@ -12,11 +12,14 @@ import com.construction.persistence.domain.ObjectStatus;
 import com.construction.persistence.exception.ResourceNotFoundException;
 import com.construction.persistence.service.EntityDataMapper;
 import com.construction.persistence.utils.ObjectStatusValidator;
+import com.construction.persistence.utils.SFWhere;
 import com.construction.user.authentication.service.AppUserService;
 import com.construction.user.authorization.domain.ActionName;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -51,6 +54,12 @@ public class StreetService {
 
     public Street getById(Long id) {
         return repository.findById(id).orElseThrow(() -> new ResourceNotFoundException(Street.class, id));
+    }
+
+    public ResponseEntity<Object> search(Street street, Pageable pageable) {
+        Page<Street> all = repository.findAll(SFWhere.and(street)
+                .build(), pageable);
+        return new ResponseEntity<>(all, HttpStatus.OK);
     }
 
     public List<Street> getAssignedStreet() {

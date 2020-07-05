@@ -16,15 +16,16 @@ public interface ProjectRepository extends JpaRepository<Project, Long>, JpaSpec
 
     Page<Project> findAllByCreatedBy(AppUser user, Pageable pageable);
 
-    @Query(value = "select p.* from project p, project_assign pa " +
-            "where pa.assign_for = 'VERIFY' and p.id = pa.project_id and pa.app_user_id = :userId and p.status = 'OPEN'", nativeQuery = true)
+    @Query(value = "select p from Project p, ProjectAssign pa where p.id = pa.project and pa.appUser.id = :userId " +
+            "and pa.assignFor = com.construction.persistence.domain.AssignFor.VERIFY " +
+            "and p.status = com.construction.persistence.domain.ObjectStatus.OPEN")
     Page<Project> findPendingForVerify(final Long userId, Pageable pageable);
 
-    @Query(value = "select p.* from project p, project_assign pa " +
-            "where pa.assign_for = 'APPROVE' and p.id = pa.project_id and pa.app_user_id = :userId and p.status = 'VERIFIED'", nativeQuery = true)
+    @Query(value = "select p from Project p, ProjectAssign pa where p.id = pa.project and pa.appUser.id = :userId " +
+            "and pa.assignFor = com.construction.persistence.domain.AssignFor.APPROVE " +
+            "and p.status = com.construction.persistence.domain.ObjectStatus.VERIFIED")
     Page<Project> findPendingForApprove(final Long userId, Pageable pageable);
 
-    @Query(value = "select p.* from project p, project_assign pa " +
-            "where p.id = pa.project_id and pa.app_user_id = :userId", nativeQuery = true)
+    @Query(value = "select p from Project p, ProjectAssign pa where p.id = pa.project and pa.appUser.id = :userId")
     Page<Project> findAssignedProject(final Long userId, Pageable pageable);
 }

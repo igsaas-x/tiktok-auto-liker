@@ -1,6 +1,7 @@
 package com.construction.feature.task.controller;
 
 import com.construction.feature.task.domain.BOQ;
+import com.construction.feature.task.domain.Task;
 import com.construction.feature.task.dto.BOQDto;
 import com.construction.feature.task.dto.TaskDto;
 import com.construction.feature.task.dto.TaskMapper;
@@ -14,6 +15,7 @@ import io.swagger.annotations.ApiOperation;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
@@ -41,6 +43,12 @@ public class BOQController {
     public BOQ findById(@PathVariable("id") Long id) {
         filterConfig.configureFilter(ActionName.READ, "boq");
         return service.getById(id);
+    }
+
+    @GetMapping("/search")
+    public ResponseEntity<Object> search(BOQ boq, Pageable pageable) {
+        filterConfig.configureFilter(ActionName.READ, "boq");
+        return service.search(boq, pageable);
     }
 
     @GetMapping("/{id}/tasks")

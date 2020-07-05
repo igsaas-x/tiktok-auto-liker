@@ -1,5 +1,6 @@
 package com.construction.organization.subconstructor.controller;
 
+import com.construction.feature.task.domain.Task;
 import com.construction.organization.subconstructor.domain.SubConstructor;
 import com.construction.organization.subconstructor.services.SubConstructorService;
 import com.construction.persistence.filter.FilterConfig;
@@ -7,6 +8,7 @@ import com.construction.user.authorization.domain.ActionName;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
@@ -24,6 +26,12 @@ public class SubConstructorController {
     public Page<SubConstructor> getAll(Pageable pageable) {
         filterConfig.configureFilter(ActionName.READ,"sub_constructor");
         return service.getAllAsPage(pageable);
+    }
+
+    @GetMapping("/search")
+    public ResponseEntity<Object> search(SubConstructor subConstructor, Pageable pageable) {
+        filterConfig.configureFilter(ActionName.READ, "sub_constructor");
+        return service.search(subConstructor, pageable);
     }
 
     @GetMapping
