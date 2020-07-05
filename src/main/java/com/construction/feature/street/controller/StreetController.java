@@ -1,5 +1,6 @@
 package com.construction.feature.street.controller;
 
+import com.construction.feature.FilterType;
 import com.construction.feature.street.domain.Street;
 import com.construction.feature.street.domain.StreetAssign;
 import com.construction.feature.street.service.StreetService;
@@ -51,7 +52,7 @@ public class StreetController {
     @GetMapping
     public List<Street> list() {
         filterConfig.configureFilter(ActionName.READ, "street");
-        return service.findAll();
+        return service.getAll();
     }
 
     @ApiOperation("Find all data")
@@ -73,9 +74,9 @@ public class StreetController {
 
     @ApiOperation("Pagination request")
     @GetMapping("/page")
-    public Page<Street> pageQuery(Pageable pageable) {
+    public Page<Street> pageQuery(Pageable pageable, @RequestParam FilterType filter) {
         filterConfig.configureFilter(ActionName.READ, "street");
-        return service.findAll(pageable);
+        return service.getAll(pageable, filter);
     }
 
     @ApiOperation("Update one data")

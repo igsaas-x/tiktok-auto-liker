@@ -1,5 +1,6 @@
 package com.construction.feature.task.controller;
 
+import com.construction.feature.FilterType;
 import com.construction.feature.task.domain.Task;
 import com.construction.feature.task.domain.TaskAssign;
 import com.construction.feature.task.dto.TaskDto;
@@ -59,9 +60,9 @@ public class TaskController {
 
     @ApiOperation("Pagination request")
     @GetMapping("/page")
-    public Page<Task> pageQuery(Pageable pageable) {
+    public Page<Task> pageQuery(Pageable pageable, @RequestParam FilterType filter) {
         filterConfig.configureFilter(ActionName.READ, "task");
-        return service.getAll(pageable);
+        return service.getAll(pageable, filter);
     }
 
     @GetMapping("/pending/verify")

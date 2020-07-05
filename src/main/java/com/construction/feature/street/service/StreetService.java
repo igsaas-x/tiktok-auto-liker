@@ -1,6 +1,8 @@
 package com.construction.feature.street.service;
 
 import com.construction.appconfiguration.utils.ApplicationSecurityContext;
+import com.construction.exception.UnAuthorizeException;
+import com.construction.feature.FilterType;
 import com.construction.feature.street.domain.Street;
 import com.construction.feature.street.domain.StreetAssign;
 import com.construction.feature.street.repository.StreetAssignRepository;
@@ -58,20 +60,39 @@ public class StreetService {
                 .collect(Collectors.toList());
     }
 
-    public List<Street> findAll() {
+    public List<Street> getAll() {
         return repository.findAll();
     }
 
     public Page<Street> getPendingForVerify(Pageable pageable) {
-        return repository.getPendingForVerify(context.authenticatedUser().getId(), pageable);
+        return repository.findPendingForVerify(context.authenticatedUser().getId(), pageable);
     }
 
     public Page<Street> getPendingForApprove(Pageable pageable) {
-        return repository.getPendingForApprove(context.authenticatedUser().getId(), pageable);
+        return repository.findPendingForApprove(context.authenticatedUser().getId(), pageable);
     }
 
-    public Page<Street> findAll(Pageable pageable) {
+    public Page<Street> getAll(Pageable pageable) {
         return repository.findAll(pageable);
+    }
+
+    public Page<Street> getAll(Pageable pageable, FilterType type) {
+        final var user = context.authenticatedUser();
+        if (user == null) {
+            throw new UnAuthorizeException();
+        }
+        switch (type) {
+            case PENDING_FOR_APPROVE:
+                return repository.findPendingForApprove(user.getId(), pageable);
+            case PENDING_FOR_VERIFY:
+                return repository.findPendingForVerify(user.getId(), pageable);
+            case ASSIGNED:
+                return repository.findAssignedStreet(user.getId(), pageable);
+            case OWNED:
+                return repository.findAllByCreatedBy(user, pageable);
+            default:
+                return repository.findAll(pageable);
+        }
     }
 
     public Street update(Long id, final Street street) {

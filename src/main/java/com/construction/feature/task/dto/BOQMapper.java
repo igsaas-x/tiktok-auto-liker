@@ -40,9 +40,12 @@ public class BOQMapper implements DtoMapper<BOQDto, BOQ> {
     @Override
     public BOQDto toDto(BOQ entity) {
         var dto = new BOQDto()
-                .setCreatedBy(entity.getCreatedBy().getUserName())
-                .setUpdatedBy(entity.getUpdatedBy().getUserName())
+                .setCreatedBy(entity.getCreatedBy() == null ? null : entity.getCreatedBy().getUserName())
+                .setUpdatedBy(entity.getUpdatedBy() == null ? null : entity.getUpdatedBy().getUserName())
                 .setCode(entity.getCode())
+                .setCreatedAt(entity.getCreatedAt())
+                .setUpdatedAt(entity.getUpdatedAt())
+                .setStatus(entity.getStatus())
                 .setDetails(entity.getDetails());
         if (entity.getProject() != null) {
             dto.setProjectId(entity.getProject().getId());

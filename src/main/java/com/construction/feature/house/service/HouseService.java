@@ -1,6 +1,8 @@
 package com.construction.feature.house.service;
 
 import com.construction.appconfiguration.utils.ApplicationSecurityContext;
+import com.construction.exception.UnAuthorizeException;
+import com.construction.feature.FilterType;
 import com.construction.feature.house.domain.House;
 import com.construction.feature.house.domain.HouseAssign;
 import com.construction.feature.house.repository.HouseAssignRepository;
@@ -87,6 +89,25 @@ public class HouseService {
 
     public Page<House> getAll(Pageable pageable) {
         return repository.findAll(pageable);
+    }
+
+    public Page<House> getAll(Pageable pageable, FilterType type) {
+        final var user = context.authenticatedUser();
+        if (user == null) {
+            throw new UnAuthorizeException();
+        }
+        switch (type) {
+            case PENDING_FOR_APPROVE:
+                return repository.findPendingForApprove(user.getId(), pageable);
+            case PENDING_FOR_VERIFY:
+                return repository.findPendingForVerify(user.getId(), pageable);
+            case ASSIGNED:
+                return repository.findAssignedHouse(user.getId(), pageable);
+            case OWNED:
+                return repository.findAllByCreatedBy(user, pageable);
+            default:
+                return repository.findAll(pageable);
+        }
     }
 
     public House updateById(Long id, House source) {

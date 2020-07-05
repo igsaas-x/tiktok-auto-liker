@@ -1,5 +1,6 @@
 package com.construction.feature.project.controllers;
 
+import com.construction.feature.FilterType;
 import com.construction.feature.project.domain.Project;
 import com.construction.feature.project.domain.ProjectAssign;
 import com.construction.feature.project.services.ProjectService;
@@ -34,9 +35,20 @@ public class ProjectController {
     }
 
     @GetMapping("/page")
-    public Page<Project> getAllProject(Pageable pageable) {
+    public Page<Project> getAllProject(Pageable pageable, @RequestParam FilterType filter) {
         filterConfig.configureFilter(ActionName.READ, "project");
-        return service.getAll(pageable);
+        switch (filter) {
+            case PENDING_FOR_VERIFY:
+                return service.getPendingForVerify(pageable);
+            case PENDING_FOR_APPROVE:
+                return service.getPendingForApprove(pageable);
+            case OWNED:
+                return service.getMyObject(pageable);
+            case ASSIGNED:
+                return service.getAssigned(pageable);
+            default:
+                return service.getAll(pageable);
+        }
     }
 
     @GetMapping
@@ -46,8 +58,8 @@ public class ProjectController {
     }
 
     @GetMapping("/assigned")
-    public List<Project> getAssignedProject() {
-        return service.getAssigned();
+    public Page<Project> getAssignedProject(Pageable pageable) {
+        return service.getAssigned(pageable);
     }
 
     @GetMapping("/{id}")
@@ -72,6 +84,12 @@ public class ProjectController {
     void delete(@PathVariable Long id) {
         filterConfig.configureFilter(ActionName.DELETE, "project");
         service.delete(id);
+    }
+
+    @DeleteMapping("/batch")
+    void deleteAll(@RequestBody IdList ids) {
+        filterConfig.configureFilter(ActionName.DELETE, "project");
+        ids.getIds().forEach(service::delete);
     }
 
     @GetMapping("/pending/verify")

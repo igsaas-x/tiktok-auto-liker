@@ -1,5 +1,6 @@
 package com.construction.feature.house.controller;
 
+import com.construction.feature.FilterType;
 import com.construction.feature.house.domain.House;
 import com.construction.feature.house.domain.HouseAssign;
 import com.construction.feature.house.dto.HouseDto;
@@ -81,9 +82,9 @@ public class HouseController {
 
     @ApiOperation("Pagination request")
     @GetMapping("/page")
-    public Page<House> pageQuery(Pageable pageable) {
+    public Page<House> pageQuery(Pageable pageable, @RequestParam FilterType filter) {
         filterConfig.configureFilter(ActionName.READ, "house");
-        return houseService.getAll(pageable);
+        return houseService.getAll(pageable, filter);
     }
 
     @ApiOperation("Update one data")

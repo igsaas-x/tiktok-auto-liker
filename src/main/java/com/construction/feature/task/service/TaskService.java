@@ -1,6 +1,8 @@
 package com.construction.feature.task.service;
 
 import com.construction.appconfiguration.utils.ApplicationSecurityContext;
+import com.construction.exception.UnAuthorizeException;
+import com.construction.feature.FilterType;
 import com.construction.feature.task.domain.BOQ;
 import com.construction.feature.task.domain.Task;
 import com.construction.feature.task.domain.TaskAssign;
@@ -72,12 +74,31 @@ public class TaskService {
         return repository.findAll(pageable);
     }
 
+    public Page<Task> getAll(Pageable pageable, FilterType type) {
+        final var user = context.authenticatedUser();
+        if (user == null) {
+            throw new UnAuthorizeException();
+        }
+        switch (type) {
+            case PENDING_FOR_APPROVE:
+                return repository.findPendingTask(user.getId(), "APPROVE", "VERIFIED", pageable);
+            case PENDING_FOR_VERIFY:
+                return repository.findPendingTask(user.getId(), "VERIFY", "OPEN", pageable);
+            case ASSIGNED:
+                return repository.findAssignedTask(user.getId(), pageable);
+            case OWNED:
+                return repository.findAllByCreatedBy(user, pageable);
+            default:
+                return repository.findAll(pageable);
+        }
+    }
+
     public List<Task> getPendingForVerify() {
-        return repository.getPendingTask(context.authenticatedUser().getId(), AssignFor.VERIFY.name(), ObjectStatus.OPEN.name());
+        return repository.findPendingTask(context.authenticatedUser().getId(), AssignFor.VERIFY.name(), ObjectStatus.OPEN.name());
     }
 
     public List<Task> getPendingForApprove() {
-        return repository.getPendingTask(context.authenticatedUser().getId(), AssignFor.APPROVE.name(), ObjectStatus.VERIFIED.name());
+        return repository.findPendingTask(context.authenticatedUser().getId(), AssignFor.APPROVE.name(), ObjectStatus.VERIFIED.name());
     }
 
     public Task updateById(Long id, Task task) {

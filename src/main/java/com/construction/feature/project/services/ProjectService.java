@@ -63,15 +63,16 @@ public class ProjectService {
         return repository.findAll(pageable);
     }
 
+    public Page<Project> getMyObject(Pageable pageable) {
+        return repository.findAllByCreatedBy(context.authenticatedUser(), pageable);
+    }
+
     public List<Project> getAll() {
         return repository.findAll();
     }
 
-    public List<Project> getAssigned(){
-        return assignRepository.findAllByAppUser(context.authenticatedUser())
-                .stream()
-                .map(ProjectAssign::getProject)
-                .collect(Collectors.toList());
+    public Page<Project> getAssigned(Pageable pageable) {
+        return repository.findAssignedProject(context.authenticatedUser().getId(), pageable);
     }
 
     public Page<Project> getPendingForVerify(Pageable pageable) {
