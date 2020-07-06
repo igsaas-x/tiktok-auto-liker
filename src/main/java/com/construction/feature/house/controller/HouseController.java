@@ -94,6 +94,12 @@ public class HouseController {
         return houseService.getAll(pageable, filter);
     }
 
+    @GetMapping("/pending/all")
+    public Page<House> getAllPending(Pageable pageable) {
+        filterConfig.configureFilter(ActionName.READ, "house");
+        return houseService.getAllPending(pageable);
+    }
+
     @ApiOperation("Update one data")
     @PutMapping("/update/{id}")
     public House update(@PathVariable Long id, @RequestBody HouseDto dto) {

@@ -102,6 +102,16 @@ public class TaskService {
         }
     }
 
+    public Page<Task> getAllPending(Pageable pageable) {
+        final var user = context.authenticatedUser();
+        if (user == null) {
+            throw new UnAuthorizeException();
+        }
+        return repository.findAllPendingTask(user.getId(),
+                AssignFor.APPROVE, ObjectStatus.VERIFIED,
+                AssignFor.VERIFY, ObjectStatus.OPEN, pageable);
+    }
+
     public List<Task> getPendingForVerify() {
         return repository.findPendingTask(context.authenticatedUser().getId(), AssignFor.VERIFY.name(), ObjectStatus.OPEN.name());
     }

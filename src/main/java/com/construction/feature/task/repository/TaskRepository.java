@@ -31,6 +31,15 @@ public interface TaskRepository extends JpaRepository<Task, Long>, JpaSpecificat
                                @Param("assignFor") AssignFor assignFor,
                                @Param("status") ObjectStatus status, Pageable pageable);
 
+    @Query(value = "select p from Task p, TaskAssign pa where p.id = pa.task and pa.appUser.id = :userId " +
+            "and ((pa.assignFor = :assignFor and p.status = :status) " +
+            "or (pa.assignFor = :assignFor1 and p.status = :status1))")
+    Page<Task> findAllPendingTask(@Param("userId") Long userId,
+                               @Param("assignFor") AssignFor assignFor,
+                               @Param("status") ObjectStatus status,
+                               @Param("assignFor1") AssignFor assignFor1,
+                               @Param("status1") ObjectStatus status1, Pageable pageable);
+
     @Query(value = "select p from Task p, TaskAssign pa where p.id = pa.task and pa.appUser.id = :userId")
     Page<Task> findAssignedTask(Long userId, Pageable pageable);
 }

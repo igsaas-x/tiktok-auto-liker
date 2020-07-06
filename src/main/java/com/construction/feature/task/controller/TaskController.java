@@ -72,6 +72,12 @@ public class TaskController {
         return service.getAll(pageable, filter);
     }
 
+    @GetMapping("/page/pending/all")
+    public Page<Task> getAllPendingTask(Pageable pageable) {
+        filterConfig.configureFilter(ActionName.READ, "task");
+        return service.getAllPending(pageable);
+    }
+
     @GetMapping("/pending/verify")
     public List<TaskDto> getPendingForVerifyTask() {
         return service.getPendingForVerify().stream().map(mapper::toDto).collect(Collectors.toList());

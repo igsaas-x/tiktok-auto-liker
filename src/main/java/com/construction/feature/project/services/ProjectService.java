@@ -85,6 +85,10 @@ public class ProjectService {
         return repository.findPendingForApprove(user.getId(), pageable);
     }
 
+    public Page<Project> getAllPending(Pageable pageable) {
+        return repository.findAllPending(context.authenticatedUser().getId(), pageable);
+    }
+
     public Project getById(Long id) {
         return repository.findById(id).orElseThrow();
     }

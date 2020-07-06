@@ -81,6 +81,10 @@ public class StreetService {
         return repository.findPendingForApprove(context.authenticatedUser().getId(), pageable);
     }
 
+    public Page<Street> getAllPending(Pageable pageable) {
+        return repository.findAllPending(context.authenticatedUser().getId(), pageable);
+    }
+
     public Page<Street> getAll(Pageable pageable) {
         return repository.findAll(pageable);
     }

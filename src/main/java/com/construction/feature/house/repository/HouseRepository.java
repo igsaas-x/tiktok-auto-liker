@@ -36,6 +36,13 @@ public interface HouseRepository extends JpaRepository<House, Long>, JpaSpecific
             "and p.status = com.construction.persistence.domain.ObjectStatus.VERIFIED")
     Page<House> findPendingForApprove(final Long userId, Pageable pageable);
 
+    @Query(value = "select p from House p, HouseAssign pa where p.id = pa.house and pa.appUser.id = :userId " +
+            "and ((pa.assignFor = com.construction.persistence.domain.AssignFor.VERIFY " +
+            "and p.status = com.construction.persistence.domain.ObjectStatus.OPEN) or " +
+            "(pa.assignFor = com.construction.persistence.domain.AssignFor.APPROVE " +
+            "and p.status = com.construction.persistence.domain.ObjectStatus.VERIFIED))")
+    Page<House> findAllPending(final Long userId, Pageable pageable);
+
     @Query(value = "select p from House p, HouseAssign pa where p.id = pa.house and pa.appUser.id = :userId")
     Page<House> findAssignedHouse(final Long userId, Pageable pageable);
 }

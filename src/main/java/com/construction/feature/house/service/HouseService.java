@@ -83,6 +83,10 @@ public class HouseService {
         return repository.findPendingForApprove(context.authenticatedUser().getId());
     }
 
+    public Page<House> getAllPending(Pageable pageable) {
+        return repository.findAllPending(context.authenticatedUser().getId(), pageable);
+    }
+
     private List<House> fromAssignedTask() {
         var user = context.authenticatedUser();
         if (user == null) throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);

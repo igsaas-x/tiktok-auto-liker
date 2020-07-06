@@ -104,6 +104,12 @@ public class ProjectController {
         return service.getPendingForApprove(pageable);
     }
 
+    @GetMapping("/pending/all")
+    public Page<Project> getAllPending(Pageable pageable) {
+        filterConfig.configureFilter(ActionName.READ, "project");
+        return service.getAllPending(pageable);
+    }
+
     @PostMapping("/{id}/verify")
     @PreAuthorize("hasAuthority('VERIFY_ALL_PROJECT') or hasAuthority('VERIFY_ASSIGNED_PROJECT')")
     public Project verify(@PathVariable Long id) {

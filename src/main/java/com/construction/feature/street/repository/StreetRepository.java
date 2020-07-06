@@ -24,6 +24,13 @@ public interface StreetRepository extends JpaRepository<Street, Long>, JpaSpecif
             "and p.status = com.construction.persistence.domain.ObjectStatus.VERIFIED")
     Page<Street> findPendingForApprove(Long userId, Pageable pageable);
 
+    @Query(value = "select p from Street p, StreetAssign pa where p.id = pa.street and pa.appUser.id = :userId " +
+            "and ((pa.assignFor = com.construction.persistence.domain.AssignFor.VERIFY " +
+            "and p.status = com.construction.persistence.domain.ObjectStatus.OPEN) " +
+            "or (pa.assignFor = com.construction.persistence.domain.AssignFor.APPROVE " +
+            "and p.status = com.construction.persistence.domain.ObjectStatus.VERIFIED))")
+    Page<Street> findAllPending(Long userId, Pageable pageable);
+
     @Query(value = "select p from Street p, StreetAssign pa where p.id = pa.street and pa.appUser.id = :userId")
     Page<Street> findAssignedStreet(Long userId, Pageable pageable);
 }
