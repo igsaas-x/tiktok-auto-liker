@@ -142,6 +142,14 @@ public class TaskController {
         return service.assign(id, userId, assignFor);
     }
 
+    @PostMapping("/batch/assign/{userId}")
+    @PreAuthorize("hasAuthority('ASSIGN_ALL_TASK') or hasAuthority('ASSIGN_ASSIGNED_TASK')")
+    public boolean assignAll(@RequestBody IdList ids, @PathVariable Long userId, @RequestParam AssignFor assignFor) {
+        filterConfig.configureFilter(ActionName.ASSIGN, "task");
+        ids.getIds().forEach(id -> service.assign(id, userId, assignFor));
+        return true;
+    }
+
     @PostMapping("/{id}/unassign/{userId}")
     @PreAuthorize("hasAuthority('ASSIGN_ALL_TASK') or hasAuthority('ASSIGN_ASSIGNED_TASK')")
     public boolean unAssign(@PathVariable Long id, @PathVariable Long userId) {

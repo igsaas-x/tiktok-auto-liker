@@ -145,6 +145,14 @@ public class ProjectController {
         return service.assign(id, userId, assignFor);
     }
 
+    @PostMapping("/batch/assign/{userId}")
+    @PreAuthorize("hasAuthority('ASSIGN_ALL_PROJECT') or hasAuthority('ASSIGN_ASSIGNED_PROJECT')")
+    public boolean assignAllProject(@RequestBody IdList ids, @PathVariable Long userId, @RequestParam AssignFor assignFor) {
+        filterConfig.configureFilter(ActionName.ASSIGN, "project");
+        ids.getIds().forEach(id -> service.assign(id, userId, assignFor));
+        return true;
+    }
+
     @PostMapping("/{id}/unassign/{userId}")
     @PreAuthorize("hasAuthority('ASSIGN_ALL_PROJECT') or hasAuthority('ASSIGN_ASSIGNED_PROJECT')")
     public boolean unAssignProject(@PathVariable Long id, @PathVariable Long userId) {

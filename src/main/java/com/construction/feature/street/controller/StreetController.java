@@ -108,6 +108,14 @@ public class StreetController {
         return service.assign(id, userId, assignFor);
     }
 
+    @PostMapping("/batch/assign/{userId}")
+    @PreAuthorize("hasAuthority('ASSIGN_ALL_STREET') or hasAuthority('ASSIGN_ASSIGNED_STREET')")
+    public boolean assignAll(@RequestBody IdList ids, @PathVariable Long userId, @RequestParam AssignFor assignFor) {
+        filterConfig.configureFilter(ActionName.ASSIGN, "street");
+        ids.getIds().forEach(id -> service.assign(id, userId, assignFor));
+        return true;
+    }
+
     @PostMapping("/{id}/unassign/{userId}")
     @PreAuthorize("hasAuthority('ASSIGN_ALL_STREET') or hasAuthority('ASSIGN_ASSIGNED_STREET')")
     public void unAssign(@PathVariable Long id, @PathVariable Long userId) {

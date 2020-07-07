@@ -122,6 +122,14 @@ public class HouseController {
         return houseService.assign(id, userId, assignFor);
     }
 
+    @PostMapping("/batch/assign/{userId}")
+    @PreAuthorize("hasAuthority('ASSIGN_ALL_HOUSE') or hasAuthority('ASSIGN_ASSIGNED_HOUSE')")
+    public boolean assignAll(@RequestBody IdList ids, @PathVariable Long userId, @RequestParam AssignFor assignFor) {
+        filterConfig.configureFilter(ActionName.VERIFY, "house");
+        ids.getIds().forEach(id -> houseService.assign(id, userId, assignFor));
+        return true;
+    }
+
     @PostMapping("/{id}/unassign/{userId}")
     @PreAuthorize("hasAuthority('ASSIGN_ALL_HOUSE') or hasAuthority('ASSIGN_ASSIGNED_HOUSE')")
     public void unAssign(@PathVariable Long id, @PathVariable Long userId) {
