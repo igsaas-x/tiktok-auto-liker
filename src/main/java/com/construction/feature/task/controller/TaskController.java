@@ -5,8 +5,10 @@ import com.construction.feature.task.domain.Task;
 import com.construction.feature.task.domain.TaskAssign;
 import com.construction.feature.task.dto.TaskDto;
 import com.construction.feature.task.dto.TaskMapper;
+import com.construction.feature.task.service.TaskAssignService;
 import com.construction.feature.task.service.TaskService;
 import com.construction.persistence.domain.AssignFor;
+import com.construction.persistence.dto.AssignedDto;
 import com.construction.persistence.dto.IdList;
 import com.construction.persistence.filter.FilterConfig;
 import com.construction.user.authorization.domain.ActionName;
@@ -31,6 +33,7 @@ public class TaskController {
     private final TaskService service;
     private final FilterConfig filterConfig;
     private final TaskMapper mapper;
+    private final TaskAssignService assignService;
 
     @ApiOperation("Add new data")
     @PostMapping
@@ -155,5 +158,11 @@ public class TaskController {
     public boolean unAssign(@PathVariable Long id, @PathVariable Long userId) {
         filterConfig.configureFilter(ActionName.ASSIGN, "task");
         return service.unAssign(id, userId);
+    }
+
+    @GetMapping("/{id}/assigned/user")
+    public List<AssignedDto> getAssignedUser(@PathVariable Long id) {
+        filterConfig.configureFilter(ActionName.READ, "task");
+        return assignService.getAssignedUser(id);
     }
 }

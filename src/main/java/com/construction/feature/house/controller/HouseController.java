@@ -5,13 +5,17 @@ import com.construction.feature.house.domain.House;
 import com.construction.feature.house.domain.HouseAssign;
 import com.construction.feature.house.dto.HouseDto;
 import com.construction.feature.house.dto.HouseMapper;
+import com.construction.feature.house.service.HouseAssignService;
 import com.construction.feature.house.service.HouseService;
 import com.construction.persistence.domain.AssignFor;
+import com.construction.persistence.dto.AssignedDto;
 import com.construction.persistence.dto.IdList;
 import com.construction.persistence.filter.FilterConfig;
+import com.construction.user.authentication.domain.AppUser;
 import com.construction.user.authorization.domain.ActionName;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
@@ -24,17 +28,13 @@ import java.util.stream.Collectors;
 @RequestMapping("/house")
 @RestController
 @Api(tags = "House API")
+@RequiredArgsConstructor
 public class HouseController {
 
     private final FilterConfig filterConfig;
     private final HouseService houseService;
+    private final HouseAssignService houseAssignService;
     private final HouseMapper mapper;
-
-    public HouseController(FilterConfig filterConfig, HouseService houseService, HouseMapper mapper) {
-        this.filterConfig = filterConfig;
-        this.houseService = houseService;
-        this.mapper = mapper;
-    }
 
     @ApiOperation("Add new data")
     @PostMapping
@@ -156,5 +156,11 @@ public class HouseController {
     public List<HouseDto> approveAll(@RequestBody IdList ids) {
         filterConfig.configureFilter(ActionName.APPROVE, "house");
         return houseService.approveAll(ids.getIds()).stream().map(mapper::toDto).collect(Collectors.toList());
+    }
+
+    @GetMapping("/{id}/assigned/user")
+    public List<AssignedDto> getAssignedUser(@PathVariable Long id) {
+        filterConfig.configureFilter(ActionName.READ, "house");
+        return houseAssignService.getAssignedUser(id);
     }
 }

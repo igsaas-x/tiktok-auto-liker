@@ -10,6 +10,6 @@ import java.util.Optional;
 
 public interface TaskAssignRepository extends JpaRepository<TaskAssign, Long> {
     Optional<TaskAssign> findByTaskAndAppUser(Task task, AppUser user);
-
+    List<TaskAssign> findAllByTask(Task task);
     List<TaskAssign> findAllByAppUser(AppUser user);
 }

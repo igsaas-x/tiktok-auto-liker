@@ -12,4 +12,5 @@ import java.util.Optional;
 public interface ProjectAssignRepository extends JpaRepository<ProjectAssign, Long> {
     Optional<ProjectAssign> findByProjectAndAppUser(Project project, AppUser appUser);
     List<ProjectAssign> findAllByAppUser(final AppUser appUser);
+    List<ProjectAssign> findAllByProject(final Project project);
 }

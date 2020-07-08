@@ -3,13 +3,17 @@ package com.construction.feature.street.controller;
 import com.construction.feature.FilterType;
 import com.construction.feature.street.domain.Street;
 import com.construction.feature.street.domain.StreetAssign;
+import com.construction.feature.street.service.StreetAssignService;
 import com.construction.feature.street.service.StreetService;
 import com.construction.persistence.domain.AssignFor;
+import com.construction.persistence.dto.AssignedDto;
 import com.construction.persistence.dto.IdList;
 import com.construction.persistence.filter.FilterConfig;
+import com.construction.user.authentication.domain.AppUser;
 import com.construction.user.authorization.domain.ActionName;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -22,12 +26,12 @@ import java.util.List;
 @RequestMapping("/street")
 @RestController
 @Api(tags = "Street API")
+@RequiredArgsConstructor
 public class StreetController {
 
-    @Autowired
-    private StreetService service;
-    @Autowired
-    private FilterConfig filterConfig;
+    private final StreetService service;
+    private final FilterConfig filterConfig;
+    private final StreetAssignService assignService;
 
     @ApiOperation("Add new data")
     @PostMapping
@@ -149,5 +153,11 @@ public class StreetController {
     public List<Street> approveAll(@RequestBody IdList ids) {
         filterConfig.configureFilter(ActionName.APPROVE, "street");
         return service.approveAll(ids.getIds());
+    }
+
+    @GetMapping("/{id}/assigned/user")
+    public List<AssignedDto> getAssignedUser(@PathVariable Long id) {
+        filterConfig.configureFilter(ActionName.READ, "street");
+        return assignService.getAssignedUser(id);
     }
 }

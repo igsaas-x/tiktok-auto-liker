@@ -1,5 +1,6 @@
 package com.construction.feature.house.repository;
 
+import com.construction.feature.house.domain.House;
 import com.construction.feature.house.domain.HouseAssign;
 import com.construction.user.authentication.domain.AppUser;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -10,4 +11,5 @@ import java.util.Optional;
 public interface HouseAssignRepository extends JpaRepository<HouseAssign, Long> {
     Optional<HouseAssign> findByHouseIdAndAppUserId(Long houseId, Long appUserId);
     List<HouseAssign> findAllByAppUser(final AppUser appUser);
+    List<HouseAssign> findAllByHouse(final House house);
 }

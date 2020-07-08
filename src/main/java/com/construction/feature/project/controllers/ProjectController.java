@@ -3,11 +3,15 @@ package com.construction.feature.project.controllers;
 import com.construction.feature.FilterType;
 import com.construction.feature.project.domain.Project;
 import com.construction.feature.project.domain.ProjectAssign;
+import com.construction.feature.project.services.ProjectAssignService;
 import com.construction.feature.project.services.ProjectService;
 import com.construction.persistence.domain.AssignFor;
+import com.construction.persistence.dto.AssignedDto;
 import com.construction.persistence.dto.IdList;
 import com.construction.persistence.filter.FilterConfig;
+import com.construction.user.authentication.domain.AppUser;
 import com.construction.user.authorization.domain.ActionName;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
@@ -18,15 +22,12 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/project")
+@RequiredArgsConstructor
 public class ProjectController {
 
     private final ProjectService service;
     private final FilterConfig filterConfig;
-
-    public ProjectController(ProjectService service, FilterConfig filterConfig) {
-        this.service = service;
-        this.filterConfig = filterConfig;
-    }
+    private final ProjectAssignService assignService;
 
     @GetMapping("/search")
     public ResponseEntity<Object> search(Project project, Pageable pageable) {
@@ -158,5 +159,11 @@ public class ProjectController {
     public boolean unAssignProject(@PathVariable Long id, @PathVariable Long userId) {
         filterConfig.configureFilter(ActionName.ASSIGN, "project");
         return service.unAssign(id, userId);
+    }
+
+    @GetMapping("/{id}/assigned/user")
+    public List<AssignedDto> getAssignedUser(@PathVariable Long id) {
+        filterConfig.configureFilter(ActionName.READ, "project");
+        return assignService.getAssignedUser(id);
     }
 }
