@@ -2,14 +2,18 @@ package com.construction.persistence.dto;
 
 import com.construction.persistence.domain.AssignEntity;
 import com.construction.persistence.domain.AssignFor;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 
 import java.time.LocalDateTime;
+
+import static com.construction.persistence.dto.LocalDateFormat.DATE_FORMAT;
 
 @Data
 public class AssignedDto {
     private Long userId;
     private String userName;
+    @JsonFormat(pattern = DATE_FORMAT)
     private LocalDateTime createdAt;
     private AssignFor assignFor;
 
