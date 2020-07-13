@@ -49,11 +49,18 @@ public class TaskController {
         return mapper.toDto(service.getById(id));
     }
 
-    @ApiOperation("Find by Id")
+    @ApiOperation("Delete by Id")
     @DeleteMapping("/{id}")
     public void delete(@PathVariable("id") Long id) {
         filterConfig.configureFilter(ActionName.DELETE, "task");
         service.deleteById(id);
+    }
+
+    @ApiOperation("Delete batch by Id")
+    @DeleteMapping
+    public void deleteAll(@RequestBody IdList ids) {
+        filterConfig.configureFilter(ActionName.DELETE, "task");
+        ids.getIds().forEach(service::deleteById);
     }
 
     @GetMapping("/search")
@@ -69,7 +76,7 @@ public class TaskController {
         return service.getAll().stream().map(mapper::toDto).collect(Collectors.toList());
     }
 
-    @ApiOperation("List of task with sub task for beloved brother `Phally` best developer ever")
+    @ApiOperation("List of task with sub task for beloved brother `Phally`")
     @GetMapping("/all-with-sub")
     public List<TaskData> getAll() {
         filterConfig.configureFilter(ActionName.READ, "task");
