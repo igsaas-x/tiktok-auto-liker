@@ -3,6 +3,7 @@ package com.construction.feature.task.controller;
 import com.construction.feature.FilterType;
 import com.construction.feature.task.domain.Task;
 import com.construction.feature.task.domain.TaskAssign;
+import com.construction.feature.task.dto.TaskData;
 import com.construction.feature.task.dto.TaskDto;
 import com.construction.feature.task.dto.TaskMapper;
 import com.construction.feature.task.service.TaskAssignService;
@@ -66,6 +67,13 @@ public class TaskController {
     public List<TaskDto> list() {
         filterConfig.configureFilter(ActionName.READ, "task");
         return service.getAll().stream().map(mapper::toDto).collect(Collectors.toList());
+    }
+
+    @ApiOperation("List of task with sub task for beloved brother `Phally` best developer ever")
+    @GetMapping("/all-with-sub")
+    public List<TaskData> getAll() {
+        filterConfig.configureFilter(ActionName.READ, "task");
+        return service.getAllAsData();
     }
 
     @ApiOperation("Pagination request")

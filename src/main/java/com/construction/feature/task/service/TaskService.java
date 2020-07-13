@@ -6,7 +6,9 @@ import com.construction.feature.FilterType;
 import com.construction.feature.task.domain.BOQ;
 import com.construction.feature.task.domain.Task;
 import com.construction.feature.task.domain.TaskAssign;
+import com.construction.feature.task.dto.TaskData;
 import com.construction.feature.task.repository.TaskAssignRepository;
+import com.construction.feature.task.repository.TaskDataRepository;
 import com.construction.feature.task.repository.TaskRepository;
 import com.construction.persistence.domain.AssignFor;
 import com.construction.persistence.domain.AssignStatus;
@@ -41,6 +43,7 @@ public class TaskService {
     private final ApplicationSecurityContext context;
     private final AppUserService userService;
     private final TaskAssignRepository assignRepository;
+    private final TaskDataRepository taskDataRepository;
 
     public Task save(Task task) {
         return repository.save(task);
@@ -81,6 +84,10 @@ public class TaskService {
 
     public Page<Task> getAll(Pageable pageable) {
         return repository.findAll(pageable);
+    }
+
+    public List<TaskData> getAllAsData() {
+        return taskDataRepository.findAll();
     }
 
     public Page<Task> getAll(Pageable pageable, FilterType type) {

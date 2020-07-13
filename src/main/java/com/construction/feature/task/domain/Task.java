@@ -5,7 +5,6 @@ import com.construction.feature.project.domain.Project;
 import com.construction.feature.street.domain.Street;
 import com.construction.persistence.domain.AuditingEntity;
 import com.construction.persistence.exception.ValidationErrorException;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -13,7 +12,6 @@ import org.hibernate.annotations.Filter;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
-import java.util.List;
 
 @Entity
 @Getter
@@ -47,11 +45,6 @@ public class Task extends AuditingEntity {
     @ManyToOne
     @JoinColumn(name = "parent_id")
     private Task parent;
-
-    @OneToMany(fetch = FetchType.LAZY)
-    @JsonIgnore
-    @JoinColumn(name = "parent_id")
-    private List<Task> child;
 
     private boolean firstLevel;
 
