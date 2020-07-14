@@ -11,6 +11,7 @@ import lombok.experimental.FieldDefaults;
 import org.hibernate.annotations.Filter;
 
 import javax.persistence.*;
+import java.math.BigDecimal;
 
 @Entity
 @Getter
@@ -26,6 +27,10 @@ public class PaymentRequest extends SimpleAuditingEntity {
     Task task;
 
     String description;
+
+    BigDecimal requestAmount;
+
+    BigDecimal approvedAmount;
 
     @ManyToOne
     @JoinColumn

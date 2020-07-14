@@ -31,7 +31,6 @@ import javax.persistence.Entity;
 @Filter(name = "readableObjectFilter")
 public class Project extends AuditingEntity {
 
-    @Column(nullable = false)
     private String objectType;
 
     @Column(nullable = false)
