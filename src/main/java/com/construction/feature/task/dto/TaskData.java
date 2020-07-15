@@ -23,4 +23,5 @@ public class TaskData extends EntityData {
     @OneToMany
     @JoinColumn(name = "parent_id")
     private List<TaskData> child;
+    private boolean firstLevel;
 }

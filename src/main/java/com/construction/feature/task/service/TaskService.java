@@ -87,7 +87,7 @@ public class TaskService {
     }
 
     public List<TaskData> getAllAsData() {
-        return taskDataRepository.findAll();
+        return taskDataRepository.findAllByFirstLevel(true);
     }
 
     public Page<Task> getAll(Pageable pageable, FilterType type) {
