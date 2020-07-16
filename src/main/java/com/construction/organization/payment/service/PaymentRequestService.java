@@ -48,6 +48,10 @@ public class PaymentRequestService {
         return repository.findById(id).orElseThrow(() -> new ResourceNotFoundException(PaymentRequest.class, id));
     }
 
+    public List<PaymentRequest> getBySubConstructorId(final Long id){
+        return repository.findAllBySubConstructorId(id);
+    }
+
     public List<PaymentRequest> findAll() {
         return repository.findAll();
     }

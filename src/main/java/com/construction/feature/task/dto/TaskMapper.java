@@ -68,6 +68,8 @@ public class TaskMapper implements DtoMapper<TaskDto, Task> {
                 .setTotalPrice(entity.getTotalPrice())
                 .setUnit(entity.getUnit())
                 .setUnitPrice(entity.getUnitPrice())
+                .setActualPrice(entity.getActualPrice())
+                .setTotalPrice(entity.getTotalPrice())
                 .setFloor(entity.getFloor())
                 .setTypeOfWork(entity.getTypeOfWork())
                 .setQuantity(entity.getQuantity())

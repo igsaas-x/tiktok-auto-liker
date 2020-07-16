@@ -55,6 +55,12 @@ public class PaymentRequestController {
         return service.getById(id);
     }
 
+    @GetMapping("/sub-constructor/{id}")
+    public List<PaymentRequest> findBySubConstructorId(@PathVariable("id") Long id){
+        filterConfig.configureFilter(ActionName.READ, "payment");
+        return service.getBySubConstructorId(id);
+    }
+
     @ApiOperation("delete by Id")
     @DeleteMapping("/{id}")
     public void delete(@PathVariable("id") Long id) {
