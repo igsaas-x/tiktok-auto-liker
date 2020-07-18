@@ -41,6 +41,12 @@ public class SubConstructorController {
         return service.getAll();
     }
 
+    @GetMapping("/{id}")
+    public SubConstructor getById(@PathVariable final Long id) {
+        filterConfig.configureFilter(ActionName.READ, "sub_constructor");
+        return service.getById(id);
+    }
+
     @PostMapping
     @PreAuthorize("hasAuthority('CREATE_ALL_PAYMENT')")
     public SubConstructor create(@RequestBody SubConstructor subConstructor) {
