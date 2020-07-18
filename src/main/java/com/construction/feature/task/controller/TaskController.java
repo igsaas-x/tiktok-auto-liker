@@ -120,9 +120,9 @@ public class TaskController {
 
     @ApiOperation("Update one data")
     @PutMapping("/{id}")
-    public TaskDto update(@PathVariable Long id, @RequestBody TaskDto dto) {
+    public Task update(@PathVariable Long id, @RequestBody TaskDto dto) {
         filterConfig.configureFilter(ActionName.UPDATE, "task");
-        return mapper.toDto(service.updateById(id, mapper.toEntity(dto)));
+        return service.updateById(id, mapper.toEntity(dto));
     }
 
     @PostMapping("/{id}/verify")
