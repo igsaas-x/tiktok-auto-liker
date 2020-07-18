@@ -1,8 +1,7 @@
 package com.construction.organization.subconstructor.services;
 
 import com.construction.appconfiguration.utils.ApplicationSecurityContext;
-import com.construction.feature.project.domain.Project;
-import com.construction.feature.street.domain.Street;
+import com.construction.feature.FilterType;
 import com.construction.organization.subconstructor.domain.SubConstructor;
 import com.construction.organization.subconstructor.repository.SubConstructorRepository;
 import com.construction.persistence.domain.ObjectStatus;
@@ -51,8 +50,19 @@ public class SubConstructorService {
         return repository.findAll();
     }
 
-    public Page<SubConstructor> getAllAsPage(Pageable pageable) {
-        return repository.findAll(pageable);
+    public Page<SubConstructor> getAll(Pageable pageable, FilterType filterType) {
+        switch (filterType) {
+            case OWNED:
+                return repository.findAllByCreatedById(context.authenticatedUser().getId(), pageable);
+            case PENDING_FOR_VERIFY:
+                return repository.findAllByStatus(ObjectStatus.OPEN, pageable);
+            case PENDING_FOR_APPROVE:
+                return repository.findAllByStatus(ObjectStatus.VERIFIED, pageable);
+            case ALL:
+                return repository.findAll(pageable);
+            default:
+                return null;
+        }
     }
 
     public void delete(Long id) {
@@ -60,11 +70,11 @@ public class SubConstructorService {
         repository.delete(target);
     }
 
-    public List<SubConstructor> getPendingForVerify(){
+    public List<SubConstructor> getPendingForVerify() {
         return repository.findAllByStatus(ObjectStatus.OPEN);
     }
 
-    public List<SubConstructor> getPendingForApprove(){
+    public List<SubConstructor> getPendingForApprove() {
         return repository.findAllByStatus(ObjectStatus.VERIFIED);
     }
 
