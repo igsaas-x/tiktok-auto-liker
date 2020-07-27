@@ -48,7 +48,6 @@ public class Task extends AuditingEntity {
     @JoinColumn(name = "parent_id")
     private Task parent;
 
-    @OneToMany(fetch = FetchType.LAZY)
     @JsonIgnore
     @JoinColumn(name = "parent_id")
     private List<Task> child;
