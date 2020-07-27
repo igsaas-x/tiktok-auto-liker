@@ -9,8 +9,6 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.hibernate.annotations.Filter;
-import org.hibernate.annotations.SQLDelete;
-import org.hibernate.annotations.Where;
 
 import javax.persistence.*;
 
@@ -23,8 +21,6 @@ import javax.persistence.*;
         condition = "created_by = :id or " +
                 "exists (select t.id from task t, task_assign ta where t.id = ta.task_id and t.boq_id = id and ta.app_user_id = :id)")
 @Filter(name = "myObjectFilter", condition = "created_by = :id")
-@SQLDelete(sql = "update boq set status = 'DELETED' where id = ? and version = ?")
-@Where(clause = "status <> 'DELETED'")
 public class BOQ extends SimpleAuditingEntity {
 
     private String code;
