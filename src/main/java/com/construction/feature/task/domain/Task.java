@@ -48,6 +48,7 @@ public class Task extends AuditingEntity {
     @JoinColumn(name = "parent_id")
     private Task parent;
 
+    @OneToMany
     @JsonIgnore
     @JoinColumn(name = "parent_id")
     private List<Task> child;
