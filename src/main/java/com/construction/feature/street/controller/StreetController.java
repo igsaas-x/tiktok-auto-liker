@@ -53,7 +53,7 @@ public class StreetController {
     }
 
     @ApiOperation("Delete by Id")
-    @DeleteMapping("/delete/{id}")
+    @DeleteMapping("/{id}")
     public void delete(@PathVariable("id") Long id) {
         filterConfig.configureFilter(ActionName.DELETE, "street");
         service.deleteById(id);

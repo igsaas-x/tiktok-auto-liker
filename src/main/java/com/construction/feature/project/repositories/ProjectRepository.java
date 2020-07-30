@@ -12,8 +12,6 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface ProjectRepository extends JpaRepository<Project, Long>, JpaSpecificationExecutor<Project> {
 
-    Page<Project> findAll(Pageable pageable);
-
     Page<Project> findAllByCreatedBy(AppUser user, Pageable pageable);
 
     @Query(value = "select p from Project p, ProjectAssign pa where p.id = pa.project and pa.appUser.id = :userId " +

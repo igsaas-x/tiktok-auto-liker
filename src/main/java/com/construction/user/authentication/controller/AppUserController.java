@@ -72,7 +72,14 @@ public class AppUserController {
     }
 
     @DeleteMapping("/{id}")
-    public void deleteUser(@NotNull @PathVariable("id") final Long id) {
+    public boolean deleteUser(@NotNull @PathVariable("id") final Long id) {
+        if (id.equals(context.authenticatedUser().getId())) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "cannot delete current user");
+        }
+        if (id == 1L) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "cannot delete admin user");
+        }
         service.deleteById(id);
+        return true;
     }
 }
