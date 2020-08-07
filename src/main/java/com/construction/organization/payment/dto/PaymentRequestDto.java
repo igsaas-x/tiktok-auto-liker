@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.experimental.Accessors;
 import lombok.experimental.FieldDefaults;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Data
@@ -18,6 +19,8 @@ public class PaymentRequestDto {
     String taskName;
     String description;
     Long subConstructorId;
+    BigDecimal requestAmount;
+    BigDecimal approvedAmount;
     String createdBy;
     String updatedBy;
     LocalDateTime createdAt;

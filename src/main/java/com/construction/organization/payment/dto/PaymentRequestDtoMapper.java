@@ -22,6 +22,8 @@ public class PaymentRequestDtoMapper implements DtoMapper<PaymentRequestDto, Pay
         return new PaymentRequest()
                 .setTask(taskService.getById(dto.getTaskId()))
                 .setDescription(dto.getDescription())
+                .setRequestAmount(dto.getRequestAmount())
+                .setApprovedAmount(dto.getApprovedAmount())
                 .setSubConstructor(constructorService.getById(dto.getSubConstructorId()));
     }
 
@@ -30,6 +32,8 @@ public class PaymentRequestDtoMapper implements DtoMapper<PaymentRequestDto, Pay
         var payment = new PaymentRequestDto()
                 .setId(entity.getId())
                 .setDescription(entity.getDescription())
+                .setRequestAmount(entity.getRequestAmount())
+                .setApprovedAmount(entity.getApprovedAmount())
                 .setCreatedAt(entity.getCreatedAt())
                 .setUpdatedAt(entity.getUpdatedAt())
                 .setCreatedBy(entity.getCreatedBy() == null ? null : entity.getCreatedBy().getUserName())

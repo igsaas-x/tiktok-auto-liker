@@ -7,13 +7,14 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
+import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 
 @Data
 @Accessors(chain = true)
-@JsonIgnoreProperties(value = {"id", "createdBy", "updatedBy", "verifiedBy", "approvedBy"}, allowGetters = true)
+@JsonIgnoreProperties(value = {"id", "createdBy", "updatedBy", "verifiedBy", "approvedBy","subConstructors"}, allowGetters = true)
 public class TaskDto {
     private Long id;
     private Long typeOfTaskId;
