@@ -7,7 +7,6 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
-import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -18,7 +17,6 @@ import java.util.List;
 public class TaskDto {
     private Long id;
     private Long typeOfTaskId;
-    @NotNull
     private TaskBelongTo belongTo;
     private Long projectId;
     private String projectObjectName;
