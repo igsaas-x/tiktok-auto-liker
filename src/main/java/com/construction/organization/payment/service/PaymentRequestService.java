@@ -32,8 +32,8 @@ public class PaymentRequestService {
     final PaymentRequestRepository repository;
     final StatusHistoryRepository historyRepository;
 
-    public PaymentRequest save(PaymentRequest dto) {
-        return repository.save(dto);
+    public PaymentRequest save(PaymentRequest request) {
+        return repository.save(request);
     }
 
     public void save(List<PaymentRequest> dtos) {

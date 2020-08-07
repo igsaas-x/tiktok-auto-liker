@@ -6,6 +6,7 @@ import com.construction.feature.street.service.StreetService;
 import com.construction.feature.task.domain.Task;
 import com.construction.feature.task.repository.BOQRepository;
 import com.construction.feature.task.repository.TaskRepository;
+import com.construction.feature.task.repository.TypeOfTaskRepository;
 import com.construction.persistence.mapper.DtoMapper;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -19,6 +20,7 @@ public class TaskMapper implements DtoMapper<TaskDto, Task> {
     private final HouseService houseService;
     private final BOQRepository boqRepository;
     private final TaskRepository repository;
+    private final TypeOfTaskRepository typeOfTaskRepository;
 
     @Override
     public Task toEntity(TaskDto taskDto) {
@@ -35,7 +37,6 @@ public class TaskMapper implements DtoMapper<TaskDto, Task> {
                 .setUnitPrice(taskDto.getUnitPrice())
                 .setTotalPrice(taskDto.getTotalPrice())
                 .setActualPrice(taskDto.getActualPrice())
-                .setTypeOfWork(taskDto.getTypeOfWork())
                 .setContractType(taskDto.getContractType())
                 .setFloor(taskDto.getFloor())
                 .setQuantity(taskDto.getQuantity());
@@ -53,6 +54,9 @@ public class TaskMapper implements DtoMapper<TaskDto, Task> {
         }
         if (taskDto.getParentId() != null) {
             task.setParent(repository.findById(taskDto.getParentId()).orElseThrow());
+        }
+        if (taskDto.getTypeOfTaskId() != null) {
+            task.setTypeOfTask(typeOfTaskRepository.findById(taskDto.getTypeOfTaskId()).orElseThrow());
         }
         return task;
     }
@@ -72,9 +76,8 @@ public class TaskMapper implements DtoMapper<TaskDto, Task> {
                 .setUnit(entity.getUnit())
                 .setUnitPrice(entity.getUnitPrice())
                 .setActualPrice(entity.getActualPrice())
-                .setTotalPrice(entity.getTotalPrice())
                 .setFloor(entity.getFloor())
-                .setTypeOfWork(entity.getTypeOfWork())
+                .setTypeOfTaskId(entity.getTypeOfTask() == null ? null : entity.getTypeOfTask().getId())
                 .setQuantity(entity.getQuantity())
                 .setCreatedAt(entity.getCreatedAt())
                 .setUpdatedAt(entity.getUpdatedAt())

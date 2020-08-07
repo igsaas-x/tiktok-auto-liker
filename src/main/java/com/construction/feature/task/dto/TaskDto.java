@@ -1,6 +1,7 @@
 package com.construction.feature.task.dto;
 
 import com.construction.feature.task.domain.TaskBelongTo;
+import com.construction.organization.subconstructor.data.SubConstructorData;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;
@@ -9,13 +10,14 @@ import lombok.experimental.Accessors;
 import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Data
 @Accessors(chain = true)
 @JsonIgnoreProperties(value = {"id", "createdBy", "updatedBy", "verifiedBy", "approvedBy"}, allowGetters = true)
 public class TaskDto {
     private Long id;
-    private String typeOfWork;
+    private Long typeOfTaskId;
     @NotNull
     private TaskBelongTo belongTo;
     private Long projectId;
@@ -50,4 +52,5 @@ public class TaskDto {
     private LocalDateTime verifiedAt;
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime approvedAt;
+    private List<SubConstructorData> subConstructors;
 }

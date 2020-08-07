@@ -3,6 +3,7 @@ package com.construction.feature.task.domain;
 import com.construction.feature.house.domain.House;
 import com.construction.feature.project.domain.Project;
 import com.construction.feature.street.domain.Street;
+import com.construction.organization.subconstructor.domain.SubConstructor;
 import com.construction.persistence.domain.AuditingEntity;
 import com.construction.persistence.exception.ValidationErrorException;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -27,7 +28,9 @@ import java.util.List;
         condition = "created_by = :id or exists(select 1 from task_assign ta where ta.task_id = id and ta.app_user_id = :id)")
 public class Task extends AuditingEntity {
 
-    private String typeOfWork;
+    @ManyToOne
+    @JoinColumn
+    private TypeOfTask typeOfTask;
 
     @Enumerated(EnumType.STRING)
     private TaskBelongTo belongTo;

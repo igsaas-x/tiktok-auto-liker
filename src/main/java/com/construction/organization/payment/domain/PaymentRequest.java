@@ -1,7 +1,5 @@
 package com.construction.organization.payment.domain;
 
-import com.construction.feature.task.domain.Task;
-import com.construction.organization.subconstructor.domain.SubConstructor;
 import com.construction.persistence.domain.SimpleAuditingEntity;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -11,7 +9,7 @@ import lombok.experimental.FieldDefaults;
 import org.hibernate.annotations.Filter;
 
 import javax.persistence.*;
-import java.math.BigDecimal;
+import java.util.List;
 
 @Entity
 @Getter
@@ -22,19 +20,9 @@ import java.math.BigDecimal;
 @Filter(name = "readableObjectFilter", condition = "created_by = :id")
 public class PaymentRequest extends SimpleAuditingEntity {
 
-    @ManyToOne
-    @JoinColumn
-    Task task;
-
-    String description;
-
-    BigDecimal requestAmount;
-
-    BigDecimal approvedAmount;
-
-    @ManyToOne
-    @JoinColumn
-    SubConstructor subConstructor;
+    @OneToMany
+    @JoinColumn(name = "payment_request_id")
+    List<PaymentEntry> entries;
 
     @Enumerated(EnumType.STRING)
     PaymentRequestStatus status = PaymentRequestStatus.OPEN;

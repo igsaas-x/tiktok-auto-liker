@@ -5,6 +5,7 @@ import com.construction.organization.payment.domain.CommandType;
 import com.construction.organization.payment.domain.PaymentRequest;
 import com.construction.organization.payment.domain.PaymentRequestStatus;
 import com.construction.organization.payment.domain.StatusHistory;
+import com.construction.organization.payment.dto.PaymentEntryMapper;
 import com.construction.organization.payment.dto.PaymentRequestDto;
 import com.construction.organization.payment.dto.PaymentRequestDtoMapper;
 import com.construction.organization.payment.service.PaymentRequestService;
@@ -22,6 +23,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
+import javax.transaction.Transactional;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -39,14 +41,22 @@ public class PaymentRequestController {
 
     final PaymentRequestService service;
     final PaymentRequestDtoMapper mapper;
+    final PaymentEntryMapper entryMapper;
     final ApplicationSecurityContext context;
     final FilterConfig filterConfig;
 
     @ApiOperation("Add new data")
     @PostMapping
     @PreAuthorize("hasAuthority('CREATE_ALL_PAYMENT')")
+    @Transactional
     public PaymentRequest save(@RequestBody PaymentRequestDto dto) {
-        return service.save(mapper.toEntity(dto));
+        final var request = new PaymentRequest();
+        final var paymentRequest = service.save(request);
+        final var entries = dto.getEntries().stream()
+                .map(entry -> entryMapper.toEntity(entry, paymentRequest))
+                .collect(Collectors.toList());
+        paymentRequest.setEntries(entries);
+        return service.save(paymentRequest);
     }
 
     @GetMapping("/{id}")
@@ -56,7 +66,7 @@ public class PaymentRequestController {
     }
 
     @GetMapping("/sub-constructor/{id}")
-    public List<PaymentRequest> findBySubConstructorId(@PathVariable("id") Long id){
+    public List<PaymentRequest> findBySubConstructorId(@PathVariable("id") Long id) {
         filterConfig.configureFilter(ActionName.READ, "payment");
         return service.getBySubConstructorId(id);
     }
