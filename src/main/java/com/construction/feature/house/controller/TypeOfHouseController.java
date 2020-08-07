@@ -29,13 +29,13 @@ public class TypeOfHouseController {
     }
 
     @PostMapping
-    @PreAuthorize("hasAuthority('CREATE_ALL_TYPEOFHOUSE')")
+    @PreAuthorize("hasAuthority('ALL_ALL_ALL')")
     public TypeOfHouse create(@RequestBody TypeOfHouse typeOfHouse) {
         return repository.save(typeOfHouse);
     }
 
     @PutMapping("/{id}")
-    @PreAuthorize("hasAuthority('UPDATE_ALL_TYPEOFHOUSE')")
+    @PreAuthorize("hasAuthority('ALL_ALL_ALL')")
     public TypeOfHouse update(@PathVariable Long id, @RequestBody TypeOfHouse typeOfHouse) {
         var target = repository.findById(id).orElseThrow();
         target = dataMapper.mapObject(typeOfHouse, target, TypeOfHouse.class);
@@ -43,7 +43,7 @@ public class TypeOfHouseController {
     }
 
     @DeleteMapping("/id")
-    @PreAuthorize("hasAuthority('DELETE_ALL_TYPEOFHOUSE')")
+    @PreAuthorize("hasAuthority('ALL_ALL_ALL')")
     public void deleteById(@PathVariable Long id) {
         repository.deleteById(id);
     }
