@@ -6,7 +6,7 @@ import com.construction.feature.FilterType;
 import com.construction.feature.task.domain.BOQ;
 import com.construction.feature.task.domain.Task;
 import com.construction.feature.task.domain.TaskAssign;
-import com.construction.feature.task.dto.TaskData;
+import com.construction.feature.task.dto.TaskTemplateData;
 import com.construction.feature.task.repository.TaskAssignRepository;
 import com.construction.feature.task.repository.TaskDataRepository;
 import com.construction.feature.task.repository.TaskRepository;
@@ -86,7 +86,7 @@ public class TaskService {
         return repository.findAll(pageable);
     }
 
-    public List<TaskData> getAllAsData() {
+    public List<TaskTemplateData> getAllAsData() {
         return taskDataRepository.findAllByFirstLevel(true);
     }
 

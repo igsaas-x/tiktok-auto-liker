@@ -59,7 +59,6 @@ public class HouseService {
 
     public List<House> getAll() {
         var houses = repository.findAll();
-        houses.addAll(fromAssignedTask());
         return houses.stream().distinct().collect(Collectors.toList());
     }
 
@@ -85,17 +84,6 @@ public class HouseService {
 
     public Page<House> getAllPending(Pageable pageable) {
         return repository.findAllPending(context.authenticatedUser().getId(), pageable);
-    }
-
-    private List<House> fromAssignedTask() {
-        var user = context.authenticatedUser();
-        if (user == null) throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
-        var taskAssigns = taskAssignRepository.findAllByAppUser(user);
-        return taskAssigns.stream()
-                .map(TaskAssign::getTask)
-                .filter(task -> task.getHouse() != null)
-                .map(Task::getHouse)
-                .collect(Collectors.toList());
     }
 
     public Page<House> getAll(Pageable pageable) {

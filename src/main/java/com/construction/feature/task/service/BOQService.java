@@ -1,18 +1,14 @@
 package com.construction.feature.task.service;
 
-import com.construction.appconfiguration.utils.ApplicationSecurityContext;
 import com.construction.feature.task.domain.BOQ;
 import com.construction.feature.task.domain.Task;
-import com.construction.feature.task.dto.BOQDto;
-import com.construction.feature.task.dto.BOQMapper;
 import com.construction.feature.task.repository.BOQRepository;
 import com.construction.persistence.domain.AssignFor;
 import com.construction.persistence.exception.ResourceNotFoundException;
 import com.construction.persistence.service.EntityDataMapper;
-import com.construction.persistence.utils.ObjectStatusValidator;
 import com.construction.persistence.utils.SFWhere;
 import com.construction.user.authentication.service.AppUserService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -24,25 +20,15 @@ import java.util.List;
 
 @Service
 @Transactional
+@RequiredArgsConstructor
 public class BOQService {
 
-    @Autowired
-    private BOQRepository repository;
-    @Autowired
-    private EntityDataMapper dataMapper;
-    @Autowired
-    private ObjectStatusValidator<Task> validator;
-    @Autowired
-    private TaskService taskService;
-    @Autowired
-    private AppUserService userService;
-    @Autowired
-    private ApplicationSecurityContext context;
-    @Autowired
-    private BOQMapper mapper;
+    private final BOQRepository repository;
+    private final EntityDataMapper dataMapper;
+    private final TaskService taskService;
+    private final AppUserService userService;
 
-    public BOQ save(BOQDto dto) {
-        var boq = mapper.toEntity(dto);
+    public BOQ save(BOQ boq) {
         return repository.save(boq);
     }
 
@@ -69,22 +55,27 @@ public class BOQService {
         return repository.findAll(pageable);
     }
 
-    public BOQ updateById(Long id, BOQDto dto) {
-        var boq = mapper.toEntity(dto);
+    public BOQ updateById(Long id, BOQ boq) {
         var target = getById(id);
         target = dataMapper.mapObject(boq, target, BOQ.class);
         return repository.save(target);
     }
 
+    public BOQ addTask(Long id, List<Task> tasks) {
+        var task = getById(id);
+        task.getTasks().addAll(tasks);
+        return repository.save(task);
+    }
+
     public boolean verifyAllTask(Long id) {
         var boq = getById(id);
-        taskService.getByBoq(boq).forEach(task -> taskService.verify(task));
+        taskService.getByBoq(boq).forEach(taskService::verify);
         return true;
     }
 
     public boolean approveAllTask(Long id) {
         var boq = getById(id);
-        taskService.getByBoq(boq).forEach(task -> taskService.approve(task));
+        taskService.getByBoq(boq).forEach(taskService::approve);
         return true;
     }
 

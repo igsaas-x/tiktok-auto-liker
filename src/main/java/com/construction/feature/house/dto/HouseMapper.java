@@ -4,11 +4,11 @@ import com.construction.feature.house.domain.House;
 import com.construction.feature.house.repository.TypeOfHouseRepository;
 import com.construction.feature.project.services.ProjectService;
 import com.construction.feature.street.service.StreetService;
-import com.construction.persistence.mapper.DtoMapper;
+import com.construction.persistence.mapper.DtoEntityMapper;
 import org.springframework.stereotype.Component;
 
 @Component
-public class HouseMapper implements DtoMapper<HouseDto, House> {
+public class HouseMapper implements DtoEntityMapper<HouseDto, House> {
 
     private final ProjectService projectService;
     private final StreetService streetService;

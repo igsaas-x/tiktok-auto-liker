@@ -16,12 +16,12 @@ import java.util.List;
 @Setter
 @Accessors(chain = true)
 @Entity
-@Table(name = "task")
+@Table(name = "task_template")
 @Immutable
-public class TaskData extends EntityData {
+public class TaskTemplateData extends EntityData {
     private String name;
     @OneToMany
     @JoinColumn(name = "parent_id")
-    private List<TaskData> child;
+    private List<TaskTemplateData> child;
     private boolean firstLevel;
 }

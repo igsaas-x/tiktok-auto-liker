@@ -2,7 +2,6 @@ package com.construction.feature.task.repository;
 
 import com.construction.feature.task.domain.BOQ;
 import com.construction.feature.task.domain.Task;
-import com.construction.feature.task.dto.TaskData;
 import com.construction.persistence.domain.AssignFor;
 import com.construction.persistence.domain.ObjectStatus;
 import com.construction.user.authentication.domain.AppUser;

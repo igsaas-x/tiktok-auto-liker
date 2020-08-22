@@ -7,7 +7,7 @@ import javax.validation.constraints.NotNull;
 
 @Data
 @Accessors(chain = true)
-public class SubConstructorData {
+public class SubConstructorDto {
     @NotNull
     private Long id;
     private String engFullName;

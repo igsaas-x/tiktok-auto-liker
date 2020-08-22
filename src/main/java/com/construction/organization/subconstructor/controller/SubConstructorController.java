@@ -77,7 +77,7 @@ public class SubConstructorController {
         return service.getPendingForApprove();
     }
 
-    @PostMapping("/verify/{id}")
+    @PostMapping("/{id}/verify")
     public SubConstructor verify(@PathVariable Long id) {
         filterConfig.configureFilter(ActionName.VERIFY, "sub_constructor");
         return service.verify(id);
@@ -90,7 +90,7 @@ public class SubConstructorController {
         return true;
     }
 
-    @PostMapping("/approve/{id}")
+    @PostMapping("/{id}/approve")
     public SubConstructor approve(@PathVariable Long id) {
         filterConfig.configureFilter(ActionName.APPROVE, "sub_constructor");
         return service.approve(id);

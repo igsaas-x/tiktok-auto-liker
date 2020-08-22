@@ -98,8 +98,8 @@ public class SubConstructorService {
         var project = getById(id);
         validator.validateStatus(project, ActionName.APPROVE);
         project.setStatus(ObjectStatus.APPROVED);
-        project.setVerifiedBy(context.authenticatedUser());
-        project.setVerifiedAt(LocalDateTime.now());
+        project.setApprovedBy(context.authenticatedUser());
+        project.setApprovedAt(LocalDateTime.now());
         return repository.save(project);
     }
 }

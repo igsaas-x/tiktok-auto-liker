@@ -11,6 +11,7 @@ import lombok.experimental.Accessors;
 import org.hibernate.annotations.Filter;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Entity
 @Getter
@@ -41,4 +42,7 @@ public class BOQ extends SimpleAuditingEntity {
 
     @Enumerated(EnumType.STRING)
     private SimpleObjectStatus status = SimpleObjectStatus.ACTIVE;
+
+    @OneToMany(mappedBy = "boq", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private List<Task> tasks;
 }

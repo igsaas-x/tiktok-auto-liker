@@ -1,9 +1,6 @@
 package com.construction.organization.payment.service;
 
-import com.construction.organization.payment.domain.CommandType;
-import com.construction.organization.payment.domain.PaymentRequest;
-import com.construction.organization.payment.domain.PaymentRequestStatus;
-import com.construction.organization.payment.domain.StatusHistory;
+import com.construction.organization.payment.domain.*;
 import com.construction.organization.payment.repository.PaymentRequestRepository;
 import com.construction.organization.payment.repository.StatusHistoryRepository;
 import com.construction.persistence.exception.ResourceNotFoundException;
@@ -36,10 +33,6 @@ public class PaymentRequestService {
         return repository.save(paymentRequest);
     }
 
-    public void save(List<PaymentRequest> dtos) {
-        repository.saveAll(dtos);
-    }
-
     public void deleteById(Long id) {
         repository.deleteById(id);
     }
@@ -48,110 +41,7 @@ public class PaymentRequestService {
         return repository.findById(id).orElseThrow(() -> new ResourceNotFoundException(PaymentRequest.class, id));
     }
 
-    public List<PaymentRequest> getBySubConstructorId(final Long id){
-        return repository.findAllBySubConstructorId(id);
-    }
-
-    public List<PaymentRequest> findAll() {
-        return repository.findAll();
-    }
-
-    public List<PaymentRequest> findPendingFor(final CommandType pendingFor) {
-        switch (pendingFor) {
-            case SUBMIT:
-                return repository.findAllByStatus(PaymentRequestStatus.OPEN);
-            case VERIFY:
-                return repository.findAllByStatus(PaymentRequestStatus.SUBMITTED);
-            case CONFIRM:
-                return repository.findAllByStatus(PaymentRequestStatus.VERIFIED);
-            case REVIEW:
-                return repository.findAllByStatus(PaymentRequestStatus.CONFIRMED);
-            case APPROVE:
-                return repository.findAllByStatus(PaymentRequestStatus.REVIEWED);
-            case CASH_OUT:
-                return repository.findAllByStatus(PaymentRequestStatus.APPROVED);
-        }
-        return List.of();
-    }
-
-    public Map<CommandType, List<PaymentRequest>> getAllPending() {
-        return Map.of(
-                CommandType.SUBMIT, repository.findAllByStatus(PaymentRequestStatus.OPEN),
-                CommandType.VERIFY, repository.findAllByStatus(PaymentRequestStatus.SUBMITTED),
-                CommandType.CONFIRM, repository.findAllByStatus(PaymentRequestStatus.VERIFIED),
-                CommandType.REVIEW, repository.findAllByStatus(PaymentRequestStatus.CONFIRMED),
-                CommandType.APPROVE, repository.findAllByStatus(PaymentRequestStatus.REVIEWED),
-                CommandType.CASH_OUT, repository.findAllByStatus(PaymentRequestStatus.APPROVED)
-        );
-    }
-
-    public PaymentRequest handleCommand(final PaymentRequest request, final CommandType command, final AppUser user, final String comment) {
-        addHistory(request, command, user, comment);
-        switch (command) {
-            case SUBMIT:
-                if (!request.getStatus().equals(PaymentRequestStatus.OPEN)) {
-                    throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "payment request is not in open status");
-                }
-                request.setStatus(PaymentRequestStatus.SUBMITTED);
-                break;
-            case VERIFY:
-                if (!request.getStatus().equals(PaymentRequestStatus.SUBMITTED)) {
-                    throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "payment request is not in submitted status");
-                }
-                request.setStatus(PaymentRequestStatus.VERIFIED);
-                break;
-            case CONFIRM:
-                if (!request.getStatus().equals(PaymentRequestStatus.VERIFIED)) {
-                    throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "payment request is not in verified status");
-                }
-                request.setStatus(PaymentRequestStatus.CONFIRMED);
-                break;
-            case REVIEW:
-                if (!request.getStatus().equals(PaymentRequestStatus.CONFIRMED)) {
-                    throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "payment request is not in confirmed status");
-                }
-                request.setStatus(PaymentRequestStatus.REVIEWED);
-                break;
-            case APPROVE:
-                if (!request.getStatus().equals(PaymentRequestStatus.REVIEWED)) {
-                    throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "payment request is not in reviewed status");
-                }
-                request.setStatus(PaymentRequestStatus.APPROVED);
-                break;
-            case CASH_OUT:
-                if (!request.getStatus().equals(PaymentRequestStatus.APPROVED)) {
-                    throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "payment request is not in approved status");
-                }
-                request.setStatus(PaymentRequestStatus.PAID);
-                break;
-            case REJECT:
-                request.setStatus(PaymentRequestStatus.OPEN);
-                break;
-            default:
-                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "command not found");
-        }
-        return repository.save(request);
-    }
-
-    private void addHistory(PaymentRequest request, CommandType commandType, AppUser doneBy, String comment) {
-        var history = new StatusHistory()
-                .setPaymentRequest(request)
-                .setCommandType(commandType)
-                .setComment(comment);
-        historyRepository.save(history);
-    }
-
-    public List<StatusHistory> getByPaymentId(Long id) {
-        return historyRepository.findAllByPaymentRequestId(id);
-    }
-
-    public Page<PaymentRequest> findAll(Pageable pageable) {
+    public Page<PaymentRequest> getAll(Pageable pageable) {
         return repository.findAll(pageable);
-    }
-
-    public PaymentRequest updateById(Long id, PaymentRequest source) {
-        var target = getById(id);
-        target = dataMapper.mapObject(source, target, PaymentRequest.class);
-        return repository.save(target);
     }
 }

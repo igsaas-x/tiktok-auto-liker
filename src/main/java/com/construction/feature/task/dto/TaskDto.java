@@ -1,9 +1,10 @@
 package com.construction.feature.task.dto;
 
-import com.construction.feature.task.domain.TaskBelongTo;
-import com.construction.organization.subconstructor.data.SubConstructorData;
+import com.construction.organization.subconstructor.data.SubConstructorDto;
+import com.construction.persistence.domain.ObjectStatus;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
@@ -14,35 +15,28 @@ import java.util.List;
 
 @Data
 @Accessors(chain = true)
-@JsonIgnoreProperties(value = {"id", "createdBy", "updatedBy", "verifiedBy", "approvedBy","subConstructors"}, allowGetters = true)
+@JsonIgnoreProperties(value = {
+        "id", "status",
+        "createdBy", "updatedBy",
+        "verifiedBy", "approvedBy",
+        "subConstructors"}, allowGetters = true)
 public class TaskDto {
     private Long id;
-    private Long typeOfTaskId;
-    private TaskBelongTo belongTo;
-    private Long projectId;
-    private String projectObjectName;
-    private Long streetId;
-    private String streetName;
-    private Long houseId;
-    private String houseNo;
-    private String code;
-    private String name;
-    private String description;
-    private Long parentId;
-    private boolean leaf;
-    private String floor;
-    private Long boqId;
-    private String boqCode;
-    private String contractType;
     private Integer quantity;
     private String unit;
     private BigDecimal unitPrice;
     private BigDecimal totalPrice;
     private BigDecimal actualPrice;
-    private String createdBy;
-    private String updatedBy;
-    private String verifiedBy;
-    private String approvedBy;
+    @NotNull
+    private Long taskTemplateId;
+    @JsonProperty("createdBy")
+    private String createdByUserName;
+    @JsonProperty("updatedBy")
+    private String updatedByUserName;
+    @JsonProperty("verifiedBy")
+    private String verifiedByUserName;
+    @JsonProperty("approvedBy")
+    private String approvedByUserName;
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime createdAt;
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
@@ -51,5 +45,6 @@ public class TaskDto {
     private LocalDateTime verifiedAt;
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime approvedAt;
-    private List<SubConstructorData> subConstructors;
+    private ObjectStatus status;
+    private List<SubConstructorDto> subConstructors;
 }

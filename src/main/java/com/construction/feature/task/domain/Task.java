@@ -1,20 +1,20 @@
 package com.construction.feature.task.domain;
 
-import com.construction.feature.house.domain.House;
-import com.construction.feature.project.domain.Project;
-import com.construction.feature.street.domain.Street;
-import com.construction.organization.subconstructor.domain.SubConstructor;
 import com.construction.persistence.domain.AuditingEntity;
-import com.construction.persistence.exception.ValidationErrorException;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.hibernate.annotations.Filter;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.server.ResponseStatusException;
 
-import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.PrePersist;
+import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
-import java.util.List;
 
 @Entity
 @Getter
@@ -28,51 +28,14 @@ import java.util.List;
         condition = "created_by = :id or exists(select 1 from task_assign ta where ta.task_id = id and ta.app_user_id = :id)")
 public class Task extends AuditingEntity {
 
-    @ManyToOne
-    @JoinColumn
-    private TypeOfTask typeOfTask;
-
-    @Enumerated(EnumType.STRING)
-    private TaskBelongTo belongTo;
-
-    @ManyToOne
-    @JoinColumn
-    private Project project;
-
-    @ManyToOne
-    @JoinColumn
-    private Street street;
-
-    @ManyToOne
-    @JoinColumn
-    private House house;
-
-    @ManyToOne
-    @JoinColumn(name = "parent_id")
-    private Task parent;
-
-    @OneToMany
     @JsonIgnore
-    @JoinColumn(name = "parent_id")
-    private List<Task> child;
-
-    private boolean firstLevel;
-
-    private String code;
-
-    private String name;
-
-    private String description;
-
-    private boolean leaf;
-
-    private String floor;
-
     @ManyToOne
-    @JoinColumn
     private BOQ boq;
 
-    private String contractType;
+    @NotNull
+    @ManyToOne
+    @JoinColumn
+    private TaskTemplate taskTemplate;
 
     private Integer quantity;
 
@@ -80,18 +43,18 @@ public class Task extends AuditingEntity {
 
     private BigDecimal unitPrice;
 
+    @NotNull
     private BigDecimal totalPrice;
 
     private BigDecimal actualPrice;
 
     @PrePersist
-    private void validate() {
-        if (parent == null) {
-            firstLevel = true;
-            return;
+    private void prePersist() {
+        if (taskTemplate == null) {
+            throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "task template cannot be null");
         }
-        if (parent.isLeaf()) {
-            throw new ValidationErrorException(this.getClass(), "parent", "parent is leaf");
+        if (!taskTemplate.isLeaf()) {
+            throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "template is not leaf");
         }
     }
 }

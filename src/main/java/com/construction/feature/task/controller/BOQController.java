@@ -1,12 +1,11 @@
 package com.construction.feature.task.controller;
 
 import com.construction.feature.task.domain.BOQ;
-import com.construction.feature.task.domain.Task;
 import com.construction.feature.task.dto.BOQDto;
 import com.construction.feature.task.dto.TaskDto;
-import com.construction.feature.task.dto.TaskMapper;
+import com.construction.feature.task.dto.mapper.BOQMapper;
+import com.construction.feature.task.dto.mapper.TaskMapper;
 import com.construction.feature.task.service.BOQService;
-import com.construction.feature.task.service.TaskService;
 import com.construction.persistence.domain.AssignFor;
 import com.construction.persistence.filter.FilterConfig;
 import com.construction.user.authorization.domain.ActionName;
@@ -30,32 +29,25 @@ public class BOQController {
 
     private final BOQService service;
     private final FilterConfig filterConfig;
-    private final TaskService taskService;
-    private final TaskMapper mapper;
+    private final TaskMapper taskMapper;
+    private final BOQMapper mapper;
 
     @PostMapping
     @PreAuthorize("hasAuthority('CREATE_ALL_BOQ')")
-    public BOQ create(@RequestBody BOQDto dto) {
-        return service.save(dto);
+    public BOQDto create(@RequestBody BOQDto dto) {
+        return mapper.apply(service.save(mapper.toEntity(dto)));
     }
 
     @GetMapping("/{id}")
-    public BOQ findById(@PathVariable("id") Long id) {
+    public BOQDto findById(@PathVariable("id") Long id) {
         filterConfig.configureFilter(ActionName.READ, "boq");
-        return service.getById(id);
+        return mapper.apply(service.getById(id));
     }
 
     @GetMapping("/search")
     public ResponseEntity<Object> search(BOQ boq, Pageable pageable) {
         filterConfig.configureFilter(ActionName.READ, "boq");
         return service.search(boq, pageable);
-    }
-
-    @GetMapping("/{id}/tasks")
-    public List<TaskDto> findTaskByBoqId(@PathVariable("id") Long id) {
-        filterConfig.configureFilter(ActionName.READ, "task");
-        var boq = service.getById(id);
-        return taskService.getByBoq(boq).stream().map(mapper::toDto).collect(Collectors.toList());
     }
 
     @ApiOperation("Find by Id")
@@ -67,23 +59,30 @@ public class BOQController {
 
     @ApiOperation("Find all data")
     @GetMapping
-    public List<BOQ> list() {
+    public List<BOQDto> list() {
         filterConfig.configureFilter(ActionName.READ, "boq");
-        return service.findAll();
+        return service.findAll().stream().map(mapper).collect(Collectors.toList());
     }
 
     @ApiOperation("Pagination request")
     @GetMapping("/page")
-    public Page<BOQ> pageQuery(Pageable pageable) {
+    public Page<BOQDto> pageQuery(Pageable pageable) {
         filterConfig.configureFilter(ActionName.READ, "boq");
-        return service.findAll(pageable);
+        return service.findAll(pageable).map(mapper);
     }
 
     @ApiOperation("Update one data")
     @PutMapping("/{id}")
-    public BOQ update(@PathVariable Long id, @RequestBody BOQDto dto) {
+    public BOQDto update(@PathVariable Long id, @RequestBody BOQDto dto) {
         filterConfig.configureFilter(ActionName.UPDATE, "boq");
-        return service.updateById(id, dto);
+        return mapper.apply(service.updateById(id, mapper.toEntity(dto)));
+    }
+
+    @PutMapping("/{id}/add-task")
+    public BOQDto addTask(@PathVariable Long id, @RequestBody List<TaskDto> dtos) {
+        filterConfig.configureFilter(ActionName.UPDATE, "boq");
+        final var tasks = dtos.stream().map(taskMapper::toEntity).collect(Collectors.toList());
+        return mapper.apply(service.addTask(id, tasks));
     }
 
     @ApiOperation("verify BOQ mean to verify all task in BOQ")

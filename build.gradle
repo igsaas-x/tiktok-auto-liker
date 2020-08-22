@@ -24,6 +24,7 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-security'
     implementation 'org.springframework.security.oauth:spring-security-oauth2:2.4.0.RELEASE'
     implementation 'org.springframework.security:spring-security-jwt:1.0.9.RELEASE'
+    implementation 'org.modelmapper:modelmapper:2.3.8'
     implementation 'net.coobird:thumbnailator:0.4.8'
     implementation 'io.springfox:springfox-swagger2:2.9.2'
     implementation 'io.springfox:springfox-swagger-ui:2.9.2'

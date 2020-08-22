@@ -1,6 +1,6 @@
 package com.construction.user.authentication.dto;
 
-import com.construction.persistence.mapper.DtoMapper;
+import com.construction.persistence.mapper.DtoEntityMapper;
 import com.construction.user.authentication.domain.AppUser;
 import com.construction.user.authorization.repository.UserRoleRepository;
 import lombok.AllArgsConstructor;
@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 @AllArgsConstructor
-public class UserDataMapper implements DtoMapper<UserDto, AppUser> {
+public class UserDataMapper implements DtoEntityMapper<UserDto, AppUser> {
 
     final UserRoleRepository repository;
     final PasswordEncoder encoder;

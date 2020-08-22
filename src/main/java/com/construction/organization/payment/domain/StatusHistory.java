@@ -20,7 +20,7 @@ public class StatusHistory extends SimpleAuditingEntity {
     @ManyToOne
     @JoinColumn
     @JsonIgnore
-    PaymentRequest paymentRequest;
+    PaymentEntry paymentEntry;
 
     @Enumerated(EnumType.STRING)
     CommandType commandType;
