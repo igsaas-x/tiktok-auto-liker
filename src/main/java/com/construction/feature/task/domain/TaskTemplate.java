@@ -35,6 +35,10 @@ public class TaskTemplate extends VersionEntity {
     @Enumerated(EnumType.STRING)
     private ContractType contractType;
 
+    @JsonIgnore
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "parent")
+    private List<TaskTemplate> child;
+
     @PrePersist
     private void validate() {
         if (parent == null) {
