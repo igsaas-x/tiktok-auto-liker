@@ -1,8 +1,10 @@
 package com.construction.feature.task.controller;
 
 import com.construction.feature.task.domain.TaskTemplate;
+import com.construction.feature.task.dto.TaskTemplateData;
 import com.construction.feature.task.dto.TaskTemplateDto;
 import com.construction.feature.task.dto.mapper.TaskTemplateMapper;
+import com.construction.feature.task.repository.TaskDataRepository;
 import com.construction.feature.task.service.TaskTemplateService;
 import io.swagger.annotations.Api;
 import lombok.RequiredArgsConstructor;
@@ -21,6 +23,7 @@ public class TaskTemplateController {
 
     private final TaskTemplateService service;
     private final TaskTemplateMapper mapper;
+    private final TaskDataRepository dataRepository;
 
     @PostMapping
     public TaskTemplate create(@RequestBody TaskTemplateDto dto) {
@@ -42,6 +45,11 @@ public class TaskTemplateController {
     @GetMapping
     public Page<TaskTemplate> getAll(Pageable pageable) {
         return service.getAll(pageable);
+    }
+
+    @GetMapping("/all-data")
+    public List<TaskTemplateData> getAllData() {
+        return dataRepository.findAllByFirstLevel(true);
     }
 
     @GetMapping("/{id}")

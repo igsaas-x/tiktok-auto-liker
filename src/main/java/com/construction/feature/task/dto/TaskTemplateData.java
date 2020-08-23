@@ -4,7 +4,7 @@ import com.construction.persistence.dto.EntityData;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
-import org.hibernate.annotations.Immutable;
+import org.springframework.data.annotation.Immutable;
 
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
@@ -19,9 +19,16 @@ import java.util.List;
 @Table(name = "task_template")
 @Immutable
 public class TaskTemplateData extends EntityData {
+
     private String name;
+
+    private String code;
+
     @OneToMany
     @JoinColumn(name = "parent_id")
     private List<TaskTemplateData> child;
+
     private boolean firstLevel;
+
+    private boolean leaf;
 }
