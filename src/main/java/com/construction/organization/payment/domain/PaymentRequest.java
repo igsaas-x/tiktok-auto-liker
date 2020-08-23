@@ -9,6 +9,8 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 import lombok.experimental.FieldDefaults;
 import org.hibernate.annotations.Filter;
+import org.hibernate.annotations.FilterDef;
+import org.hibernate.annotations.ParamDef;
 
 import javax.persistence.*;
 import java.util.List;
@@ -20,6 +22,7 @@ import java.util.List;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Filter(name = "myObjectFilter", condition = "created_by = :id")
 @Filter(name = "readableObjectFilter", condition = "created_by = :id")
+@FilterDef(name = "pendingRequestFilter", parameters = @ParamDef(name = "status", type = "string"))
 public class PaymentRequest extends SimpleAuditingEntity {
 
     @Column(unique = true)
@@ -29,8 +32,9 @@ public class PaymentRequest extends SimpleAuditingEntity {
     @JoinColumn
     SubConstructor subConstructor;
 
-    @OneToMany(cascade = CascadeType.PERSIST)
+    @OneToMany(cascade = CascadeType.ALL)
     @JsonIgnore
     @JoinColumn(name = "payment_request_id")
+    @Filter(name = "pendingRequestFilter", condition = "status = :status")
     List<PaymentEntry> entries;
 }

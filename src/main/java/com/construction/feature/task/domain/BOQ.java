@@ -24,6 +24,7 @@ import java.util.List;
 @Filter(name = "myObjectFilter", condition = "created_by = :id")
 public class BOQ extends SimpleAuditingEntity {
 
+    @Column(unique = true)
     private String code;
 
     @ManyToOne

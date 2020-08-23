@@ -1,6 +1,6 @@
 package com.construction.organization.payment.dto;
 
-import com.construction.organization.payment.domain.PaymentRequestStatus;
+import com.construction.organization.payment.domain.PaymentEntryStatus;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AccessLevel;
 import lombok.Data;
@@ -13,16 +13,27 @@ import java.math.BigDecimal;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Accessors(chain = true)
 public class PaymentEntryDto {
+
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     Long id;
+
     Long taskId;
+
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     String taskName;
+
     String description;
+
     @JsonProperty(value = "subConstructorId", access = JsonProperty.Access.READ_ONLY)
     Long paymentRequestSubConstructorId;
+
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     Long paymentRequestId;
+
     BigDecimal requestAmount;
+
     BigDecimal approvedAmount;
+
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
-    PaymentRequestStatus status;
+    PaymentEntryStatus status;
 }

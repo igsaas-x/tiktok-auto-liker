@@ -26,8 +26,8 @@ public class PaymentRequestMapper extends DtoMapper<PaymentRequest, PaymentReque
     @Override
     public PaymentRequest toEntity(PaymentRequestDto dto) {
         final var request = super.toEntity(dto);
-        if (dto.getPaymentEntries() != null) {
-            final var entries = dto.getPaymentEntries()
+        if (dto.getEntries() != null) {
+            final var entries = dto.getEntries()
                     .stream()
                     .map(paymentEntryMapper::toEntity)
                     .collect(Collectors.toList());

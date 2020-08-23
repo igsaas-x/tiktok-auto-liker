@@ -1,6 +1,7 @@
 package com.construction.feature.task.domain;
 
 import com.construction.persistence.domain.AuditingEntity;
+import com.construction.persistence.domain.ObjectStatus;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
@@ -30,6 +31,7 @@ public class Task extends AuditingEntity {
 
     @JsonIgnore
     @ManyToOne
+    @JoinColumn
     private BOQ boq;
 
     @NotNull
@@ -55,6 +57,9 @@ public class Task extends AuditingEntity {
         }
         if (!taskTemplate.isLeaf()) {
             throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "template is not leaf");
+        }
+        if (getStatus() == null) {
+            setStatus(ObjectStatus.OPEN);
         }
     }
 }

@@ -62,9 +62,16 @@ public class BOQService {
     }
 
     public BOQ addTask(Long id, List<Task> tasks) {
-        var task = getById(id);
-        task.getTasks().addAll(tasks);
-        return repository.save(task);
+        var boq = getById(id);
+        boq.getTasks().addAll(tasks);
+        return repository.save(boq);
+    }
+
+    public BOQ removeTask(Long id, Long taskId) {
+        var boq = getById(id);
+        var task = taskService.getById(taskId);
+        boq.getTasks().remove(task);
+        return repository.save(boq);
     }
 
     public boolean verifyAllTask(Long id) {

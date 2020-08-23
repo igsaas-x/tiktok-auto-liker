@@ -25,6 +25,8 @@ public class PaymentEntryMapper extends DtoMapper<PaymentEntry, PaymentEntryDto>
         if (dto.getTaskId() != null) {
             final var task = taskRepository.findById(dto.getTaskId()).orElseThrow(() -> new ResourceNotFoundException(Task.class, dto.getTaskId()));
             entry.setTask(task);
+        }else {
+            System.out.println("task is null");
         }
         return entry;
     }

@@ -15,7 +15,7 @@ import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 
-import static com.construction.organization.payment.domain.PaymentRequestStatus.*;
+import static com.construction.organization.payment.domain.PaymentEntryStatus.OPEN;
 
 @Entity
 @Getter
@@ -44,12 +44,15 @@ public class PaymentEntry extends VersionEntity {
     BigDecimal approvedAmount;
 
     @Enumerated(EnumType.STRING)
-    PaymentRequestStatus status = PaymentRequestStatus.OPEN;
+    PaymentEntryStatus status = PaymentEntryStatus.OPEN;
 
     @PrePersist
     private void prePersist() {
         if (status == null) {
             status = OPEN;
+        }
+        if (task == null) {
+            throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "task cannot be null");
         }
         if (requestAmount == null) {
             requestAmount = task.getTotalPrice();
@@ -57,12 +60,5 @@ public class PaymentEntry extends VersionEntity {
         if (requestAmount.compareTo(task.getTotalPrice()) > 0) {
             throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "request amount cannot greater than task total amount");
         }
-    }
-
-    public void reject() {
-        if (OPEN.equals(status) || APPROVED.equals(status) || PAID.equals(status)) {
-            throw new RuntimeException("status cannot be rejected");
-        }
-        status = OPEN;
     }
 }

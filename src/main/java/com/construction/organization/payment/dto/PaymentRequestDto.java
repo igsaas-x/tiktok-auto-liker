@@ -15,6 +15,9 @@ import java.util.List;
 @Accessors(chain = true)
 public class PaymentRequestDto {
 
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    Long id;
+
     @JsonProperty(value = "createdBy", access = JsonProperty.Access.READ_ONLY)
     String createdByUserName;
 
@@ -30,6 +33,10 @@ public class PaymentRequestDto {
     LocalDateTime updatedAt;
 
     Long subConstructorId;
+
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     String subConstructorEngFullName;
-    List<PaymentEntryDto> paymentEntries;
+
+    @JsonProperty(value = "paymentEntries")
+    List<PaymentEntryDto> entries;
 }
