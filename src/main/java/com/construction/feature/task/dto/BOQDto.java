@@ -1,7 +1,6 @@
 package com.construction.feature.task.dto;
 
 import com.construction.persistence.domain.SimpleObjectStatus;
-import com.fasterxml.jackson.annotation.JsonAlias;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -13,8 +12,9 @@ import java.util.List;
 
 @Data
 @Accessors(chain = true)
-@JsonIgnoreProperties(value = {"createdBy", "updatedBy", "createdAt", "updatedAt", "status"}, allowGetters = true)
+@JsonIgnoreProperties(value = {"id", "createdBy", "updatedBy", "createdAt", "updatedAt", "status"}, allowGetters = true)
 public class BOQDto {
+    private Long id;
     private String code;
     private Long projectId;
     private Long houseId;
