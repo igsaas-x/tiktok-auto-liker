@@ -17,8 +17,11 @@ public class BOQDto {
     private Long id;
     private String code;
     private Long projectId;
+    private String projectName;
     private Long houseId;
+    private String houseHouseNo;
     private Long streetId;
+    private String streetName;
     private String details;
     @JsonProperty("createdBy")
     private String createdByUserName;
