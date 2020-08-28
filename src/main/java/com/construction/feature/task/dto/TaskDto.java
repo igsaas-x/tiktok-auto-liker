@@ -22,6 +22,8 @@ import java.util.List;
         "subConstructors"}, allowGetters = true)
 public class TaskDto {
     private Long id;
+    @JsonProperty("name")
+    private String taskTemplateName;
     private Integer quantity;
     private String unit;
     private BigDecimal unitPrice;
