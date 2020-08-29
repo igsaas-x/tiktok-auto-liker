@@ -12,11 +12,13 @@ import com.construction.feature.task.service.TaskSubConstructAssignService;
 import com.construction.persistence.domain.AssignFor;
 import com.construction.persistence.dto.AssignedDto;
 import com.construction.persistence.dto.IdList;
+import com.construction.persistence.dto.IdListBatch;
 import com.construction.persistence.filter.FilterConfig;
 import com.construction.user.authorization.domain.ActionName;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
@@ -26,6 +28,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Slf4j
 @RequestMapping("/task")
 @RestController
 @Api(tags = "Task API")
@@ -186,6 +189,20 @@ public class TaskController {
     @PostMapping("/{id}/assign/sub-constructor/{sid}")
     public TaskDto assignToSubConstructor(@PathVariable Long id, @PathVariable Long sid) {
         return mapper.apply(subConstructAssignService.assign(id, sid).getTask());
+    }
+
+    @PostMapping("/batch/assign/sub-constructor/batch")
+    public boolean batchAssignToSubConstructor(@RequestBody final IdListBatch batch) {
+        batch.getIds().forEach(taskId -> {
+            batch.getSids().forEach(sid -> {
+                try {
+                    subConstructAssignService.assign(taskId, sid);
+                } catch (Exception e) {
+                    log.error("error assign task");
+                }
+            });
+        });
+        return true;
     }
 
     @GetMapping("/by-sub-constructor/{id}")
