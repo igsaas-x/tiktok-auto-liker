@@ -7,4 +7,5 @@ import java.util.List;
 
 public interface TaskSubConstructorAssignRepository extends JpaRepository<TaskSubConstructorAssign, Long> {
     List<TaskSubConstructorAssign> findAllByTaskId(final Long id);
+    List<TaskSubConstructorAssign> findAllBySubConstructorId(final Long id);
 }

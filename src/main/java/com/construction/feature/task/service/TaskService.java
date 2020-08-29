@@ -6,10 +6,12 @@ import com.construction.feature.FilterType;
 import com.construction.feature.task.domain.BOQ;
 import com.construction.feature.task.domain.Task;
 import com.construction.feature.task.domain.TaskAssign;
+import com.construction.feature.task.domain.TaskSubConstructorAssign;
 import com.construction.feature.task.dto.TaskTemplateData;
 import com.construction.feature.task.repository.TaskAssignRepository;
 import com.construction.feature.task.repository.TaskDataRepository;
 import com.construction.feature.task.repository.TaskRepository;
+import com.construction.feature.task.repository.TaskSubConstructorAssignRepository;
 import com.construction.persistence.domain.AssignFor;
 import com.construction.persistence.domain.AssignStatus;
 import com.construction.persistence.domain.ObjectStatus;
@@ -44,6 +46,7 @@ public class TaskService {
     private final AppUserService userService;
     private final TaskAssignRepository assignRepository;
     private final TaskDataRepository taskDataRepository;
+    private final TaskSubConstructorAssignRepository constructorAssignRepository;
 
     public Task save(Task task) {
         return repository.save(task);
@@ -194,5 +197,12 @@ public class TaskService {
         taskAssign.setStatus(AssignStatus.DELETED);
         assignRepository.save(taskAssign);
         return true;
+    }
+
+    public List<Task> getBySubConstructorId(final Long id) {
+        return constructorAssignRepository.findAllBySubConstructorId(id)
+                .stream()
+                .map(TaskSubConstructorAssign::getTask)
+                .collect(Collectors.toList());
     }
 }

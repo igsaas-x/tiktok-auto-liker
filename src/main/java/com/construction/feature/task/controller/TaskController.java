@@ -187,4 +187,9 @@ public class TaskController {
     public TaskDto assignToSubConstructor(@PathVariable Long id, @PathVariable Long sid) {
         return mapper.apply(subConstructAssignService.assign(id, sid).getTask());
     }
+
+    @GetMapping("/by-sub-constructor/{id}")
+    public List<TaskDto> getBySubConstructorId(@PathVariable Long id) {
+        return service.getBySubConstructorId(id).stream().map(mapper).collect(Collectors.toList());
+    }
 }
