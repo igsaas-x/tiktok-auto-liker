@@ -44,6 +44,7 @@ public class BOQ extends SimpleAuditingEntity {
     @Enumerated(EnumType.STRING)
     private SimpleObjectStatus status = SimpleObjectStatus.ACTIVE;
 
-    @OneToMany(mappedBy = "boq", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinColumn(name = "boq_id")
     private List<Task> tasks;
 }

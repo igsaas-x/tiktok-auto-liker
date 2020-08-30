@@ -31,7 +31,6 @@ public class Task extends AuditingEntity {
 
     @JsonIgnore
     @ManyToOne
-    @JoinColumn
     private BOQ boq;
 
     @NotNull

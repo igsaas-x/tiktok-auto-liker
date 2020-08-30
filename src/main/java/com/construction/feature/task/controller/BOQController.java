@@ -34,8 +34,9 @@ public class BOQController {
 
     @PostMapping
     @PreAuthorize("hasAuthority('CREATE_ALL_BOQ')")
-    public BOQDto create(@RequestBody BOQDto dto) {
-        return mapper.apply(service.save(mapper.toEntity(dto)));
+    public boolean create(@RequestBody BOQDto dto) {
+        service.save(mapper.toEntity(dto));
+        return true;
     }
 
     @GetMapping("/{id}")
@@ -83,12 +84,6 @@ public class BOQController {
         filterConfig.configureFilter(ActionName.UPDATE, "boq");
         final var tasks = dtos.stream().map(taskMapper::toEntity).collect(Collectors.toList());
         return mapper.apply(service.addTask(id, tasks));
-    }
-
-    @PutMapping("/{id}/remove-task/{taskId}")
-    public BOQDto removeTask(@PathVariable Long id, @PathVariable Long taskId) {
-        filterConfig.configureFilter(ActionName.UPDATE, "boq");
-        return mapper.apply(service.removeTask(id, taskId));
     }
 
     @ApiOperation("verify BOQ mean to verify all task in BOQ")

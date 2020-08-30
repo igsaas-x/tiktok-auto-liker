@@ -67,11 +67,9 @@ public class BOQService {
         return repository.save(boq);
     }
 
-    public BOQ removeTask(Long id, Long taskId) {
-        var boq = getById(id);
-        var task = taskService.getById(taskId);
-        boq.getTasks().remove(task);
-        return repository.save(boq);
+    public boolean removeTask(Long taskId) {
+        taskService.deleteById(taskId);
+        return true;
     }
 
     public boolean verifyAllTask(Long id) {
