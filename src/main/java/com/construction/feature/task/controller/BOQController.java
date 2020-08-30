@@ -86,9 +86,9 @@ public class BOQController {
     }
 
     @PutMapping("/{id}/remove-task/{taskId}")
-    public BOQDto removeTask(@PathVariable Long id, @PathVariable Long taskID) {
+    public BOQDto removeTask(@PathVariable Long id, @PathVariable Long taskId) {
         filterConfig.configureFilter(ActionName.UPDATE, "boq");
-        return mapper.apply(service.removeTask(id, taskID));
+        return mapper.apply(service.removeTask(id, taskId));
     }
 
     @ApiOperation("verify BOQ mean to verify all task in BOQ")
