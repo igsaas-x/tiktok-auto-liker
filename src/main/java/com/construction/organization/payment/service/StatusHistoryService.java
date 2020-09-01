@@ -29,6 +29,6 @@ public class StatusHistoryService {
     }
 
     public List<StatusHistory> getByPaymentEntryId(final Long id) {
-        return repository.findAllByPaymentEntryId(id, Sort.by(Sort.Direction.DESC, "created_at"));
+        return repository.findAllByPaymentEntryId(id, Sort.by(Sort.Direction.DESC, "createdAt"));
     }
 }
