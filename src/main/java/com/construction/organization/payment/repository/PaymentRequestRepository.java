@@ -14,6 +14,4 @@ public interface PaymentRequestRepository extends JpaRepository<PaymentRequest, 
 
     @Query("select pr from PaymentRequest pr join pr.entries pe where pe.status = :status")
     Page<PaymentRequest> getPendingPaymentRequest(@Param("status") final PaymentEntryStatus status, Pageable pageable);
-
-    Page<PaymentRequest> findBySubConstructorId(final Long id);
 }
