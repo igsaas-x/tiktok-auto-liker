@@ -72,9 +72,10 @@ public class PaymentRequestController {
     }
 
     @PutMapping("/{id}/remove-entries")
-    public PaymentRequestDto removeEntries(@PathVariable("id") Long id, @RequestBody IdList ids) {
-        filterConfig.configureFilter(ActionName.UPDATE, "payment");
-        return requestMapper.apply(service.removeEntries(id, ids.getIds()));
+    public boolean removeEntries(@PathVariable("id") Long id, @RequestBody IdList ids) {
+        filterConfig.configureFilter(ActionName.DELETE, "payment");
+        ids.getIds().forEach(entry -> entryService.delete(id));
+        return true;
     }
 
     @ApiOperation("delete by Id")

@@ -29,7 +29,6 @@ public class PaymentEntry extends VersionEntity {
 
     @JsonIgnore
     @ManyToOne
-    @JoinColumn(name = "payment_request_id")
     PaymentRequest paymentRequest;
 
     @ManyToOne

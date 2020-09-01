@@ -52,17 +52,6 @@ public class PaymentRequestService {
         return repository.save(paymentRequest);
     }
 
-    public PaymentRequest removeEntries(Long id, List<Long> ids) {
-        final var paymentRequest = getById(id);
-        final var entries = paymentRequest.getEntries();
-        entries.forEach(entry -> {
-            if (ids.contains(entry.getId())) {
-                entries.remove(entry);
-            }
-        });
-        return repository.save(paymentRequest);
-    }
-
     public PaymentRequest update(Long id, PaymentRequest source) {
         final var target = getById(id);
         final var paymentRequest = dataMapper.mapObject(source, target, PaymentRequest.class);
