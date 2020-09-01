@@ -6,6 +6,7 @@ import com.construction.organization.payment.domain.StatusHistory;
 import com.construction.organization.payment.repository.StatusHistoryRepository;
 import com.construction.user.authentication.domain.AppUser;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Sort;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
@@ -28,6 +29,6 @@ public class StatusHistoryService {
     }
 
     public List<StatusHistory> getByPaymentEntryId(final Long id) {
-        return repository.findAllByPaymentEntryId(id);
+        return repository.findAllByPaymentEntryId(id, Sort.by(Sort.Direction.DESC, "created_at"));
     }
 }

@@ -28,7 +28,8 @@ public class PaymentEntry extends VersionEntity {
     String externalId;
 
     @JsonIgnore
-    @ManyToOne
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "payment_request_id", nullable = false)
     PaymentRequest paymentRequest;
 
     @ManyToOne
