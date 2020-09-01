@@ -64,17 +64,6 @@ public class PaymentRequestService {
         return repository.save(paymentRequest);
     }
 
-    public PaymentRequest deleteEntry(Long id, List<Long> ids) {
-        final var paymentRequest = getById(id);
-        final var entries = paymentRequest.getEntries();
-        entries.forEach(entry -> {
-            if (ids.contains(entry.getId())) {
-                entries.remove(entry);
-            }
-        });
-        return repository.save(paymentRequest);
-    }
-
     public Page<PaymentRequest> getAll(Pageable pageable) {
         return repository.findAll(pageable);
     }

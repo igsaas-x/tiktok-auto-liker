@@ -13,6 +13,8 @@ import com.construction.user.authorization.domain.ActionName;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
@@ -71,5 +73,10 @@ public class PaymentEntryController {
     @GetMapping("/{id}/history")
     public List<StatusHistory> getPaymentRequestHistory(@PathVariable Long id) {
         return historyService.getByPaymentEntryId(id);
+    }
+
+    @GetMapping("/by-subconstrucor/{id}")
+    public Page<PaymentEntry> getBySubConstructor(@PathVariable Long id, Pageable pageable) {
+        return service.getBySubConstructorId(id, pageable);
     }
 }
