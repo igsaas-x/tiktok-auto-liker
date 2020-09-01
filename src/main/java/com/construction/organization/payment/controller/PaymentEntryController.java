@@ -2,6 +2,7 @@ package com.construction.organization.payment.controller;
 
 import com.construction.organization.payment.domain.CommandType;
 import com.construction.organization.payment.domain.PaymentEntry;
+import com.construction.organization.payment.domain.PaymentEntryStatus;
 import com.construction.organization.payment.domain.StatusHistory;
 import com.construction.organization.payment.dto.PaymentEntryDto;
 import com.construction.organization.payment.dto.mapper.PaymentEntryMapper;
@@ -76,7 +77,7 @@ public class PaymentEntryController {
     }
 
     @GetMapping("/by-subconstrucor/{id}")
-    public Page<PaymentEntry> getBySubConstructor(@PathVariable Long id, Pageable pageable) {
-        return service.getBySubConstructorId(id, pageable);
+    public Page<PaymentEntryDto> getBySubConstructor(@PathVariable Long id, Pageable pageable) {
+        return service.getBySubConstructorId(id, PaymentEntryStatus.APPROVED, pageable).map(mapper);
     }
 }

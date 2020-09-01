@@ -44,8 +44,8 @@ public class PaymentEntryService {
         return repository.findByIdIn(ids);
     }
 
-    public Page<PaymentEntry> getBySubConstructorId(final Long id, Pageable pageable) {
-        return repository.findAllByPaymentRequestSubConstructorId(id, pageable);
+    public Page<PaymentEntry> getBySubConstructorId(final Long id, final PaymentEntryStatus status, Pageable pageable) {
+        return repository.findAllByPaymentRequestSubConstructorIdAndStatus(id, status, pageable);
     }
 
     public PaymentEntry handleCommand(final PaymentEntry paymentEntry, final CommandType command, final String comment) {

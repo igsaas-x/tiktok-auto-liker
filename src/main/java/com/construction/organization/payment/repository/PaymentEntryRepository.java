@@ -12,7 +12,7 @@ public interface PaymentEntryRepository extends JpaRepository<PaymentEntry, Long
 
     List<PaymentEntry> findByIdIn(final List<Long> ids);
 
-    Page<PaymentEntry> findAllByPaymentRequestSubConstructorId(final Long id, final Pageable pageable);
+    Page<PaymentEntry> findAllByPaymentRequestSubConstructorIdAndStatus(final Long id, final PaymentEntryStatus status, final Pageable pageable);
 
     List<PaymentEntry> findAllByPaymentRequestId(final Long id);
 
