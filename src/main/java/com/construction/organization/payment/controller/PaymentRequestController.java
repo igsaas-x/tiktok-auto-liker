@@ -74,7 +74,7 @@ public class PaymentRequestController {
     @PutMapping("/{id}/remove-entries")
     public boolean removeEntries(@PathVariable("id") Long id, @RequestBody IdList ids) {
         filterConfig.configureFilter(ActionName.DELETE, "payment");
-        ids.getIds().forEach(entry -> entryService.delete(id));
+        ids.getIds().forEach(entryService::delete);
         return true;
     }
 
