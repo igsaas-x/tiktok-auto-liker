@@ -51,40 +51,40 @@ public class PaymentEntryService {
     public PaymentEntry handleCommand(final PaymentEntry paymentEntry, final CommandType command, final String comment) {
         switch (command) {
             case SUBMIT:
-                if (!paymentEntry.getStatus().equals(PaymentEntryStatus.OPEN)) {
+                if (!PaymentEntryStatus.OPEN.equals(paymentEntry.getStatus())) {
                     throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "payment request is not in open status");
                 }
-                paymentEntry.setStatus(PaymentEntryStatus.SUBMITTED);
+                paymentEntry.setStatus(SUBMITTED);
                 break;
             case VERIFY:
-                if (!paymentEntry.getStatus().equals(PaymentEntryStatus.SUBMITTED)) {
+                if (!SUBMITTED.equals(paymentEntry.getStatus())) {
                     throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "payment request is not in submitted status");
                 }
-                paymentEntry.setStatus(PaymentEntryStatus.VERIFIED);
+                paymentEntry.setStatus(VERIFIED);
                 break;
             case CONFIRM:
-                if (!paymentEntry.getStatus().equals(PaymentEntryStatus.VERIFIED)) {
+                if (!VERIFIED.equals(paymentEntry.getStatus())) {
                     throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "payment request is not in verified status");
                 }
                 paymentEntry.setStatus(PaymentEntryStatus.CONFIRMED);
                 break;
             case REVIEW:
-                if (!paymentEntry.getStatus().equals(PaymentEntryStatus.CONFIRMED)) {
+                if (!CONFIRMED.equals(paymentEntry.getStatus())) {
                     throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "payment request is not in confirmed status");
                 }
-                paymentEntry.setStatus(PaymentEntryStatus.REVIEWED);
+                paymentEntry.setStatus(REVIEWED);
                 break;
             case APPROVE:
-                if (!paymentEntry.getStatus().equals(PaymentEntryStatus.REVIEWED)) {
+                if (!REVIEWED.equals(paymentEntry.getStatus())) {
                     throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "payment request is not in reviewed status");
                 }
-                paymentEntry.setStatus(PaymentEntryStatus.APPROVED);
+                paymentEntry.setStatus(APPROVED);
                 break;
             case CASH_OUT:
-                if (!paymentEntry.getStatus().equals(PaymentEntryStatus.APPROVED)) {
+                if (!APPROVED.equals(paymentEntry.getStatus())) {
                     throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "payment request is not in approved status");
                 }
-                paymentEntry.setStatus(PaymentEntryStatus.PAID);
+                paymentEntry.setStatus(PAID);
                 break;
             case REJECT:
                 if (OPEN.equals(paymentEntry.getStatus())
@@ -92,7 +92,7 @@ public class PaymentEntryService {
                         || PAID.equals(paymentEntry.getStatus())) {
                     throw new RuntimeException("status cannot be rejected");
                 }
-                paymentEntry.setStatus(PaymentEntryStatus.OPEN);
+                paymentEntry.setStatus(OPEN);
                 break;
             default:
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "command not found");
@@ -107,7 +107,11 @@ public class PaymentEntryService {
 
     public PaymentEntry update(final Long id, final PaymentEntry sourceEntry) {
         final var targetEntry = getById(id);
+        final var status = targetEntry.getStatus();
         final var newEntry = dataMapper.mapObject(sourceEntry, targetEntry, PaymentEntry.class);
+        if (newEntry.getStatus() == null) {
+            newEntry.setStatus(status);
+        }
         historyService.addHistory(newEntry, CommandType.UPDATE, context.authenticatedUser(), null);
         return repository.save(newEntry);
     }
