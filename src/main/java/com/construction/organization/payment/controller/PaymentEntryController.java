@@ -71,6 +71,7 @@ public class PaymentEntryController {
         return Map.of("success", result);
     }
 
+    @ApiOperation("history")
     @GetMapping("/{id}/history")
     public List<StatusHistory> getPaymentRequestHistory(@PathVariable Long id) {
         return historyService.getByPaymentEntryId(id);
