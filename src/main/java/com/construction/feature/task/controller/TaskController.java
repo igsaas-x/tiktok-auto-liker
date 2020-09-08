@@ -4,7 +4,6 @@ import com.construction.feature.FilterType;
 import com.construction.feature.task.domain.Task;
 import com.construction.feature.task.domain.TaskAssign;
 import com.construction.feature.task.dto.TaskDto;
-import com.construction.feature.task.dto.TaskTemplateData;
 import com.construction.feature.task.dto.mapper.TaskMapper;
 import com.construction.feature.task.service.TaskAssignService;
 import com.construction.feature.task.service.TaskService;
@@ -79,13 +78,6 @@ public class TaskController {
     public List<TaskDto> list() {
         filterConfig.configureFilter(ActionName.READ, "task");
         return service.getAll().stream().map(mapper).collect(Collectors.toList());
-    }
-
-    @ApiOperation("List of task with sub task for beloved brother `Phally`")
-    @GetMapping("/all-with-sub")
-    public List<TaskTemplateData> getAll() {
-        filterConfig.configureFilter(ActionName.READ, "task");
-        return service.getAllAsData();
     }
 
     @ApiOperation("Pagination request")
@@ -207,6 +199,6 @@ public class TaskController {
 
     @GetMapping("/by-sub-constructor/{id}")
     public List<TaskDto> getBySubConstructorId(@PathVariable Long id) {
-        return service.getBySubConstructorId(id).stream().map(mapper).collect(Collectors.toList());
+        return service.getBySubConstructorId(id).stream().map(task -> mapper.apply(task, id)).collect(Collectors.toList());
     }
 }

@@ -10,6 +10,7 @@ import io.swagger.annotations.Api;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -26,18 +27,35 @@ public class TaskTemplateController {
     private final TaskDataRepository dataRepository;
 
     @PostMapping
+    @PreAuthorize("hasAuthority('CREATE_ALL_TASK_TEMPLATE')")
     public TaskTemplate create(@RequestBody TaskTemplateDto dto) {
         final var template = mapper.toEntity(dto);
         return service.create(template);
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize("hasAuthority('UPDATE_ALL_TASK_TEMPLATE')")
     public TaskTemplate update(@PathVariable Long id, @RequestBody TaskTemplateDto dto) {
         final var template = mapper.toEntity(dto);
         return service.update(id, template);
     }
 
+    @PutMapping("/{id}")
+    @PreAuthorize("hasAuthority('VERIFY_ALL_TASK_TEMPLATE')")
+    public TaskTemplate verify(@PathVariable Long id, @RequestBody TaskTemplateDto dto) {
+        final var template = mapper.toEntity(dto);
+        return service.update(id, template);
+    }
+
+    @PutMapping("/{id}")
+    @PreAuthorize("hasAuthority('APPROVE_ALL_TASK_TEMPLATE')")
+    public TaskTemplate approve(@PathVariable Long id, @RequestBody TaskTemplateDto dto) {
+        final var template = mapper.toEntity(dto);
+        return service.update(id, template);
+    }
+
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasAuthority('DELETE_ALL_TASK_TEMPLATE')")
     public Map<String, Object> delete(@PathVariable Long id) {
         return Map.of("success", service.delete(id));
     }
@@ -66,5 +84,4 @@ public class TaskTemplateController {
     public List<TaskTemplate> getByParentId(@PathVariable Long id) {
         return service.getByParentId(id);
     }
-
 }

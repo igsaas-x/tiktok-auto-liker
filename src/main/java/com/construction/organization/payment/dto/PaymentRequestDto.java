@@ -18,6 +18,8 @@ public class PaymentRequestDto {
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     Long id;
 
+    String externalId;
+
     @JsonProperty(value = "createdBy", access = JsonProperty.Access.READ_ONLY)
     String createdByUserName;
 

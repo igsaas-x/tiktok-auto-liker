@@ -16,9 +16,12 @@ import java.util.List;
 @Data
 @Accessors(chain = true)
 @JsonIgnoreProperties(value = {
-        "id", "status",
-        "createdBy", "updatedBy",
-        "verifiedBy", "approvedBy",
+        "id",
+        "status",
+        "createdBy",
+        "updatedBy",
+        "verifiedBy",
+        "approvedBy",
         "subConstructors"}, allowGetters = true)
 public class TaskDto {
     private Long id;
@@ -48,5 +51,7 @@ public class TaskDto {
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime approvedAt;
     private ObjectStatus status;
+    private BigDecimal paidAmount;
+    private BigDecimal availableAmount;
     private List<SubConstructorDto> subConstructors;
 }
