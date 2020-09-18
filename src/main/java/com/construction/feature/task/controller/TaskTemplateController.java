@@ -6,8 +6,10 @@ import com.construction.feature.task.dto.TaskTemplateDto;
 import com.construction.feature.task.dto.mapper.TaskTemplateMapper;
 import com.construction.feature.task.repository.TaskDataRepository;
 import com.construction.feature.task.service.TaskTemplateService;
+import com.construction.persistence.dto.IdList;
 import io.swagger.annotations.Api;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -16,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Map;
 
+@Slf4j
 @RequestMapping("/task-template")
 @RestController
 @Api(tags = "Task Template API")
@@ -40,18 +43,40 @@ public class TaskTemplateController {
         return service.update(id, template);
     }
 
-    @PutMapping("/{id}")
+    @PutMapping("/{id}/verify")
     @PreAuthorize("hasAuthority('VERIFY_ALL_TASK_TEMPLATE')")
-    public TaskTemplate verify(@PathVariable Long id, @RequestBody TaskTemplateDto dto) {
-        final var template = mapper.toEntity(dto);
-        return service.update(id, template);
+    public TaskTemplate verify(@PathVariable Long id) {
+        return service.verify(id);
     }
 
-    @PutMapping("/{id}")
+    @PutMapping("/verify/all")
+    @PreAuthorize("hasAuthority('VERIFY_ALL_TASK_TEMPLATE')")
+    public void verifyAll(@RequestBody IdList ids) {
+        ids.getIds().forEach(id -> {
+            try {
+                service.verify(id);
+            } catch (final Exception e) {
+                log.warn("verify fail:", e);
+            }
+        });
+    }
+
+    @PutMapping("/{id}/approve")
     @PreAuthorize("hasAuthority('APPROVE_ALL_TASK_TEMPLATE')")
-    public TaskTemplate approve(@PathVariable Long id, @RequestBody TaskTemplateDto dto) {
-        final var template = mapper.toEntity(dto);
-        return service.update(id, template);
+    public TaskTemplate approve(@PathVariable Long id) {
+        return service.approve(id);
+    }
+
+    @PutMapping("/approve/all")
+    @PreAuthorize("hasAuthority('APPROVE_ALL_TASK_TEMPLATE')")
+    public void approveAll(@RequestBody IdList ids) {
+        ids.getIds().forEach(id -> {
+            try {
+                service.approve(id);
+            } catch (final Exception e) {
+                log.warn("approve fail:", e);
+            }
+        });
     }
 
     @DeleteMapping("/{id}")

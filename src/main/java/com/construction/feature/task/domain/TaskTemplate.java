@@ -1,5 +1,7 @@
 package com.construction.feature.task.domain;
 
+import com.construction.persistence.domain.AuditingEntity;
+import com.construction.persistence.domain.SimpleAuditingEntity;
 import com.construction.persistence.domain.VersionEntity;
 import com.construction.persistence.exception.ValidationErrorException;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -15,7 +17,7 @@ import java.util.List;
 @Setter
 @Table(name = "task_template")
 @Accessors(chain = true)
-public class TaskTemplate extends VersionEntity {
+public class TaskTemplate extends AuditingEntity {
 
     @JsonIgnore
     @ManyToOne
