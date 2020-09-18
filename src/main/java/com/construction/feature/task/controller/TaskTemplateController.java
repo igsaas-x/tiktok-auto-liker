@@ -85,6 +85,18 @@ public class TaskTemplateController {
         return Map.of("success", service.delete(id));
     }
 
+    @DeleteMapping
+    @PreAuthorize("hasAuthority('DELETE_ALL_TASK_TEMPLATE')")
+    public void deleteAll(@RequestBody IdList ids) {
+        ids.getIds().forEach(id -> {
+            try {
+                service.delete(id);
+            } catch (final Exception e) {
+                log.warn("delete fail:", e);
+            }
+        });
+    }
+
     @GetMapping
     public Page<TaskTemplate> getAll(Pageable pageable) {
         return service.getAll(pageable);
