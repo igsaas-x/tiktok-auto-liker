@@ -42,7 +42,7 @@ public class TypeOfHouseController {
         return repository.save(target);
     }
 
-    @DeleteMapping("/id")
+    @DeleteMapping("/{id}")
     @PreAuthorize("hasAuthority('ALL_ALL_ALL')")
     public void deleteById(@PathVariable Long id) {
         repository.deleteById(id);
