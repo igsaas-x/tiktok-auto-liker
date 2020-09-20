@@ -4,7 +4,7 @@ import com.construction.user.authorization.domain.Permission;
 import com.construction.user.authorization.domain.RolePermission;
 import com.construction.user.authorization.domain.UserRole;
 import com.construction.user.authorization.dto.PermissionDto;
-import com.construction.user.authorization.dto.PermissionMapper;
+import com.construction.user.authorization.dto.mapper.PermissionMapper;
 import com.construction.user.authorization.dto.RoleDto;
 import com.construction.user.authorization.repository.RolePermissionRepository;
 import com.construction.user.authorization.repository.UserRoleRepository;

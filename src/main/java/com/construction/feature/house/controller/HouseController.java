@@ -56,7 +56,7 @@ public class HouseController {
     }
 
     @ApiOperation("Find by Id")
-    @DeleteMapping("/delete/{id}")
+    @DeleteMapping("/{id}")
     public void delete(@PathVariable("id") Long id) {
         filterConfig.configureFilter(ActionName.DELETE, "house");
         houseService.deleteById(id);
@@ -75,18 +75,6 @@ public class HouseController {
         return houseService.getAssigned().stream().map(mapper).collect(Collectors.toList());
     }
 
-    @GetMapping("/pending/verify")
-    public List<HouseDto> getPendingForVerify(Pageable pageable) {
-        filterConfig.configureFilter(ActionName.READ, "house");
-        return houseService.getPendingForVerify().stream().map(mapper).collect(Collectors.toList());
-    }
-
-    @GetMapping("/pending/approve")
-    public List<HouseDto> getPendingForApprove(Pageable pageable) {
-        filterConfig.configureFilter(ActionName.READ, "house");
-        return houseService.getPendingForApprove().stream().map(mapper).collect(Collectors.toList());
-    }
-
     @ApiOperation("Pagination request")
     @GetMapping("/page")
     public Page<HouseDto> pageQuery(Pageable pageable, @RequestParam FilterType filter) {
@@ -101,7 +89,7 @@ public class HouseController {
     }
 
     @ApiOperation("Update one data")
-    @PutMapping("/update/{id}")
+    @PutMapping("/{id}")
     public HouseDto update(@PathVariable Long id, @RequestBody HouseDto dto) {
         var house = mapper.toEntity(dto);
         filterConfig.configureFilter(ActionName.UPDATE, "house");

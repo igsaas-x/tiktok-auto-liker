@@ -1,7 +1,9 @@
-package com.construction.user.authorization.dto;
+package com.construction.user.authorization.dto.mapper;
 
 import com.construction.user.authorization.domain.Permission;
 import com.construction.user.authorization.domain.UserRole;
+import com.construction.user.authorization.dto.PermissionDto;
+import com.construction.user.authorization.dto.RoleDto;
 import com.construction.user.authorization.repository.PermissionRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;

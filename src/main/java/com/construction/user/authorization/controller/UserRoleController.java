@@ -34,7 +34,6 @@ public class UserRoleController {
         return service.getById(id);
     }
 
-    @ApiOperation("Find by Id")
     @DeleteMapping("/{id}")
     @PreAuthorize("hasAuthority('ALL_ALL')")
     public void delete(@PathVariable("id") Long id) {

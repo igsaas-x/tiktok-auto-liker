@@ -86,22 +86,10 @@ public class ProjectController {
         service.delete(id);
     }
 
-    @DeleteMapping("/batch")
+    @DeleteMapping
     void deleteAll(@RequestBody IdList ids) {
         filterConfig.configureFilter(ActionName.DELETE, "project");
         ids.getIds().forEach(service::delete);
-    }
-
-    @GetMapping("/pending/verify")
-    public Page<Project> getPendingVerify(Pageable pageable) {
-        filterConfig.configureFilter(ActionName.READ, "project");
-        return service.getPendingForVerify(pageable);
-    }
-
-    @GetMapping("/pending/approve")
-    public Page<Project> getPendingApprove(Pageable pageable) {
-        filterConfig.configureFilter(ActionName.READ, "project");
-        return service.getPendingForApprove(pageable);
     }
 
     @GetMapping("/pending/all")
