@@ -37,7 +37,7 @@ public class HouseController {
 
     @ApiOperation("Add new data")
     @PostMapping
-    @PreAuthorize("hasAuthority('CREATE_ALL_HOUSE')")
+    @PreAuthorize("hasAuthority('CREATE_HOUSE')")
     public HouseDto save(@RequestBody HouseDto dto) {
         var house = mapper.toEntity(dto);
         return mapper.apply(houseService.save(house));
@@ -109,21 +109,18 @@ public class HouseController {
     }
 
     @PostMapping("/{id}/verify")
-    @PreAuthorize("hasAuthority('VERIFY_ALL_HOUSE') or hasAuthority('VERIFY_ASSIGNED_HOUSE')")
     public HouseDto verify(@PathVariable Long id) {
         filterConfig.configureFilter(ActionName.VERIFY, "house");
         return mapper.apply(houseService.verify(id));
     }
 
     @PostMapping("/{id}/assign/{userId}")
-    @PreAuthorize("hasAuthority('ASSIGN_ALL_HOUSE') or hasAuthority('ASSIGN_ASSIGNED_HOUSE')")
     public HouseAssign assign(@PathVariable Long id, @PathVariable Long userId, @RequestParam AssignFor assignFor) {
         filterConfig.configureFilter(ActionName.VERIFY, "house");
         return houseService.assign(id, userId, assignFor);
     }
 
     @PostMapping("/batch/assign/{userId}")
-    @PreAuthorize("hasAuthority('ASSIGN_ALL_HOUSE') or hasAuthority('ASSIGN_ASSIGNED_HOUSE')")
     public boolean assignAll(@RequestBody IdList ids, @PathVariable Long userId, @RequestParam AssignFor assignFor) {
         filterConfig.configureFilter(ActionName.VERIFY, "house");
         ids.getIds().forEach(id -> houseService.assign(id, userId, assignFor));
@@ -131,28 +128,24 @@ public class HouseController {
     }
 
     @PostMapping("/{id}/unassign/{userId}")
-    @PreAuthorize("hasAuthority('ASSIGN_ALL_HOUSE') or hasAuthority('ASSIGN_ASSIGNED_HOUSE')")
     public void unAssign(@PathVariable Long id, @PathVariable Long userId) {
         filterConfig.configureFilter(ActionName.VERIFY, "house");
         houseService.unAssign(id, userId);
     }
 
     @PostMapping("/batch/verify")
-    @PreAuthorize("hasAuthority('VERIFY_ALL_HOUSE') or hasAuthority('VERIFY_ASSIGNED_HOUSE')")
     public List<HouseDto> verifyAll(@RequestBody IdList ids) {
         filterConfig.configureFilter(ActionName.VERIFY, "house");
         return houseService.verifyAll(ids.getIds()).stream().map(mapper).collect(Collectors.toList());
     }
 
     @PostMapping("/{id}/approve")
-    @PreAuthorize("hasAuthority('APPROVE_ALL_HOUSE') or hasAuthority('APPROVE_ASSIGNED_HOUSE')")
     public HouseDto approve(@PathVariable Long id) {
         filterConfig.configureFilter(ActionName.APPROVE, "house");
         return mapper.apply(houseService.approve(id));
     }
 
     @PostMapping("/batch/approve")
-    @PreAuthorize("hasAuthority('APPROVE_ALL_HOUSE') or hasAuthority('APPROVE_ASSIGNED_HOUSE')")
     public List<HouseDto> approveAll(@RequestBody IdList ids) {
         filterConfig.configureFilter(ActionName.APPROVE, "house");
         return houseService.approveAll(ids.getIds()).stream().map(mapper).collect(Collectors.toList());

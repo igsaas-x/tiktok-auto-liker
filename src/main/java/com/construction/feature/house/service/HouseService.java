@@ -7,14 +7,12 @@ import com.construction.feature.house.domain.House;
 import com.construction.feature.house.domain.HouseAssign;
 import com.construction.feature.house.repository.HouseAssignRepository;
 import com.construction.feature.house.repository.HouseRepository;
-import com.construction.feature.task.domain.Task;
-import com.construction.feature.task.domain.TaskAssign;
 import com.construction.feature.task.repository.TaskAssignRepository;
 import com.construction.persistence.domain.AssignFor;
 import com.construction.persistence.domain.ObjectStatus;
 import com.construction.persistence.exception.ResourceNotFoundException;
 import com.construction.persistence.service.EntityDataMapper;
-import com.construction.persistence.utils.ObjectStatusValidator;
+import com.construction.persistence.utils.EntityValidator;
 import com.construction.persistence.utils.SFWhere;
 import com.construction.user.authentication.service.AppUserService;
 import com.construction.user.authorization.domain.ActionName;
@@ -24,7 +22,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
 
 import javax.transaction.Transactional;
 import java.time.LocalDateTime;
@@ -40,7 +37,7 @@ public class HouseService {
     private final TaskAssignRepository taskAssignRepository;
     private final EntityDataMapper dataMapper;
     private final ApplicationSecurityContext context;
-    private final ObjectStatusValidator<House> validator;
+    private final EntityValidator<House> validator;
     private final HouseAssignRepository assignRepository;
     private final AppUserService userService;
 

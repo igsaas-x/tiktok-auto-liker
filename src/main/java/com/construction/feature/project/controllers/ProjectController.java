@@ -69,7 +69,7 @@ public class ProjectController {
     }
 
     @PostMapping
-    @PreAuthorize("hasAuthority('CREATE_ALL_PROJECT')")
+    @PreAuthorize("hasAuthority('CREATE_PROJECT')")
     public Project create(@RequestBody Project project) {
         return service.create(project);
     }
@@ -111,42 +111,36 @@ public class ProjectController {
     }
 
     @PostMapping("/{id}/verify")
-    @PreAuthorize("hasAuthority('VERIFY_ALL_PROJECT') or hasAuthority('VERIFY_ASSIGNED_PROJECT')")
     public Project verify(@PathVariable Long id) {
         filterConfig.configureFilter(ActionName.VERIFY, "project");
         return service.verify(id);
     }
 
     @PostMapping("/batch/verify")
-    @PreAuthorize("hasAuthority('VERIFY_ALL_PROJECT') or hasAuthority('VERIFY_ASSIGNED_PROJECT')")
     public List<Project> verifyAll(@RequestBody IdList ids) {
         filterConfig.configureFilter(ActionName.VERIFY, "project");
         return service.verifyAll(ids.getIds());
     }
 
     @PostMapping("/{id}/approve")
-    @PreAuthorize("hasAuthority('APPROVE_ALL_PROJECT') or hasAuthority('APPROVE_ASSIGNED_PROJECT')")
     public Project approve(@PathVariable Long id) {
         filterConfig.configureFilter(ActionName.APPROVE, "project");
         return service.approve(id);
     }
 
     @PostMapping("/batch/approve")
-    @PreAuthorize("hasAuthority('APPROVE_ALL_PROJECT') or hasAuthority('APPROVE_ASSIGNED_PROJECT')")
     public List<Project> approveAll(@RequestBody IdList ids) {
         filterConfig.configureFilter(ActionName.APPROVE, "project");
         return service.approveAll(ids.getIds());
     }
 
     @PostMapping("/{id}/assign/{userId}")
-    @PreAuthorize("hasAuthority('ASSIGN_ALL_PROJECT') or hasAuthority('ASSIGN_ASSIGNED_PROJECT')")
     public ProjectAssign assignProject(@PathVariable Long id, @PathVariable Long userId, @RequestParam AssignFor assignFor) {
         filterConfig.configureFilter(ActionName.ASSIGN, "project");
         return service.assign(id, userId, assignFor);
     }
 
     @PostMapping("/batch/assign/{userId}")
-    @PreAuthorize("hasAuthority('ASSIGN_ALL_PROJECT') or hasAuthority('ASSIGN_ASSIGNED_PROJECT')")
     public boolean assignAllProject(@RequestBody IdList ids, @PathVariable Long userId, @RequestParam AssignFor assignFor) {
         filterConfig.configureFilter(ActionName.ASSIGN, "project");
         ids.getIds().forEach(id -> service.assign(id, userId, assignFor));
@@ -154,7 +148,6 @@ public class ProjectController {
     }
 
     @PostMapping("/{id}/unassign/{userId}")
-    @PreAuthorize("hasAuthority('ASSIGN_ALL_PROJECT') or hasAuthority('ASSIGN_ASSIGNED_PROJECT')")
     public boolean unAssignProject(@PathVariable Long id, @PathVariable Long userId) {
         filterConfig.configureFilter(ActionName.ASSIGN, "project");
         return service.unAssign(id, userId);

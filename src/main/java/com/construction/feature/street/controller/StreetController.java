@@ -35,7 +35,7 @@ public class StreetController {
 
     @ApiOperation("Add new data")
     @PostMapping
-    @PreAuthorize("hasAuthority('CREATE_ALL_STREET')")
+    @PreAuthorize("hasAuthority('CREATE_STREET')")
     public Street save(@RequestBody Street street) {
         return service.save(street);
     }
@@ -88,6 +88,7 @@ public class StreetController {
 
     @GetMapping("/assigned")
     public List<Street> getAssignedStreet() {
+        filterConfig.configureFilter(ActionName.READ, "street");
         return service.getAssignedStreet();
     }
 
@@ -106,14 +107,12 @@ public class StreetController {
     }
 
     @PostMapping("/{id}/assign/{userId}")
-    @PreAuthorize("hasAuthority('ASSIGN_ALL_STREET') or hasAuthority('ASSIGN_ASSIGNED_STREET')")
     public StreetAssign assign(@PathVariable Long id, @PathVariable Long userId, @RequestParam AssignFor assignFor) {
         filterConfig.configureFilter(ActionName.ASSIGN, "street");
         return service.assign(id, userId, assignFor);
     }
 
     @PostMapping("/batch/assign/{userId}")
-    @PreAuthorize("hasAuthority('ASSIGN_ALL_STREET') or hasAuthority('ASSIGN_ASSIGNED_STREET')")
     public boolean assignAll(@RequestBody IdList ids, @PathVariable Long userId, @RequestParam AssignFor assignFor) {
         filterConfig.configureFilter(ActionName.ASSIGN, "street");
         ids.getIds().forEach(id -> service.assign(id, userId, assignFor));
@@ -121,35 +120,30 @@ public class StreetController {
     }
 
     @PostMapping("/{id}/unassign/{userId}")
-    @PreAuthorize("hasAuthority('ASSIGN_ALL_STREET') or hasAuthority('ASSIGN_ASSIGNED_STREET')")
     public void unAssign(@PathVariable Long id, @PathVariable Long userId) {
         filterConfig.configureFilter(ActionName.ASSIGN, "street");
         service.unAssign(id, userId);
     }
 
     @PostMapping("/{id}/verify")
-    @PreAuthorize("hasAuthority('VERIFY_ALL_STREET') or hasAuthority('VERIFY_ASSIGNED_STREET')")
     public Street verify(@PathVariable Long id) {
         filterConfig.configureFilter(ActionName.VERIFY, "street");
         return service.verify(id);
     }
 
     @PostMapping("/batch/verify")
-    @PreAuthorize("hasAuthority('VERIFY_ALL_STREET') or hasAuthority('VERIFY_ASSIGNED_STREET')")
     public List<Street> verifyAll(@RequestBody IdList ids) {
         filterConfig.configureFilter(ActionName.VERIFY, "street");
         return service.verifyAll(ids.getIds());
     }
 
     @PostMapping("/{id}/approve")
-    @PreAuthorize("hasAuthority('APPROVE_ALL_STREET') or hasAuthority('APPROVE_ASSIGNED_STREET')")
     public Street approve(@PathVariable Long id) {
         filterConfig.configureFilter(ActionName.APPROVE, "street");
         return service.approve(id);
     }
 
     @PostMapping("/batch/approve")
-    @PreAuthorize("hasAuthority('APPROVE_ALL_STREET') or hasAuthority('APPROVE_ASSIGNED_STREET')")
     public List<Street> approveAll(@RequestBody IdList ids) {
         filterConfig.configureFilter(ActionName.APPROVE, "street");
         return service.approveAll(ids.getIds());

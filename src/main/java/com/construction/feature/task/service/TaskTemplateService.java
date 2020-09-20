@@ -6,7 +6,7 @@ import com.construction.feature.task.repository.TaskTemplateRepository;
 import com.construction.persistence.domain.ObjectStatus;
 import com.construction.persistence.exception.ResourceNotFoundException;
 import com.construction.persistence.service.EntityDataMapper;
-import com.construction.persistence.utils.ObjectStatusValidator;
+import com.construction.persistence.utils.EntityValidator;
 import com.construction.user.authorization.domain.ActionName;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -22,7 +22,7 @@ public class TaskTemplateService {
 
     private final TaskTemplateRepository repository;
     private final EntityDataMapper dataMapper;
-    private final ObjectStatusValidator<TaskTemplate> validator;
+    private final EntityValidator<TaskTemplate> validator;
     private final ApplicationSecurityContext context;
 
     public TaskTemplate getById(final Long id) {

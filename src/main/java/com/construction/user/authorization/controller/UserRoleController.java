@@ -2,9 +2,7 @@ package com.construction.user.authorization.controller;
 
 import com.construction.user.authorization.domain.UserRole;
 import com.construction.user.authorization.dto.PermissionDto;
-import com.construction.user.authorization.dto.PermissionMapper;
 import com.construction.user.authorization.dto.RoleDto;
-import com.construction.user.authorization.repository.PermissionRepository;
 import com.construction.user.authorization.service.UserRoleService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -22,13 +20,11 @@ import java.util.List;
 @AllArgsConstructor
 public class UserRoleController {
 
-    private final PermissionMapper mapper;
     private final UserRoleService service;
-    private final PermissionRepository permissionRepository;
 
     @ApiOperation("Add new data")
     @PostMapping
-    @PreAuthorize("hasAuthority('ALL_ALL_ALL')")
+    @PreAuthorize("hasAuthority('ALL_ALL')")
     public UserRole save(@RequestBody RoleDto roleDto) {
         return service.save(roleDto);
     }
@@ -39,8 +35,8 @@ public class UserRoleController {
     }
 
     @ApiOperation("Find by Id")
-    @DeleteMapping("/delete/{id}")
-    @PreAuthorize("hasAuthority('ALL_ALL_ALL')")
+    @DeleteMapping("/{id}")
+    @PreAuthorize("hasAuthority('ALL_ALL')")
     public void delete(@PathVariable("id") Long id) {
         service.deleteById(id);
     }
@@ -58,8 +54,8 @@ public class UserRoleController {
     }
 
     @ApiOperation("Update one data")
-    @PutMapping("/update/{id}")
-    @PreAuthorize("hasAuthority('ALL_ALL_ALL')")
+    @PutMapping("/{id}")
+    @PreAuthorize("hasAuthority('ALL_ALL')")
     public UserRole update(@PathVariable Long id, @RequestBody RoleDto dto) {
         return service.updateById(id, dto);
     }

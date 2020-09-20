@@ -24,19 +24,19 @@ public class AppUserController {
     private final ApplicationSecurityContext context;
 
     @GetMapping
-    @PreAuthorize("hasAuthority('READ_ALL_USER')")
+    @PreAuthorize("hasAuthority('READ_USER')")
     public List<AppUser> getAllUser() {
         return service.getAll();
     }
 
-    @PreAuthorize("hasAuthority('READ_ALL_USER')")
+    @PreAuthorize("hasAuthority('READ_USER')")
     @GetMapping("/by-role/{id}")
     public List<AppUser> getByRole(@PathVariable Long id) {
         return service.getByRole(id);
     }
 
     @GetMapping("/{id}")
-    @PreAuthorize("hasAuthority('READ_ALL_USER')")
+    @PreAuthorize("hasAuthority('READ_USER')")
     public AppUser getUserById(@NotNull @PathVariable("id") final Long id) {
         return service.getById(id);
     }
@@ -62,16 +62,19 @@ public class AppUserController {
     }
 
     @PutMapping("/{id}/role/{roleId}")
+    @PreAuthorize("hasAuthority('UPDATE_USER')")
     public AppUser assignRole(@PathVariable Long id, @PathVariable Long roleId) {
         return service.assignRole(id, roleId);
     }
 
     @PostMapping
+    @PreAuthorize("hasAuthority('CREATE_USER')")
     public AppUser createUser(@NotNull @RequestBody final UserDto dto) {
         return service.createUser(mapper.toEntity(dto));
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasAuthority('DELETE_USER')")
     public boolean deleteUser(@NotNull @PathVariable("id") final Long id) {
         if (id.equals(context.authenticatedUser().getId())) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "cannot delete current user");

@@ -7,7 +7,7 @@ import com.construction.organization.subconstructor.repository.SubConstructorRep
 import com.construction.persistence.domain.ObjectStatus;
 import com.construction.persistence.exception.ResourceNotFoundException;
 import com.construction.persistence.service.EntityDataMapper;
-import com.construction.persistence.utils.ObjectStatusValidator;
+import com.construction.persistence.utils.EntityValidator;
 import com.construction.persistence.utils.SFWhere;
 import com.construction.user.authorization.domain.ActionName;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,7 +28,7 @@ public class SubConstructorService {
     @Autowired
     private EntityDataMapper dataMapper;
     @Autowired
-    private ObjectStatusValidator<SubConstructor> validator;
+    private EntityValidator<SubConstructor> validator;
     @Autowired
     private ApplicationSecurityContext context;
 

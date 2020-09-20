@@ -17,6 +17,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -39,6 +40,7 @@ public class PaymentEntryController {
     private final StatusHistoryService historyService;
 
     @GetMapping("/{id}")
+    @PreAuthorize("hasAuthority('READ_PAYMENT')")
     public PaymentEntryDto getById(@PathVariable("id") Long id) {
         filterConfig.configureFilter(ActionName.READ, "payment");
         return mapper.apply(service.getById(id));
@@ -46,6 +48,7 @@ public class PaymentEntryController {
 
     @ApiOperation("Submit command to payment request. Parameters are:" + ALLOWED_PARAM)
     @PutMapping("/command")
+    @PreAuthorize("hasAuthority('UPDATE_PAYMENT')")
     public Map<String, Object> handleCommand(@RequestBody IdList ids, @RequestParam CommandType command, @RequestParam(required = false) String comment) {
         if (!ALLOWED_PENDING_FOR.contains(command)) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "unsupported 'command', supported commands are: " + ALLOWED_PARAM);
@@ -56,26 +59,28 @@ public class PaymentEntryController {
 
     @ApiOperation("Update one data")
     @PutMapping("/{id}")
+    @PreAuthorize("hasAuthority('UPDATE_PAYMENT')")
     public PaymentEntry update(@PathVariable Long id, @RequestBody PaymentEntryDto dto) {
-        filterConfig.configureFilter(ActionName.UPDATE, "payment");
         return service.update(id, mapper.toEntity(dto));
     }
 
     @ApiOperation("delete by Id")
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasAuthority('DELETE_PAYMENT')")
     public Map<String, Object> delete(@PathVariable Long id) {
-        filterConfig.configureFilter(ActionName.DELETE, "payment");
         final var result = service.delete(id);
         return Map.of("success", result);
     }
 
     @ApiOperation("history")
     @GetMapping("/{id}/history")
+    @PreAuthorize("hasAuthority('READ_PAYMENT')")
     public List<StatusHistory> getPaymentRequestHistory(@PathVariable Long id) {
         return historyService.getByPaymentEntryId(id);
     }
 
     @GetMapping("/by-subconstrucor/{id}")
+    @PreAuthorize("hasAuthority('READ_PAYMENT')")
     public Page<PaymentEntryDto> getBySubConstructor(@PathVariable Long id, Pageable pageable) {
         return service.getBySubConstructorId(id, PaymentEntryStatus.APPROVED, pageable).map(mapper);
     }

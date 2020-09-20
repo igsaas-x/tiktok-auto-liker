@@ -42,7 +42,7 @@ public class TaskController {
 
     @ApiOperation("Add new data")
     @PostMapping
-    @PreAuthorize("hasAuthority('CREATE_ALL_TASK')")
+    @PreAuthorize("hasAuthority('CREATE_TASK')")
     public TaskDto save(@RequestBody TaskDto task) {
         return mapper.apply(service.save(mapper.toEntity(task)));
     }
@@ -95,16 +95,19 @@ public class TaskController {
 
     @GetMapping("/pending/verify")
     public List<TaskDto> getPendingForVerifyTask() {
+        filterConfig.configureFilter(ActionName.READ, "task");
         return service.getPendingForVerify().stream().map(mapper).collect(Collectors.toList());
     }
 
     @GetMapping("/pending/approve")
     public List<TaskDto> getPendingForApproveTask() {
+        filterConfig.configureFilter(ActionName.READ, "task");
         return service.getPendingForApprove().stream().map(mapper).collect(Collectors.toList());
     }
 
     @GetMapping("/pending/all")
     public List<TaskDto> getPendingForAll() {
+        filterConfig.configureFilter(ActionName.READ, "task");
         final var all = getPendingForVerifyTask();
         all.addAll(getPendingForApproveTask());
         return all;
@@ -112,6 +115,7 @@ public class TaskController {
 
     @GetMapping("/assigned")
     public List<TaskDto> getAssignedTask() {
+        filterConfig.configureFilter(ActionName.READ, "task");
         return service.getAssignedTask().stream().map(mapper).collect(Collectors.toList());
     }
 
@@ -123,42 +127,36 @@ public class TaskController {
     }
 
     @PostMapping("/{id}/verify")
-    @PreAuthorize("hasAuthority('VERIFY_ALL_TASK') or hasAuthority('VERIFY_ASSIGNED_TASK')")
     public TaskDto verify(@PathVariable Long id) {
         filterConfig.configureFilter(ActionName.VERIFY, "task");
         return mapper.apply(service.verify(id));
     }
 
     @PostMapping("/batch/verify")
-    @PreAuthorize("hasAuthority('VERIFY_ALL_TASK') or hasAuthority('VERIFY_ASSIGNED_TASK')")
     public List<TaskDto> verifyAll(@RequestBody IdList ids) {
         filterConfig.configureFilter(ActionName.VERIFY, "task");
         return service.verifyAll(ids.getIds()).stream().map(mapper).collect(Collectors.toList());
     }
 
     @PostMapping("/{id}/approve")
-    @PreAuthorize("hasAuthority('APPROVE_ALL_TASK') or hasAuthority('APPROVE_ASSIGNED_TASK')")
     public TaskDto approve(@PathVariable Long id) {
         filterConfig.configureFilter(ActionName.APPROVE, "task");
         return mapper.apply(service.approve(id));
     }
 
     @PostMapping("/batch/approve")
-    @PreAuthorize("hasAuthority('APPROVE_ALL_TASK') or hasAuthority('APPROVE_ASSIGNED_TASK')")
     public List<TaskDto> approveAll(@PathVariable IdList ids) {
         filterConfig.configureFilter(ActionName.APPROVE, "task");
         return service.approveAll(ids.getIds()).stream().map(mapper).collect(Collectors.toList());
     }
 
     @PostMapping("/{id}/assign/{userId}")
-    @PreAuthorize("hasAuthority('ASSIGN_ALL_TASK') or hasAuthority('ASSIGN_ASSIGNED_TASK')")
     public TaskAssign assign(@PathVariable Long id, @PathVariable Long userId, @RequestParam AssignFor assignFor) {
         filterConfig.configureFilter(ActionName.ASSIGN, "task");
         return service.assign(id, userId, assignFor);
     }
 
     @PostMapping("/batch/assign/{userId}")
-    @PreAuthorize("hasAuthority('ASSIGN_ALL_TASK') or hasAuthority('ASSIGN_ASSIGNED_TASK')")
     public boolean assignAll(@RequestBody IdList ids, @PathVariable Long userId, @RequestParam AssignFor assignFor) {
         filterConfig.configureFilter(ActionName.ASSIGN, "task");
         ids.getIds().forEach(id -> service.assign(id, userId, assignFor));
@@ -166,7 +164,6 @@ public class TaskController {
     }
 
     @PostMapping("/{id}/unassign/{userId}")
-    @PreAuthorize("hasAuthority('ASSIGN_ALL_TASK') or hasAuthority('ASSIGN_ASSIGNED_TASK')")
     public boolean unAssign(@PathVariable Long id, @PathVariable Long userId) {
         filterConfig.configureFilter(ActionName.ASSIGN, "task");
         return service.unAssign(id, userId);
@@ -180,11 +177,13 @@ public class TaskController {
 
     @PostMapping("/{id}/assign/sub-constructor/{sid}")
     public TaskDto assignToSubConstructor(@PathVariable Long id, @PathVariable Long sid) {
+        filterConfig.configureFilter(ActionName.ASSIGN, "task");
         return mapper.apply(subConstructAssignService.assign(id, sid).getTask());
     }
 
     @PostMapping("/batch/assign/sub-constructor/batch")
     public boolean batchAssignToSubConstructor(@RequestBody final IdListBatch batch) {
+        filterConfig.configureFilter(ActionName.ASSIGN, "task");
         batch.getIds().forEach(taskId -> {
             batch.getSids().forEach(sid -> {
                 try {

@@ -18,19 +18,16 @@ public class FilterUtils {
         session.enableFilter("noAccessFilter");
     }
 
-    public void enableAssignedObjectFilter(final Long id) {
+    public void enableReadWriteFilter(final Long id, final String assignFor) {
         var session = entityManager.unwrap(Session.class);
-        session.enableFilter("assignedObjectFilter").setParameter("id", id);
+        session.enableFilter("readWriteFilter")
+                .setParameter("id", id)
+                .setParameter("assignFor", assignFor);
     }
 
-    public void enableMyObjectFilter(final Long id) {
+    public void enableReadFilter(final Long id) {
         var session = entityManager.unwrap(Session.class);
-        session.enableFilter("myObjectFilter").setParameter("id", id);
-    }
-
-    public void enableReadableObjectFilter(final Long id) {
-        var session = entityManager.unwrap(Session.class);
-        session.enableFilter("readableObjectFilter").setParameter("id", id);
+        session.enableFilter("readFilter").setParameter("id", id);
     }
 
     public void enablePendingRequestFilter(final PaymentEntryStatus status) {

@@ -3,32 +3,42 @@ package com.construction.persistence.filter;
 import com.construction.appconfiguration.utils.ApplicationSecurityContext;
 import com.construction.organization.payment.domain.PaymentEntryStatus;
 import com.construction.user.authorization.domain.ActionName;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
+import org.springframework.web.server.ResponseStatusException;
+
+import javax.validation.constraints.NotNull;
 
 @Component
+@RequiredArgsConstructor
 public class FilterConfig {
 
-    @Autowired
-    private ApplicationSecurityContext context;
-    @Autowired
-    private FilterUtils filterUtils;
+    private final ApplicationSecurityContext context;
+    private final FilterUtils filterUtils;
 
-    public void configureFilter(ActionName action, String entityName) {
-        entityName = entityName.toUpperCase();
-        var user = context.authenticatedUser();
+    public void configureFilter(@NotNull final ActionName action, @NotNull final String entityName) {
+        final var user = context.authenticatedUser();
         if (user == null) {
             filterUtils.enableNoAccessFilter();
-        } else if (context.hasPermission(action.name() + "_ALL_" + entityName)) {
+        } else if (context.hasPermissionTo(action.name() + entityName.toUpperCase())) {
             return;
-        } else if (!action.equals(ActionName.READ)) {
-            if (context.hasPermission(action.name() + "_ASSIGNED_" + entityName)) {
-                filterUtils.enableAssignedObjectFilter(user.getId());
-            } else {
-                filterUtils.enableMyObjectFilter(user.getId());
-            }
         } else {
-            filterUtils.enableReadableObjectFilter(user.getId());
+            switch (action) {
+                case READ:
+                    filterUtils.enableReadFilter(user.getId());
+                    break;
+                case UPDATE:
+                case DELETE:
+                    filterUtils.enableReadWriteFilter(user.getId(), "READ_WRITE");
+                    break;
+                case VERIFY:
+                case APPROVE:
+                    filterUtils.enableReadWriteFilter(user.getId(), action.name());
+                    break;
+                default:
+                    throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "user has no permission to: " + action.name());
+            }
         }
     }
 

@@ -33,7 +33,7 @@ public class BOQController {
     private final BOQMapper mapper;
 
     @PostMapping
-    @PreAuthorize("hasAuthority('CREATE_ALL_BOQ')")
+    @PreAuthorize("hasAuthority('CREATE_BOQ')")
     public boolean create(@RequestBody BOQDto dto) {
         service.save(mapper.toEntity(dto));
         return true;
@@ -84,35 +84,5 @@ public class BOQController {
         filterConfig.configureFilter(ActionName.UPDATE, "boq");
         final var tasks = dtos.stream().map(taskMapper::toEntity).collect(Collectors.toList());
         return mapper.apply(service.addTask(id, tasks));
-    }
-
-    @ApiOperation("verify BOQ mean to verify all task in BOQ")
-    @PostMapping("/{id}/verify")
-    @PreAuthorize("hasAuthority('VERIFY_ALL_TASK') or hasAuthority('VERIFY_ASSIGNED_TASK')")
-    public boolean verifyAllTaskInBoq(@PathVariable Long id) {
-        filterConfig.configureFilter(ActionName.VERIFY, "task");
-        return service.verifyAllTask(id);
-    }
-
-    @ApiOperation("approve BOQ mean to approve all task in BOQ")
-    @PostMapping("/{id}/approve")
-    @PreAuthorize("hasAuthority('APPROVE_ALL_TASK') or hasAuthority('APPROVE_ASSIGNED_TASK')")
-    public boolean approveAllTaskInBoq(@PathVariable Long id) {
-        filterConfig.configureFilter(ActionName.APPROVE, "task");
-        return service.approveAllTask(id);
-    }
-
-    @PostMapping("/{id}/assign/{userId}")
-    @PreAuthorize("hasAuthority('ASSIGN_ALL_TASK') or hasAuthority('ASSIGN_ASSIGNED_TASK')")
-    public boolean assign(@PathVariable Long id, @PathVariable Long userId, @RequestParam AssignFor assignFor) {
-        filterConfig.configureFilter(ActionName.ASSIGN, "task");
-        return service.assign(id, userId, assignFor);
-    }
-
-    @PostMapping("/{id}/unassign/{userId}")
-    @PreAuthorize("hasAuthority('ASSIGN_ALL_TASK') or hasAuthority('ASSIGN_ASSIGNED_TASK')")
-    public boolean unAssign(@PathVariable Long id, @PathVariable Long userId) {
-        filterConfig.configureFilter(ActionName.ASSIGN, "task");
-        return service.unAssign(id, userId);
     }
 }

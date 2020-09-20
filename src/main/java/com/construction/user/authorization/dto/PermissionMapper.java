@@ -22,7 +22,6 @@ public class PermissionMapper {
                 .setCodeName(permission.getCodeName())
                 .setDescription(permission.getDescription())
                 .setEntityName(permission.getEntityName())
-                .setScope(permission.getScope())
                 .setSelected(selected);
     }
 
@@ -31,8 +30,7 @@ public class PermissionMapper {
                 .setActionName(dto.getActionName())
                 .setCodeName(dto.getCodeName())
                 .setDescription(dto.getDescription())
-                .setEntityName(dto.getEntityName())
-                .setScope(dto.getScope());
+                .setEntityName(dto.getEntityName());
     }
 
     public RoleDto toRoleDto(UserRole role, List<Permission> selectedPermissions) {

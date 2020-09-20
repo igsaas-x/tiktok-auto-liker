@@ -16,7 +16,7 @@ import com.construction.persistence.domain.AssignFor;
 import com.construction.persistence.domain.ObjectStatus;
 import com.construction.persistence.exception.ResourceNotFoundException;
 import com.construction.persistence.service.EntityDataMapper;
-import com.construction.persistence.utils.ObjectStatusValidator;
+import com.construction.persistence.utils.EntityValidator;
 import com.construction.persistence.utils.SFWhere;
 import com.construction.user.authentication.domain.AppUser;
 import com.construction.user.authentication.service.AppUserService;
@@ -40,7 +40,7 @@ public class TaskService {
 
     private final TaskRepository repository;
     private final EntityDataMapper dataMapper;
-    private final ObjectStatusValidator<Task> validator;
+    private final EntityValidator<Task> validator;
     private final ApplicationSecurityContext context;
     private final AppUserService userService;
     private final TaskAssignRepository assignRepository;

@@ -11,7 +11,7 @@ import com.construction.persistence.domain.AssignFor;
 import com.construction.persistence.domain.ObjectStatus;
 import com.construction.persistence.exception.ResourceNotFoundException;
 import com.construction.persistence.service.EntityDataMapper;
-import com.construction.persistence.utils.ObjectStatusValidator;
+import com.construction.persistence.utils.EntityValidator;
 import com.construction.persistence.utils.SFWhere;
 import com.construction.user.authentication.service.AppUserService;
 import com.construction.user.authorization.domain.ActionName;
@@ -36,7 +36,7 @@ public class StreetService {
     @Autowired
     private EntityDataMapper dataMapper;
     @Autowired
-    private ObjectStatusValidator<Street> validator;
+    private EntityValidator<Street> validator;
     @Autowired
     private ApplicationSecurityContext context;
     @Autowired

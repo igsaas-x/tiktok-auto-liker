@@ -8,7 +8,7 @@ import com.construction.feature.project.repositories.ProjectRepository;
 import com.construction.persistence.domain.AssignFor;
 import com.construction.persistence.domain.ObjectStatus;
 import com.construction.persistence.service.EntityDataMapper;
-import com.construction.persistence.utils.ObjectStatusValidator;
+import com.construction.persistence.utils.EntityValidator;
 import com.construction.persistence.utils.SFWhere;
 import com.construction.user.authentication.service.AppUserService;
 import com.construction.user.authorization.domain.ActionName;
@@ -35,7 +35,7 @@ public class ProjectService {
     private final ProjectAssignRepository assignRepository;
     private final EntityDataMapper mapper;
     private final ApplicationSecurityContext context;
-    private final ObjectStatusValidator<Project> validator;
+    private final EntityValidator<Project> validator;
     private final AppUserService userService;
 
     public ResponseEntity<Object> search(Project project, Pageable pageable) {

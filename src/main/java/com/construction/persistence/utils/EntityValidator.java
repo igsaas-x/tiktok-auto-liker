@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.server.ResponseStatusException;
 
 @Component
-public class ObjectStatusValidator<T extends AuditingEntity> {
+public class EntityValidator<T extends AuditingEntity> {
 
     @Autowired
     private ApplicationSecurityContext context;

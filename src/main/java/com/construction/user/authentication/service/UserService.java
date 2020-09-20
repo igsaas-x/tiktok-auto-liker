@@ -22,8 +22,8 @@ import java.util.stream.Collectors;
 @SuppressWarnings("unchecked")
 public class UserService {
 
-    public static final String ALL_PERMISSION = "ALL_ALL_ALL";
-    public static final String READ_ALL_PERMISSION = "READ_ALL_ALL";
+    public static final String ALL_PERMISSION = "ALL_ALL";
+    public static final String READ_ALL_PERMISSION = "READ_ALL";
 
     private final AppUserRepository repository;
     private final PermissionRepository permissionRepository;

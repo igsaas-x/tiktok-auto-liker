@@ -30,27 +30,27 @@ public class TaskTemplateController {
     private final TaskDataRepository dataRepository;
 
     @PostMapping
-    @PreAuthorize("hasAuthority('CREATE_ALL_TASK_TEMPLATE')")
+    @PreAuthorize("hasAuthority('CREATE_TASK_TEMPLATE')")
     public TaskTemplate create(@RequestBody TaskTemplateDto dto) {
         final var template = mapper.toEntity(dto);
         return service.create(template);
     }
 
     @PutMapping("/{id}")
-    @PreAuthorize("hasAuthority('UPDATE_ALL_TASK_TEMPLATE')")
+    @PreAuthorize("hasAuthority('UPDATE_TASK_TEMPLATE')")
     public TaskTemplate update(@PathVariable Long id, @RequestBody TaskTemplateDto dto) {
         final var template = mapper.toEntity(dto);
         return service.update(id, template);
     }
 
     @PutMapping("/{id}/verify")
-    @PreAuthorize("hasAuthority('VERIFY_ALL_TASK_TEMPLATE')")
+    @PreAuthorize("hasAuthority('VERIFY_TASK_TEMPLATE')")
     public TaskTemplate verify(@PathVariable Long id) {
         return service.verify(id);
     }
 
     @PutMapping("/verify/all")
-    @PreAuthorize("hasAuthority('VERIFY_ALL_TASK_TEMPLATE')")
+    @PreAuthorize("hasAuthority('VERIFY_TASK_TEMPLATE')")
     public void verifyAll(@RequestBody IdList ids) {
         ids.getIds().forEach(id -> {
             try {
@@ -62,13 +62,13 @@ public class TaskTemplateController {
     }
 
     @PutMapping("/{id}/approve")
-    @PreAuthorize("hasAuthority('APPROVE_ALL_TASK_TEMPLATE')")
+    @PreAuthorize("hasAuthority('APPROVE_TASK_TEMPLATE')")
     public TaskTemplate approve(@PathVariable Long id) {
         return service.approve(id);
     }
 
     @PutMapping("/approve/all")
-    @PreAuthorize("hasAuthority('APPROVE_ALL_TASK_TEMPLATE')")
+    @PreAuthorize("hasAuthority('APPROVE_TASK_TEMPLATE')")
     public void approveAll(@RequestBody IdList ids) {
         ids.getIds().forEach(id -> {
             try {
@@ -80,13 +80,13 @@ public class TaskTemplateController {
     }
 
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasAuthority('DELETE_ALL_TASK_TEMPLATE')")
+    @PreAuthorize("hasAuthority('DELETE_TASK_TEMPLATE')")
     public Map<String, Object> delete(@PathVariable Long id) {
         return Map.of("success", service.delete(id));
     }
 
     @DeleteMapping
-    @PreAuthorize("hasAuthority('DELETE_ALL_TASK_TEMPLATE')")
+    @PreAuthorize("hasAuthority('DELETE_TASK_TEMPLATE')")
     public void deleteAll(@RequestBody IdList ids) {
         ids.getIds().forEach(id -> {
             try {
