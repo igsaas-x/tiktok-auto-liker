@@ -16,13 +16,11 @@ import javax.persistence.ManyToOne;
 @Getter
 @Setter
 @Accessors(chain = true)
-@Filter(name = "assignedObjectFilter",
-        condition = "id in (SELECT ha.house_id FROM house_assign ha WHERE ha.app_user_id = :id)")
-@Filter(name = "myObjectFilter",
-        condition = "created_by = :id")
-@Filter(name = "readableObjectFilter",
-        condition = "created_by = :id or id in (SELECT ha.house_id FROM house_assign ha WHERE ha.app_user_id = :id)" +
-                " or id in (select t.house_id from task t,task_assign ta where t.id = ta.task_id and ta.app_user_id = :id)")
+@Filter(name = "readWriteFilter",
+        condition = "created_by = :id or " +
+                "exists (SELECT 1 FROM house_assign ha WHERE ha.app_user_id = :id and ha.house_id = id and ha.assign_for = :assignFor)")
+@Filter(name = "readFilter",
+        condition = "created_by = :id or exists (SELECT 1 FROM house_assign ha WHERE ha.app_user_id = :id and ha.house_id = id)")
 public class House extends AuditingEntity {
 
     @ManyToOne

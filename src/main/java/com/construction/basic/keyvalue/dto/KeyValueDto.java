@@ -6,7 +6,7 @@ import lombok.Data;
 import java.util.Map;
 
 @Data
-public class KeyValueDTO {
+public class KeyValueDto {
     private KeyValueGroup group;
     private String key;
     private String value;

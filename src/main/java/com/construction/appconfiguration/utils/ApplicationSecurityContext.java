@@ -43,7 +43,7 @@ public class ApplicationSecurityContext {
         }
     }
 
-    public boolean hasPermission(final String permission) {
+    public boolean hasPermissionTo(final String permission) {
         var permissions = userPermissions();
         if (permissions == null) return false;
         return permissions.contains(permission);

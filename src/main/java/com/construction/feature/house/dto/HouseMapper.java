@@ -4,22 +4,22 @@ import com.construction.feature.house.domain.House;
 import com.construction.feature.house.repository.TypeOfHouseRepository;
 import com.construction.feature.project.services.ProjectService;
 import com.construction.feature.street.service.StreetService;
-import com.construction.persistence.mapper.DtoEntityMapper;
+import com.construction.persistence.mapper.DtoMapper;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
-public class HouseMapper implements DtoEntityMapper<HouseDto, House> {
+public class HouseMapper extends DtoMapper<House, HouseDto> {
 
-    private final ProjectService projectService;
-    private final StreetService streetService;
-    private final TypeOfHouseRepository typeOfHouseRepository;
+    @Autowired
+    private ProjectService projectService;
+    @Autowired
+    private StreetService streetService;
+    @Autowired
+    private TypeOfHouseRepository typeOfHouseRepository;
 
-    public HouseMapper(ProjectService projectService,
-                       StreetService streetService,
-                       TypeOfHouseRepository typeOfHouseRepository) {
-        this.projectService = projectService;
-        this.streetService = streetService;
-        this.typeOfHouseRepository = typeOfHouseRepository;
+    protected HouseMapper() {
+        super(House.class, HouseDto.class);
     }
 
     @Override
@@ -38,7 +38,7 @@ public class HouseMapper implements DtoEntityMapper<HouseDto, House> {
     }
 
     @Override
-    public HouseDto toDto(House entity) {
+    public HouseDto apply(House entity) {
         return new HouseDto()
                 .setId(entity.getId())
                 .setCreatedBy(entity.getCreatedBy() == null ? null : entity.getCreatedBy().getUserName())

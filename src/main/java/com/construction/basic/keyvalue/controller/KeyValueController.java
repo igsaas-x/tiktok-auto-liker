@@ -1,6 +1,6 @@
 package com.construction.basic.keyvalue.controller;
 
-import com.construction.basic.keyvalue.dto.KeyValueDTO;
+import com.construction.basic.keyvalue.dto.KeyValueDto;
 import com.construction.basic.keyvalue.service.KeyValueService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -23,14 +23,14 @@ public class KeyValueController {
 
     @ApiOperation("Add new data")
     @PostMapping("/save")
-    public void save(@RequestBody KeyValueDTO keyValue) {
+    public void save(@RequestBody KeyValueDto keyValue) {
         keyValueService.save(keyValue);
     }
 
     @ApiOperation("Delete based on primary key")
     @GetMapping("/{id}")
-    public KeyValueDTO findById(@PathVariable("id") Long id) {
-        Optional<KeyValueDTO> dtoOptional = keyValueService.findById(id);
+    public KeyValueDto findById(@PathVariable("id") Long id) {
+        Optional<KeyValueDto> dtoOptional = keyValueService.findById(id);
         return dtoOptional.orElse(null);
     }
 
@@ -42,13 +42,13 @@ public class KeyValueController {
 
     @ApiOperation("Find all data")
     @GetMapping("/list")
-    public List<KeyValueDTO> list() {
+    public List<KeyValueDto> list() {
         return keyValueService.findAll();
     }
 
     @ApiOperation("Pagination request")
     @GetMapping("/page-query")
-    public Page<KeyValueDTO> pageQuery(Pageable pageable) {
+    public Page<KeyValueDto> pageQuery(Pageable pageable) {
         return keyValueService.findAll(pageable);
     }
 

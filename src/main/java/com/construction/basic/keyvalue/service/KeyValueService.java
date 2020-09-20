@@ -1,6 +1,6 @@
 package com.construction.basic.keyvalue.service;
 
-import com.construction.basic.keyvalue.dto.KeyValueDTO;
+import com.construction.basic.keyvalue.dto.KeyValueDto;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -8,17 +8,17 @@ import java.util.List;
 import java.util.Optional;
 
 public interface KeyValueService {
-    KeyValueDTO save(KeyValueDTO dto);
+    KeyValueDto save(KeyValueDto dto);
 
-    void save(List<KeyValueDTO> dtos);
+    void save(List<KeyValueDto> dtos);
 
     void deleteById(Long id);
 
-    Optional<KeyValueDTO> findById(Long id);
+    Optional<KeyValueDto> findById(Long id);
 
-    List<KeyValueDTO> findAll();
+    List<KeyValueDto> findAll();
 
-    Page<KeyValueDTO> findAll(Pageable pageable);
+    Page<KeyValueDto> findAll(Pageable pageable);
 
-    KeyValueDTO updateById(Long id);
+    KeyValueDto updateById(Long id);
 }

@@ -4,5 +4,5 @@ public enum AssignFor {
     VERIFY,
     APPROVE,
     READ,
-    UPDATE // or delete
+    READ_WRITE // or delete
 }

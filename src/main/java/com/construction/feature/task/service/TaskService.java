@@ -13,7 +13,6 @@ import com.construction.feature.task.repository.TaskDataRepository;
 import com.construction.feature.task.repository.TaskRepository;
 import com.construction.feature.task.repository.TaskSubConstructorAssignRepository;
 import com.construction.persistence.domain.AssignFor;
-import com.construction.persistence.domain.AssignStatus;
 import com.construction.persistence.domain.ObjectStatus;
 import com.construction.persistence.exception.ResourceNotFoundException;
 import com.construction.persistence.service.EntityDataMapper;
@@ -181,7 +180,6 @@ public class TaskService {
         var taskAssign = new TaskAssign();
         taskAssign.setTask(task);
         taskAssign.setAppUser(user);
-        taskAssign.setStatus(AssignStatus.ACTIVE);
         taskAssign.setAssignFor(assignFor);
         return assignRepository.save(taskAssign);
     }
@@ -194,8 +192,7 @@ public class TaskService {
 
     public boolean unAssign(Task task, AppUser user) {
         var taskAssign = assignRepository.findByTaskAndAppUser(task, user).orElseThrow();
-        taskAssign.setStatus(AssignStatus.DELETED);
-        assignRepository.save(taskAssign);
+        assignRepository.delete(taskAssign);
         return true;
     }
 

@@ -2,8 +2,8 @@ package com.construction.basic.keyvalue.service.impl;
 
 import com.construction.basic.keyvalue.dao.KeyValueRepository;
 import com.construction.basic.keyvalue.domain.KeyValue;
-import com.construction.basic.keyvalue.dto.KeyValueDTO;
-import com.construction.basic.keyvalue.mapper.KeyValueMapper;
+import com.construction.basic.keyvalue.dto.KeyValueDto;
+import com.construction.basic.keyvalue.dto.mapper.KeyValueMapper;
 import com.construction.basic.keyvalue.service.KeyValueService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -26,12 +26,12 @@ public class KeyValueServiceImpl implements KeyValueService {
     }
 
     @Override
-    public KeyValueDTO save(KeyValueDTO dto) {
-        return mapper.toDto(repository.save(mapper.toEntity(dto)));
+    public KeyValueDto save(KeyValueDto dto) {
+        return mapper.apply(repository.save(mapper.toEntity(dto)));
     }
 
     @Override
-    public void save(List<KeyValueDTO> dtos) {
+    public void save(List<KeyValueDto> dtos) {
         repository.saveAll(mapper.toEntityList(dtos));
     }
 
@@ -41,26 +41,26 @@ public class KeyValueServiceImpl implements KeyValueService {
     }
 
     @Override
-    public Optional<KeyValueDTO> findById(Long id) {
+    public Optional<KeyValueDto> findById(Long id) {
         Optional<KeyValue> entityOptional = repository.findById(id);
-        return entityOptional.map(entity -> Optional.ofNullable(mapper.toDto(entity))).orElse(null);
+        return entityOptional.map(entity -> Optional.ofNullable(mapper.apply(entity))).orElse(null);
     }
 
     @Override
-    public List<KeyValueDTO> findAll() {
+    public List<KeyValueDto> findAll() {
         return mapper.toDtoList(repository.findAll());
     }
 
     @Override
-    public Page<KeyValueDTO> findAll(Pageable pageable) {
+    public Page<KeyValueDto> findAll(Pageable pageable) {
         Page<KeyValue> entityPage = repository.findAll(pageable);
-        List<KeyValueDTO> dtos = mapper.toDtoList(entityPage.getContent());
+        List<KeyValueDto> dtos = mapper.toDtoList(entityPage.getContent());
         return new PageImpl<>(dtos, pageable, entityPage.getTotalElements());
     }
 
     @Override
-    public KeyValueDTO updateById(Long id) {
-        Optional<KeyValueDTO> optionalDto = findById(id);
+    public KeyValueDto updateById(Long id) {
+        Optional<KeyValueDto> optionalDto = findById(id);
         return optionalDto.map(this::save).orElse(null);
     }
 }

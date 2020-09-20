@@ -1,5 +1,6 @@
 package com.construction.user.authentication.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AccessLevel;
 import lombok.Data;
 import lombok.experimental.FieldDefaults;
@@ -13,6 +14,7 @@ public class UserDto {
     @Email
     String email;
     String mobile;
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     String password;
     Long roleId;
 }

@@ -1,18 +1,23 @@
 package com.construction.user.authentication.dto;
 
-import com.construction.persistence.mapper.DtoEntityMapper;
+import com.construction.persistence.mapper.DtoMapper;
 import com.construction.user.authentication.domain.AppUser;
 import com.construction.user.authorization.repository.UserRoleRepository;
-import lombok.AllArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 @Component
-@AllArgsConstructor
-public class UserDataMapper implements DtoEntityMapper<UserDto, AppUser> {
+public class UserDataMapper extends DtoMapper<AppUser, UserDto> {
 
-    final UserRoleRepository repository;
-    final PasswordEncoder encoder;
+    @Autowired
+    private UserRoleRepository repository;
+    @Autowired
+    private PasswordEncoder encoder;
+
+    protected UserDataMapper() {
+        super(AppUser.class, UserDto.class);
+    }
 
     @Override
     public AppUser toEntity(UserDto dto) {
@@ -26,10 +31,5 @@ public class UserDataMapper implements DtoEntityMapper<UserDto, AppUser> {
             user.setPassword(encoder.encode(dto.getPassword()));
         }
         return user;
-    }
-
-    @Override
-    public UserDto toDto(AppUser o) {
-        return null;
     }
 }

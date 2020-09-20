@@ -21,7 +21,6 @@ import java.time.LocalDateTime;
 @Setter
 @EntityListeners(AuditingEntityListener.class)
 @JsonIgnoreProperties(value = {"createdAt", "updatedAt", "status"}, allowGetters = true)
-@Filter(name = "myObjectFilter", condition = "created_by = :id")
 public abstract class AssignEntity extends VersionEntity {
 
     @JsonIgnore
@@ -52,7 +51,4 @@ public abstract class AssignEntity extends VersionEntity {
 
     @Enumerated(EnumType.STRING)
     private AssignFor assignFor;
-
-    @Enumerated(EnumType.STRING)
-    private AssignStatus status = AssignStatus.ACTIVE;
 }

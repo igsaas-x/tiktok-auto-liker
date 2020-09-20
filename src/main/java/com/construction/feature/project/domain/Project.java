@@ -15,20 +15,17 @@ import javax.persistence.Entity;
 @Getter
 @Setter
 @Accessors(chain = true)
-@FilterDef(name = "assignedObjectFilter",
-        defaultCondition = "id in (SELECT pa.project_id FROM project_assign pa WHERE pa.app_user_id = :id) ",
-        parameters = @ParamDef(name = "id", type = "long"))
-@FilterDef(name = "myObjectFilter",
-        defaultCondition = "created_by = :id",
-        parameters = @ParamDef(name = "id", type = "long"))
-@FilterDef(name = "readableObjectFilter",
+@FilterDef(name = "readWriteFilter",
+        defaultCondition = "created_by = :id or " +
+                "exists (SELECT 1 FROM project_assign pa WHERE pa.project_id = id and pa.app_user_id = :id and pa.assign_for = :assignFor)",
+        parameters = {@ParamDef(name = "id", type = "long"), @ParamDef(name = "assignFor", type = "string")})
+@FilterDef(name = "readFilter",
         defaultCondition = "created_by = :id or " +
                 "id in (SELECT pa.project_id FROM project_assign pa WHERE pa.app_user_id = :id) or " +
-                "id in (SELECT t.project_id FROM task t,task_assign ta WHERE t.id = ta.task_id AND ta.app_user_id = :id)",
+                "exists (SELECT 1 FROM project_assign pa WHERE pa.project_id = id and pa.app_user_id = :id) ",
         parameters = @ParamDef(name = "id", type = "long"))
-@Filter(name = "assignedObjectFilter")
-@Filter(name = "myObjectFilter")
-@Filter(name = "readableObjectFilter")
+@Filter(name = "readFilter")
+@Filter(name = "readWriteFilter")
 public class Project extends AuditingEntity {
 
     private String objectType;

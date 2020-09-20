@@ -3,8 +3,9 @@ package com.construction.basic.config.service.impl;
 import com.construction.basic.config.dao.SystemConfigRepository;
 import com.construction.basic.config.domain.SystemConfig;
 import com.construction.basic.config.dto.SystemConfigDTO;
-import com.construction.basic.config.mapper.SystemConfigMapper;
+import com.construction.basic.config.dto.mapper.SystemConfigMapper;
 import com.construction.basic.config.service.SystemConfigService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -16,18 +17,15 @@ import java.util.Optional;
 
 @Service
 @Transactional
+@RequiredArgsConstructor
 public class SystemConfigServiceImpl implements SystemConfigService {
+
     private final SystemConfigMapper mapper;
     private final SystemConfigRepository repository;
 
-    public SystemConfigServiceImpl(SystemConfigMapper mapper, SystemConfigRepository repository) {
-        this.mapper = mapper;
-        this.repository = repository;
-    }
-
     @Override
     public SystemConfigDTO save(SystemConfigDTO dto) {
-        return mapper.toDto(repository.save(mapper.toEntity(dto)));
+        return mapper.apply(repository.save(mapper.toEntity(dto)));
     }
 
     @Override
@@ -43,7 +41,7 @@ public class SystemConfigServiceImpl implements SystemConfigService {
     @Override
     public Optional<SystemConfigDTO> findById(Long id) {
         Optional<SystemConfig> entityOptional = repository.findById(id);
-        return entityOptional.map(entity -> Optional.ofNullable(mapper.toDto(entity))).orElse(null);
+        return entityOptional.map(entity -> Optional.ofNullable(mapper.apply(entity))).orElse(null);
     }
 
     @Override

@@ -98,7 +98,7 @@ public class PaymentRequestController {
         if (!ALLOWED_PENDING_FOR.contains(pendingFor)) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "unsupported 'pendingFor', supported commands are: " + ALLOWED_PARAM);
         }
-        if (context.hasPermission(pendingFor + "_ALL_PAYMENT")) {
+        if (context.hasPermissionTo(pendingFor + "_ALL_PAYMENT")) {
             enableFilter(pendingFor);
             return service.findPendingFor(pendingFor, pageable).map(requestMapper);
         }

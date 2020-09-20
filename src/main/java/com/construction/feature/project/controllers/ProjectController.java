@@ -9,7 +9,6 @@ import com.construction.persistence.domain.AssignFor;
 import com.construction.persistence.dto.AssignedDto;
 import com.construction.persistence.dto.IdList;
 import com.construction.persistence.filter.FilterConfig;
-import com.construction.user.authentication.domain.AppUser;
 import com.construction.user.authorization.domain.ActionName;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;

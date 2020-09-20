@@ -50,9 +50,7 @@ public class PaymentEntryController {
         if (!ALLOWED_PENDING_FOR.contains(command)) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "unsupported 'command', supported commands are: " + ALLOWED_PARAM);
         }
-        service.getByAllId(ids.getIds()).forEach(entry -> {
-            service.handleCommand(entry, command, comment);
-        });
+        service.getByAllId(ids.getIds()).forEach(entry -> service.handleCommand(entry, command, comment));
         return Map.of("success", true);
     }
 

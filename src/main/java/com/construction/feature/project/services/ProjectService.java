@@ -12,7 +12,7 @@ import com.construction.persistence.utils.ObjectStatusValidator;
 import com.construction.persistence.utils.SFWhere;
 import com.construction.user.authentication.service.AppUserService;
 import com.construction.user.authorization.domain.ActionName;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -28,20 +28,15 @@ import java.util.stream.Collectors;
 
 @Service
 @Transactional
+@RequiredArgsConstructor
 public class ProjectService {
 
-    @Autowired
-    private ProjectRepository repository;
-    @Autowired
-    private ProjectAssignRepository assignRepository;
-    @Autowired
-    private EntityDataMapper mapper;
-    @Autowired
-    private ApplicationSecurityContext context;
-    @Autowired
-    private ObjectStatusValidator<Project> validator;
-    @Autowired
-    private AppUserService userService;
+    private final ProjectRepository repository;
+    private final ProjectAssignRepository assignRepository;
+    private final EntityDataMapper mapper;
+    private final ApplicationSecurityContext context;
+    private final ObjectStatusValidator<Project> validator;
+    private final AppUserService userService;
 
     public ResponseEntity<Object> search(Project project, Pageable pageable) {
         Page<Project> all = repository.findAll(SFWhere.and(project)
@@ -69,7 +64,7 @@ public class ProjectService {
     }
 
     public List<Project> getAll() {
-        return repository.findAll(Sort.by(Sort.Direction.DESC,"createdAt"));
+        return repository.findAll(Sort.by(Sort.Direction.DESC, "createdAt"));
     }
 
     public Page<Project> getAssigned(Pageable pageable) {
@@ -127,6 +122,7 @@ public class ProjectService {
 
     public ProjectAssign assign(Long id, Long userId, AssignFor assignFor) {
         var project = getById(id);
+        validator.validateBeforeAssign(project, assignFor);
         var user = userService.getById(userId);
         var projectAssign = new ProjectAssign();
         projectAssign.setProject(project);

@@ -11,7 +11,6 @@ import com.construction.persistence.domain.AssignFor;
 import com.construction.persistence.dto.AssignedDto;
 import com.construction.persistence.dto.IdList;
 import com.construction.persistence.filter.FilterConfig;
-import com.construction.user.authentication.domain.AppUser;
 import com.construction.user.authorization.domain.ActionName;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -39,15 +38,15 @@ public class HouseController {
     @ApiOperation("Add new data")
     @PostMapping
     @PreAuthorize("hasAuthority('CREATE_ALL_HOUSE')")
-    public House save(@RequestBody HouseDto dto) {
+    public HouseDto save(@RequestBody HouseDto dto) {
         var house = mapper.toEntity(dto);
-        return houseService.save(house);
+        return mapper.apply(houseService.save(house));
     }
 
     @GetMapping("/{id}")
-    public House findById(@PathVariable("id") Long id) {
+    public HouseDto findById(@PathVariable("id") Long id) {
         filterConfig.configureFilter(ActionName.READ, "house");
-        return houseService.getById(id);
+        return mapper.apply(houseService.getById(id));
     }
 
     @GetMapping("/search")
@@ -67,52 +66,53 @@ public class HouseController {
     @GetMapping
     public List<HouseDto> list() {
         filterConfig.configureFilter(ActionName.READ, "house");
-        return houseService.getAll().stream().map(mapper::toDto).collect(Collectors.toList());
+        return houseService.getAll().stream().map(mapper).collect(Collectors.toList());
     }
 
     @GetMapping("/assigned")
     public List<HouseDto> getAssignedHouse() {
-        return houseService.getAssigned().stream().map(mapper::toDto).collect(Collectors.toList());
+        filterConfig.configureFilter(ActionName.READ, "house");
+        return houseService.getAssigned().stream().map(mapper).collect(Collectors.toList());
     }
 
     @GetMapping("/pending/verify")
     public List<HouseDto> getPendingForVerify(Pageable pageable) {
         filterConfig.configureFilter(ActionName.READ, "house");
-        return houseService.getPendingForVerify().stream().map(mapper::toDto).collect(Collectors.toList());
+        return houseService.getPendingForVerify().stream().map(mapper).collect(Collectors.toList());
     }
 
     @GetMapping("/pending/approve")
     public List<HouseDto> getPendingForApprove(Pageable pageable) {
         filterConfig.configureFilter(ActionName.READ, "house");
-        return houseService.getPendingForApprove().stream().map(mapper::toDto).collect(Collectors.toList());
+        return houseService.getPendingForApprove().stream().map(mapper).collect(Collectors.toList());
     }
 
     @ApiOperation("Pagination request")
     @GetMapping("/page")
-    public Page<House> pageQuery(Pageable pageable, @RequestParam FilterType filter) {
+    public Page<HouseDto> pageQuery(Pageable pageable, @RequestParam FilterType filter) {
         filterConfig.configureFilter(ActionName.READ, "house");
-        return houseService.getAll(pageable, filter);
+        return houseService.getAll(pageable, filter).map(mapper);
     }
 
     @GetMapping("/pending/all")
-    public Page<House> getAllPending(Pageable pageable) {
+    public Page<HouseDto> getAllPending(Pageable pageable) {
         filterConfig.configureFilter(ActionName.READ, "house");
-        return houseService.getAllPending(pageable);
+        return houseService.getAllPending(pageable).map(mapper);
     }
 
     @ApiOperation("Update one data")
     @PutMapping("/update/{id}")
-    public House update(@PathVariable Long id, @RequestBody HouseDto dto) {
+    public HouseDto update(@PathVariable Long id, @RequestBody HouseDto dto) {
         var house = mapper.toEntity(dto);
         filterConfig.configureFilter(ActionName.UPDATE, "house");
-        return houseService.updateById(id, house);
+        return mapper.apply(houseService.updateById(id, house));
     }
 
     @PostMapping("/{id}/verify")
     @PreAuthorize("hasAuthority('VERIFY_ALL_HOUSE') or hasAuthority('VERIFY_ASSIGNED_HOUSE')")
-    public House verify(@PathVariable Long id) {
+    public HouseDto verify(@PathVariable Long id) {
         filterConfig.configureFilter(ActionName.VERIFY, "house");
-        return houseService.verify(id);
+        return mapper.apply(houseService.verify(id));
     }
 
     @PostMapping("/{id}/assign/{userId}")
@@ -141,21 +141,21 @@ public class HouseController {
     @PreAuthorize("hasAuthority('VERIFY_ALL_HOUSE') or hasAuthority('VERIFY_ASSIGNED_HOUSE')")
     public List<HouseDto> verifyAll(@RequestBody IdList ids) {
         filterConfig.configureFilter(ActionName.VERIFY, "house");
-        return houseService.verifyAll(ids.getIds()).stream().map(mapper::toDto).collect(Collectors.toList());
+        return houseService.verifyAll(ids.getIds()).stream().map(mapper).collect(Collectors.toList());
     }
 
     @PostMapping("/{id}/approve")
     @PreAuthorize("hasAuthority('APPROVE_ALL_HOUSE') or hasAuthority('APPROVE_ASSIGNED_HOUSE')")
-    public House approve(@PathVariable Long id) {
+    public HouseDto approve(@PathVariable Long id) {
         filterConfig.configureFilter(ActionName.APPROVE, "house");
-        return houseService.approve(id);
+        return mapper.apply(houseService.approve(id));
     }
 
     @PostMapping("/batch/approve")
     @PreAuthorize("hasAuthority('APPROVE_ALL_HOUSE') or hasAuthority('APPROVE_ASSIGNED_HOUSE')")
     public List<HouseDto> approveAll(@RequestBody IdList ids) {
         filterConfig.configureFilter(ActionName.APPROVE, "house");
-        return houseService.approveAll(ids.getIds()).stream().map(mapper::toDto).collect(Collectors.toList());
+        return houseService.approveAll(ids.getIds()).stream().map(mapper).collect(Collectors.toList());
     }
 
     @GetMapping("/{id}/assigned/user")
