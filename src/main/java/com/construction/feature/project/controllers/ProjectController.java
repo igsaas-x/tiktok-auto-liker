@@ -92,7 +92,7 @@ public class ProjectController {
         ids.getIds().forEach(service::delete);
     }
 
-    @GetMapping("/pending/all")
+    @GetMapping("/pending")
     public Page<Project> getAllPending(Pageable pageable) {
         filterConfig.configureFilter(ActionName.READ, "project");
         return service.getAllPending(pageable);

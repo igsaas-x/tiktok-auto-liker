@@ -66,7 +66,7 @@ public class StreetController {
         return service.getAll();
     }
 
-    @GetMapping("/pending/all")
+    @GetMapping("/pending")
     public Page<Street> getAllPending(Pageable pageable) {
         filterConfig.configureFilter(ActionName.READ, "street");
         return service.getAllPending(pageable);

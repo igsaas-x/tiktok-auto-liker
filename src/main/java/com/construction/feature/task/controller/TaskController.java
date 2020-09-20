@@ -87,29 +87,17 @@ public class TaskController {
         return service.getAll(pageable, filter).map(mapper);
     }
 
-    @GetMapping("/page/pending/all")
+    @GetMapping("/pending/page")
     public Page<TaskDto> getAllPendingTask(Pageable pageable) {
         filterConfig.configureFilter(ActionName.READ, "task");
         return service.getAllPending(pageable).map(mapper);
     }
 
-    @GetMapping("/pending/verify")
-    public List<TaskDto> getPendingForVerifyTask() {
-        filterConfig.configureFilter(ActionName.READ, "task");
-        return service.getPendingForVerify().stream().map(mapper).collect(Collectors.toList());
-    }
-
-    @GetMapping("/pending/approve")
-    public List<TaskDto> getPendingForApproveTask() {
-        filterConfig.configureFilter(ActionName.READ, "task");
-        return service.getPendingForApprove().stream().map(mapper).collect(Collectors.toList());
-    }
-
-    @GetMapping("/pending/all")
+    @GetMapping("/pending")
     public List<TaskDto> getPendingForAll() {
         filterConfig.configureFilter(ActionName.READ, "task");
-        final var all = getPendingForVerifyTask();
-        all.addAll(getPendingForApproveTask());
+        final var all = service.getPendingForVerify().stream().map(mapper).collect(Collectors.toList());
+        all.addAll(service.getPendingForApprove().stream().map(mapper).collect(Collectors.toList()));
         return all;
     }
 

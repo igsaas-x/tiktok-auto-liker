@@ -82,7 +82,7 @@ public class HouseController {
         return houseService.getAll(pageable, filter).map(mapper);
     }
 
-    @GetMapping("/pending/all")
+    @GetMapping("/pending")
     public Page<HouseDto> getAllPending(Pageable pageable) {
         filterConfig.configureFilter(ActionName.READ, "house");
         return houseService.getAllPending(pageable).map(mapper);
