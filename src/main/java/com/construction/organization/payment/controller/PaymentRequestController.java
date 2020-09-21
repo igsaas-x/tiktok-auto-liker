@@ -84,11 +84,17 @@ public class PaymentRequestController {
         service.deleteById(id);
     }
 
-    @ApiOperation("Find all data")
     @GetMapping("/page")
     @PreAuthorize("hasAuthority('READ_PAYMENT')")
     public Page<PaymentRequestDto> list(Pageable pageable) {
         return service.getAll(pageable).map(requestMapper);
+    }
+
+    @GetMapping
+    @ApiOperation("Find all data")
+    @PreAuthorize("hasAuthority('READ_PAYMENT')")
+    public List<PaymentRequestDto> getAll() {
+        return service.getAll().stream().map(requestMapper).collect(Collectors.toList());
     }
 
     @ApiOperation("Find data pending. Parameters are:" + ALLOWED_PARAM)

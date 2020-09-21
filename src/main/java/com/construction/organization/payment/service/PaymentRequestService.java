@@ -68,6 +68,10 @@ public class PaymentRequestService {
         return repository.findAll(pageable);
     }
 
+    public List<PaymentRequest> getAll() {
+        return repository.findAll();
+    }
+
     public Page<PaymentRequest> findPendingFor(final CommandType pendingFor, Pageable pageable) {
         switch (pendingFor) {
             case SUBMIT:
