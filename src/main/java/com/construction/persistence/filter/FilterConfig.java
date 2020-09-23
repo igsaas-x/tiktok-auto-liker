@@ -26,6 +26,7 @@ public class FilterConfig {
         } else {
             switch (action) {
                 case READ:
+                case ASSIGN:
                     filterUtils.enableReadFilter(user.getId());
                     break;
                 case UPDATE:
