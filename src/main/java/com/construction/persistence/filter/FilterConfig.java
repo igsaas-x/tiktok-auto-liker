@@ -21,7 +21,7 @@ public class FilterConfig {
         final var user = context.authenticatedUser();
         if (user == null) {
             filterUtils.enableNoAccessFilter();
-        } else if (context.hasPermissionTo(action.name() + entityName.toUpperCase())) {
+        } else if (context.hasPermissionTo(action.name() + "_" + entityName.toUpperCase())) {
             return;
         } else {
             switch (action) {
