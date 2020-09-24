@@ -32,6 +32,11 @@ public class EntityValidator<T extends AuditingEntity> {
                 }
                 break;
             case DELETE:
+                if (t.getCreatedBy() != null) {
+                    if (context.authenticatedUser().equals(t.getCreatedBy())) {
+                        break;
+                    }
+                }
             case UPDATE:
                 if (!t.getStatus().equals(OPEN)) {
                     throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "your project has been verified or approved, please delete and re-create request");

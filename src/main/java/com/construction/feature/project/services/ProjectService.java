@@ -91,6 +91,7 @@ public class ProjectService {
 
     public void delete(Long id) {
         var project = getById(id);
+        validator.validateStatus(project, ActionName.DELETE);
         repository.delete(project);
     }
 

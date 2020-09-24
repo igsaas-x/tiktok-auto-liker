@@ -7,7 +7,6 @@ import com.construction.feature.house.domain.House;
 import com.construction.feature.house.domain.HouseAssign;
 import com.construction.feature.house.repository.HouseAssignRepository;
 import com.construction.feature.house.repository.HouseRepository;
-import com.construction.feature.task.repository.TaskAssignRepository;
 import com.construction.persistence.domain.AssignFor;
 import com.construction.persistence.domain.ObjectStatus;
 import com.construction.persistence.exception.ResourceNotFoundException;
@@ -34,7 +33,6 @@ import java.util.stream.Collectors;
 public class HouseService {
 
     private final HouseRepository repository;
-    private final TaskAssignRepository taskAssignRepository;
     private final EntityDataMapper dataMapper;
     private final ApplicationSecurityContext context;
     private final EntityValidator<House> validator;
@@ -47,6 +45,7 @@ public class HouseService {
 
     public void deleteById(Long id) {
         var house = getById(id);
+        validator.validateStatus(house, ActionName.DELETE);
         repository.delete(house);
     }
 

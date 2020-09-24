@@ -42,7 +42,7 @@ public class TaskTemplateService {
 
     public boolean delete(final Long id) {
         final var tt = getById(id);
-        validator.validateStatus(tt, ActionName.UPDATE);
+        validator.validateStatus(tt, ActionName.DELETE);
         repository.delete(tt);
         return true;
     }

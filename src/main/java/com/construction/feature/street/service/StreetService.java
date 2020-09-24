@@ -49,7 +49,9 @@ public class StreetService {
     }
 
     public void deleteById(Long id) {
-        repository.deleteById(id);
+        final var street = getById(id);
+        validator.validateStatus(street,ActionName.DELETE);
+        repository.delete(street);
     }
 
     public Street getById(Long id) {

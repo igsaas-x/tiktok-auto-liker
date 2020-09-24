@@ -57,7 +57,7 @@ public class TaskService {
 
     public void deleteById(Long id) {
         var task = getById(id);
-        validator.validateStatus(task, ActionName.UPDATE);
+        validator.validateStatus(task, ActionName.DELETE);
         repository.delete(task);
     }
 
