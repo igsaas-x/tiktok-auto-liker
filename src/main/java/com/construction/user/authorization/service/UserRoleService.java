@@ -95,6 +95,7 @@ public class UserRoleService {
                     .collect(Collectors.toList());
             var oldRolePermissions = rolePermissionRepository.findAllByRole(role);
             rolePermissionRepository.deleteAll(oldRolePermissions);
+            rolePermissionRepository.flush();
             rolePermissionRepository.saveAll(newRolePermissions);
         }
         return newRole;
