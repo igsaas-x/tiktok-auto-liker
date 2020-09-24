@@ -66,5 +66,12 @@ public abstract class AuditingEntity extends VersionEntity {
 
     @Column(name = "status")
     @Enumerated(EnumType.STRING)
-    private ObjectStatus status = ObjectStatus.OPEN;
+    private ObjectStatus status;
+
+    @PrePersist
+    private void prePersist() {
+        if (status == null) {
+            status = ObjectStatus.OPEN;
+        }
+    }
 }

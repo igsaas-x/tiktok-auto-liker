@@ -10,6 +10,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.web.server.ResponseStatusException;
 
+import static com.construction.persistence.domain.ObjectStatus.OPEN;
+import static com.construction.persistence.domain.ObjectStatus.VERIFIED;
+
 @Component
 public class EntityValidator<T extends AuditingEntity> {
 
@@ -19,12 +22,12 @@ public class EntityValidator<T extends AuditingEntity> {
     public void validateStatus(T t, ActionName actionName) {
         switch (actionName) {
             case VERIFY:
-                if (!t.getStatus().equals(ObjectStatus.OPEN)) {
+                if (!OPEN.equals(t.getStatus())) {
                     throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "project is not on open status");
                 }
                 break;
             case APPROVE:
-                if (!t.getStatus().equals(ObjectStatus.VERIFIED)) {
+                if (!VERIFIED.equals(t.getStatus())) {
                     throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "project is not on verified status");
                 }
                 break;
@@ -32,7 +35,7 @@ public class EntityValidator<T extends AuditingEntity> {
             case UPDATE:
                 assert t.getCreatedBy().getId() != null;
                 if (t.getCreatedBy().getId().equals(context.authenticatedUser().getId())) {
-                    if (!t.getStatus().equals(ObjectStatus.OPEN)) {
+                    if (!t.getStatus().equals(OPEN)) {
                         throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "your project has been verified or approved, please delete and re-create request");
                     }
                 }
@@ -42,12 +45,12 @@ public class EntityValidator<T extends AuditingEntity> {
     public void validateBeforeAssign(T t, AssignFor assignFor) {
         switch (assignFor) {
             case VERIFY:
-                if (!t.getStatus().equals(ObjectStatus.OPEN)) {
+                if (!t.getStatus().equals(OPEN)) {
                     throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "project is not on open status");
                 }
                 break;
             case APPROVE:
-                if (!t.getStatus().equals(ObjectStatus.VERIFIED)) {
+                if (!t.getStatus().equals(VERIFIED)) {
                     throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "project is not on verified status");
                 }
                 break;

@@ -35,12 +35,15 @@ public class TaskTemplateService {
 
     public TaskTemplate update(final Long id, final TaskTemplate source) {
         final var target = getById(id);
+        validator.validateStatus(target, ActionName.UPDATE);
         final var template = dataMapper.mapObject(source, target, TaskTemplate.class);
         return repository.save(template);
     }
 
     public boolean delete(final Long id) {
-        repository.deleteById(id);
+        final var tt = getById(id);
+        validator.validateStatus(tt, ActionName.UPDATE);
+        repository.delete(tt);
         return true;
     }
 
