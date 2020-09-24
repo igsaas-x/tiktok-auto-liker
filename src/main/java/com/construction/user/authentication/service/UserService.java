@@ -24,6 +24,14 @@ public class UserService {
 
     public static final String ALL_PERMISSION = "ALL_ALL";
     public static final String READ_ALL_PERMISSION = "READ_ALL";
+    private static final List<String> FULL_PERMISSION = List.of("CREATE",
+            "UPDATE",
+            "DELETE",
+            "READ_WRITE",
+            "VERIFY",
+            "APPROVE",
+            "ASSIGN",
+            "ASSIGN_ASSIGNED");
 
     private final AppUserRepository repository;
     private final PermissionRepository permissionRepository;
@@ -40,11 +48,24 @@ public class UserService {
                 return allAuthorities();
             }
             if (permissions.stream().anyMatch(permission -> permission.getCodeName().equals(READ_ALL_PERMISSION))) {
-                return readAllAuthorities();
+                final var authorities = permissions.stream().map(this::getAuthorityFromPermission).collect(Collectors.toList());
+                authorities.addAll(readAllAuthorities());
+                return authorities.stream().distinct().collect(Collectors.toList());
             }
-            return permissions.stream().map(this::getAuthorityFromPermission).collect(Collectors.toList());
+            final var authorities = permissions.stream().map(this::getAuthorityFromPermission).collect(Collectors.toList());
+            permissions.stream().filter(permission -> permission.getActionName().equals(ActionName.FULL))
+                    .forEach(permission -> {
+                        authorities.addAll(getFullAuthorities(permission));
+                    });
+            return authorities.stream().distinct().collect(Collectors.toList());
         }
         return Collections.EMPTY_LIST;
+    }
+
+    private List<SimpleGrantedAuthority> getFullAuthorities(final Permission permission) {
+        return FULL_PERMISSION.stream()
+                .map(p -> new SimpleGrantedAuthority(p + "_" + permission.getEntityName()))
+                .collect(Collectors.toList());
     }
 
     private List<SimpleGrantedAuthority> allAuthorities() {

@@ -49,6 +49,12 @@ public class ApplicationSecurityContext {
         return permissions.contains(permission);
     }
 
+    public boolean hasFullPermission(final String entity) {
+        var permissions = userPermissions();
+        if (permissions == null) return false;
+        return permissions.contains("FULL_" + entity.toUpperCase());
+    }
+
     public List<String> userPermissions() {
         var authentication = getAuth();
         if (authentication == null) {

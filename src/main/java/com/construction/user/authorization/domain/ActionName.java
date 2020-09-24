@@ -2,6 +2,7 @@ package com.construction.user.authorization.domain;
 
 public enum ActionName {
     ALL,
+    FULL,
     READ,
     CREATE,
     UPDATE,

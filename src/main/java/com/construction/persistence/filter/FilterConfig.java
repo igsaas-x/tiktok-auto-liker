@@ -1,6 +1,7 @@
 package com.construction.persistence.filter;
 
 import com.construction.appconfiguration.utils.ApplicationSecurityContext;
+import com.construction.exception.UnAuthorizeException;
 import com.construction.organization.payment.domain.PaymentEntryStatus;
 import com.construction.user.authorization.domain.ActionName;
 import lombok.RequiredArgsConstructor;
@@ -21,8 +22,10 @@ public class FilterConfig {
         final var user = context.authenticatedUser();
         if (user == null) {
             filterUtils.enableNoAccessFilter();
-        } else if (context.hasPermissionTo(action.name() + "_" + entityName.toUpperCase())) {
+        } else if (context.hasFullPermission(entityName)) {
             return;
+        } else if (!context.hasPermissionTo(action.name() + "_" + entityName.toUpperCase())) {
+            throw new UnAuthorizeException();
         } else {
             switch (action) {
                 case READ:
