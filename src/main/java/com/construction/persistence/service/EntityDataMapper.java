@@ -21,6 +21,7 @@ public class EntityDataMapper {
             "verifiedAt",
             "approvedBy",
             "approvedAt",
+            "tasks",
             "status");
 
     @PersistenceContext
