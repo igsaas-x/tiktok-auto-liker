@@ -8,9 +8,11 @@ import com.construction.feature.project.services.ProjectService;
 import com.construction.persistence.domain.AssignFor;
 import com.construction.persistence.dto.AssignedDto;
 import com.construction.persistence.dto.IdList;
+import com.construction.persistence.dto.IdListUserListBatch;
 import com.construction.persistence.filter.FilterConfig;
 import com.construction.user.authorization.domain.ActionName;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
@@ -19,6 +21,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@Slf4j
 @RestController
 @RequestMapping("/project")
 @RequiredArgsConstructor
@@ -128,10 +131,29 @@ public class ProjectController {
         return service.assign(id, userId, assignFor);
     }
 
+    @PostMapping("/batch/assign")
+    public boolean assignAllProjectAndUser(@RequestBody IdListUserListBatch data, @RequestParam AssignFor assignFor) {
+        filterConfig.configureFilter(ActionName.ASSIGN, "project");
+        data.getUserIds().forEach(userId -> data.getIds().forEach(id -> {
+            try {
+                service.assign(id, userId, assignFor);
+            } catch (Exception e) {
+                log.error("cannot assign task id: " + id, e);
+            }
+        }));
+        return true;
+    }
+
     @PostMapping("/batch/assign/{userId}")
     public boolean assignAllProject(@RequestBody IdList ids, @PathVariable Long userId, @RequestParam AssignFor assignFor) {
         filterConfig.configureFilter(ActionName.ASSIGN, "project");
-        ids.getIds().forEach(id -> service.assign(id, userId, assignFor));
+        ids.getIds().forEach(id -> {
+            try {
+                service.assign(id, userId, assignFor);
+            } catch (Exception e) {
+                log.error("cannot assign task id: " + id, e);
+            }
+        });
         return true;
     }
 

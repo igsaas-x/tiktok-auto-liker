@@ -1,5 +1,6 @@
 package com.construction.organization.subconstructor.domain;
 
+import com.construction.persistence.converter.StringSetConverter;
 import com.construction.persistence.domain.AuditingEntity;
 import lombok.Getter;
 import lombok.Setter;
@@ -7,6 +8,7 @@ import lombok.experimental.Accessors;
 import org.hibernate.annotations.Filter;
 
 import javax.persistence.*;
+import java.util.Set;
 
 @Entity
 @Getter
@@ -26,6 +28,11 @@ public class SubConstructor extends AuditingEntity {
     private String firstName;
 
     private String lastName;
+
+    private String image;
+
+    @Convert(converter = StringSetConverter.class)
+    private Set<String> attachment;
 
     @Enumerated(EnumType.STRING)
     private Gender gender;

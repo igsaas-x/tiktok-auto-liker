@@ -48,12 +48,23 @@ public class UserService {
                 return allAuthorities();
             }
             if (permissions.stream().anyMatch(permission -> permission.getCodeName().equals(READ_ALL_PERMISSION))) {
-                final var authorities = permissions.stream().map(this::getAuthorityFromPermission).collect(Collectors.toList());
+                final var authorities = permissions
+                        .stream()
+                        .map(this::getAuthorityFromPermission)
+                        .collect(Collectors.toList());
                 authorities.addAll(readAllAuthorities());
-                return authorities.stream().distinct().collect(Collectors.toList());
+                return authorities
+                        .stream()
+                        .distinct()
+                        .collect(Collectors.toList());
             }
-            final var authorities = permissions.stream().map(this::getAuthorityFromPermission).collect(Collectors.toList());
-            permissions.stream().filter(permission -> permission.getActionName().equals(ActionName.FULL))
+            final var authorities = permissions
+                    .stream()
+                    .map(this::getAuthorityFromPermission)
+                    .collect(Collectors.toList());
+            permissions
+                    .stream()
+                    .filter(permission -> permission.getActionName().equals(ActionName.FULL))
                     .forEach(permission -> {
                         authorities.addAll(getFullAuthorities(permission));
                     });
