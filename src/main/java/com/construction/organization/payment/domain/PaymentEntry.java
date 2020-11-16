@@ -1,6 +1,7 @@
 package com.construction.organization.payment.domain;
 
 import com.construction.feature.task.domain.Task;
+import com.construction.persistence.converter.StringSetConverter;
 import com.construction.persistence.domain.VersionEntity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AccessLevel;
@@ -14,6 +15,7 @@ import org.springframework.web.server.ResponseStatusException;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
+import java.util.Set;
 
 import static com.construction.organization.payment.domain.PaymentEntryStatus.OPEN;
 
@@ -36,6 +38,9 @@ public class PaymentEntry extends VersionEntity {
     Task task;
 
     String description;
+    
+    @Convert(converter = StringSetConverter.class)
+    Set<String> attachment;
 
     @NotNull
     BigDecimal requestAmount;
