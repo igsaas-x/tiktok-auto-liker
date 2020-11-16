@@ -5,6 +5,7 @@ import net.coobird.thumbnailator.Thumbnails;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.http.HttpStatus;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.util.FileSystemUtils;
 import org.springframework.util.StringUtils;
@@ -65,6 +66,7 @@ public class FileSystemStorageService implements StorageService {
         }
     }
 
+    @Async
     @Override
     public void writeXOutput(final String name) {
         try {
@@ -77,6 +79,7 @@ public class FileSystemStorageService implements StorageService {
         }
     }
 
+    @Async
     @Override
     public void writeXxOutput(final String name) {
         try {

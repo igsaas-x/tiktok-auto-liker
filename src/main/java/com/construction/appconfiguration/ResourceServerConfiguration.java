@@ -11,10 +11,8 @@ import org.springframework.security.oauth2.config.annotation.web.configurers.Res
 @SuppressWarnings("deprecation")
 @EnableResourceServer
 public class ResourceServerConfiguration extends ResourceServerConfigurerAdapter {
+
     private static final String RESOURCE_ID = "resource-server-rest-api";
-    private static final String SECURED_READ_SCOPE = "#oauth2.hasScope('read')";
-    private static final String SECURED_WRITE_SCOPE = "#oauth2.hasScope('write')";
-    private static final String SECURED_PATTERN = "/secured/**";
 
     @Override
     public void configure(ResourceServerSecurityConfigurer resources) {
@@ -26,7 +24,6 @@ public class ResourceServerConfiguration extends ResourceServerConfigurerAdapter
 
         http.antMatcher("/**").authorizeRequests()
                 .antMatchers("/health", "/api/**", "/swagger-resources/**", "/v2/**").permitAll()
-                .antMatchers(HttpMethod.POST, "/upload").permitAll()
                 .antMatchers(HttpMethod.POST, "/feedback").permitAll()
                 .anyRequest().authenticated();
     }
