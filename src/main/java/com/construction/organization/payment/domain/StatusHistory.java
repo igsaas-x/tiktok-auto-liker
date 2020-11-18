@@ -31,6 +31,8 @@ public class StatusHistory extends VersionEntity {
     @JoinColumn(name = "created_by")
     AppUser createdBy;
 
+    String attachment;
+
     LocalDateTime createdAt = LocalDateTime.now();
 
     String comment;

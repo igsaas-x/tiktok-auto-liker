@@ -46,6 +46,13 @@ public class PaymentEntryController {
         return mapper.apply(service.getById(id));
     }
 
+    @GetMapping("/pending")
+    @PreAuthorize("hasAuthority('READ_PAYMENT')")
+    public Page<PaymentEntryDto> getPending(@RequestParam CommandType pendingFor, Pageable pageable) {
+        filterConfig.configureFilter(ActionName.READ, "payment");
+        return service.findPendingFor(pendingFor, pageable).map(mapper);
+    }
+
     @ApiOperation("Submit command to payment request. Parameters are:" + ALLOWED_PARAM)
     @PutMapping("/command")
     @PreAuthorize("hasAuthority('UPDATE_PAYMENT')")

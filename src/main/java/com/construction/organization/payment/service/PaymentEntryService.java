@@ -4,6 +4,7 @@ import com.construction.appconfiguration.utils.ApplicationSecurityContext;
 import com.construction.organization.payment.domain.CommandType;
 import com.construction.organization.payment.domain.PaymentEntry;
 import com.construction.organization.payment.domain.PaymentEntryStatus;
+import com.construction.organization.payment.domain.PaymentRequest;
 import com.construction.organization.payment.repository.PaymentEntryRepository;
 import com.construction.persistence.exception.ResourceNotFoundException;
 import com.construction.persistence.service.EntityDataMapper;
@@ -119,5 +120,23 @@ public class PaymentEntryService {
     public boolean delete(final Long id) {
         repository.deleteById(id);
         return true;
+    }
+
+    public Page<PaymentEntry> findPendingFor(final CommandType pendingFor, Pageable pageable) {
+        switch (pendingFor) {
+            case SUBMIT:
+                return repository.findAllByStatus(PaymentEntryStatus.OPEN, pageable);
+            case VERIFY:
+                return repository.findAllByStatus(PaymentEntryStatus.SUBMITTED, pageable);
+            case CONFIRM:
+                return repository.findAllByStatus(PaymentEntryStatus.VERIFIED, pageable);
+            case REVIEW:
+                return repository.findAllByStatus(PaymentEntryStatus.CONFIRMED, pageable);
+            case APPROVE:
+                return repository.findAllByStatus(PaymentEntryStatus.REVIEWED, pageable);
+            case CASH_OUT:
+                return repository.findAllByStatus(PaymentEntryStatus.APPROVED, pageable);
+        }
+        return Page.empty();
     }
 }
