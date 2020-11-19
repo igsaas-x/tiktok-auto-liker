@@ -48,15 +48,6 @@ public class FileEntity extends VersionEntity {
     @Enumerated(EnumType.STRING)
     private FileType type;
 
-    @Transient
-    private String smallImagePath;
-
-    @Transient
-    private String mediumImagePath;
-
-    @Transient
-    private String largeImagePath;
-
     public FileEntity setType() {
         if (this.extension == null) return this;
         MAP.forEach((k, v) -> {

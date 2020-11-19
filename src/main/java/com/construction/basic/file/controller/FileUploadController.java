@@ -27,11 +27,6 @@ public class FileUploadController {
     private final StorageService storageService;
     private final ByteArrayOutputStream thumbOutput = new ByteArrayOutputStream();
 
-    @Value("${server.ip}")
-    private String serverIp;
-    @Value("${server.port}")
-    private String serverPort;
-
     @Autowired
     private FileRepository repository;
 
@@ -125,11 +120,7 @@ public class FileUploadController {
             final var category = categoryRepository.findById(categoryId).orElseThrow();
             newFile.setCategory(category);
         }
-        final var nf = repository.save(newFile);
-        nf.setSmallImagePath(serverIp + ":" + serverPort + "/x/image/" + newFile.getName());
-        nf.setMediumImagePath(serverIp + ":" + serverPort + "/xx/image/" + newFile.getName());
-        nf.setLargeImagePath(serverIp + ":" + serverPort + "/image/" + newFile.getName());
-        return nf;
+        return repository.save(newFile);
     }
 
     @ExceptionHandler(StorageFileNotFoundException.class)

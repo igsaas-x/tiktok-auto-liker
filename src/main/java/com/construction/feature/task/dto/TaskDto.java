@@ -53,5 +53,6 @@ public class TaskDto {
     private ObjectStatus status;
     private BigDecimal paidAmount;
     private BigDecimal availableAmount;
+    private BOQData boq;
     private List<SubConstructorDto> subConstructors;
 }
