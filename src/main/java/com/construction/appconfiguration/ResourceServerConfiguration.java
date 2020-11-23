@@ -23,7 +23,8 @@ public class ResourceServerConfiguration extends ResourceServerConfigurerAdapter
     public void configure(HttpSecurity http) throws Exception {
 
         http.antMatcher("/**").authorizeRequests()
-                .antMatchers(HttpMethod.GET, "/x/image", "/xx/image", "image", "/small/image", "/medium/image").permitAll()
+                .antMatchers(HttpMethod.GET,
+                        "/x/image/**", "/xx/image/**", "/image/**", "/small/image/**", "/medium/image/**").permitAll()
                 .antMatchers("/health", "/api/**", "/swagger-resources/**", "/v2/**").permitAll()
                 .antMatchers(HttpMethod.POST, "/feedback").permitAll()
                 .anyRequest().authenticated();
