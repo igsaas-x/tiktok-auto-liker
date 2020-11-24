@@ -46,22 +46,6 @@ public class TaskMapper extends DtoMapper<Task, TaskDto> {
         return taskDto;
     }
 
-    public TaskDto apply(Task task, final Long subConstructorId) {
-        final var taskDto = super.apply(task);
-        final var subConstructorsDto = subConstructorAssignRepository
-                .findAllByTaskId(taskDto.getId())
-                .stream()
-                .map(TaskSubConstructorAssign::getSubConstructor)
-                .map(subConstructorMapper)
-                .collect(Collectors.toList());
-        taskDto.setSubConstructors(subConstructorsDto);
-        final var paidAmount = taskRepository.getPaidAmount(subConstructorId, task.getId());
-        final var availableAmount = taskRepository.getAvailableAmount(task.getId());
-        taskDto.setPaidAmount(paidAmount)
-                .setAvailableAmount(availableAmount);
-        return taskDto;
-    }
-
     @Override
     public Task toEntity(TaskDto taskDto) {
         final var task = super.toEntity(taskDto);

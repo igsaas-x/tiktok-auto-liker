@@ -46,7 +46,9 @@ public class Task extends AuditingEntity {
     @NotNull
     private BigDecimal totalPrice;
 
-    private BigDecimal actualPrice;
+    private BigDecimal paidAmount;
+
+    private BigDecimal availableAmount;
 
     @PrePersist
     private void prePersist() {
@@ -58,6 +60,12 @@ public class Task extends AuditingEntity {
         }
         if (getStatus() == null) {
             setStatus(ObjectStatus.OPEN);
+        }
+        if (paidAmount == null) {
+            paidAmount = BigDecimal.ZERO;
+        }
+        if (availableAmount == null) {
+            availableAmount = totalPrice;
         }
     }
 }

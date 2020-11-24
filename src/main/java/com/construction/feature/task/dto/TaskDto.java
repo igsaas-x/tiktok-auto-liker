@@ -31,7 +31,6 @@ public class TaskDto {
     private String unit;
     private BigDecimal unitPrice;
     private BigDecimal totalPrice;
-    private BigDecimal actualPrice;
     @NotNull
     private Long taskTemplateId;
     @JsonProperty("createdBy")

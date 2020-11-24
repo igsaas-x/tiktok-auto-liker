@@ -21,9 +21,11 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Slf4j
 @RestController
@@ -46,6 +48,20 @@ public class PaymentEntryController {
         return mapper.apply(service.getById(id));
     }
 
+    @GetMapping
+    @PreAuthorize("hasAuthority('READ_PAYMENT')")
+    public List<PaymentEntryDto> getByAll() {
+        filterConfig.configureFilter(ActionName.READ, "payment");
+        return service.getAll().stream().map(mapper).collect(Collectors.toList());
+    }
+
+    @GetMapping("/page")
+    @PreAuthorize("hasAuthority('READ_PAYMENT')")
+    public Page<PaymentEntryDto> getByAllPaged(Pageable pageable) {
+        filterConfig.configureFilter(ActionName.READ, "payment");
+        return service.getAll(pageable).map(mapper);
+    }
+
     @GetMapping("/pending")
     @PreAuthorize("hasAuthority('READ_PAYMENT')")
     public Page<PaymentEntryDto> getPending(@RequestParam CommandType pendingFor, Pageable pageable) {
@@ -56,11 +72,14 @@ public class PaymentEntryController {
     @ApiOperation("Submit command to payment request. Parameters are:" + ALLOWED_PARAM)
     @PutMapping("/command")
     @PreAuthorize("hasAuthority('UPDATE_PAYMENT')")
-    public Map<String, Object> handleCommand(@RequestBody IdList ids, @RequestParam CommandType command, @RequestParam(required = false) String comment) {
+    public Map<String, Object> handleCommand(@RequestBody IdList ids,
+                                             @RequestParam CommandType command,
+                                             @RequestParam(required = false) BigDecimal approveAmount,
+                                             @RequestParam(required = false) String comment) {
         if (!ALLOWED_PENDING_FOR.contains(command)) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "unsupported 'command', supported commands are: " + ALLOWED_PARAM);
         }
-        service.getByAllId(ids.getIds()).forEach(entry -> service.handleCommand(entry, command, comment));
+        service.getByAllId(ids.getIds()).forEach(entry -> service.handleCommand(entry, command, approveAmount, comment));
         return Map.of("success", true);
     }
 

@@ -172,20 +172,18 @@ public class TaskController {
     @PostMapping("/batch/assign/sub-constructor/batch")
     public boolean batchAssignToSubConstructor(@RequestBody final IdListBatch batch) {
         filterConfig.configureFilter(ActionName.ASSIGN, "task");
-        batch.getIds().forEach(taskId -> {
-            batch.getSids().forEach(sid -> {
-                try {
-                    subConstructAssignService.assign(taskId, sid);
-                } catch (Exception e) {
-                    log.error("error assign task");
-                }
-            });
-        });
+        batch.getIds().forEach(taskId -> batch.getSids().forEach(sid -> {
+            try {
+                subConstructAssignService.assign(taskId, sid);
+            } catch (Exception e) {
+                log.error("error assign task");
+            }
+        }));
         return true;
     }
 
     @GetMapping("/by-sub-constructor/{id}")
     public List<TaskDto> getBySubConstructorId(@PathVariable Long id) {
-        return service.getBySubConstructorId(id).stream().map(task -> mapper.apply(task, id)).collect(Collectors.toList());
+        return service.getBySubConstructorId(id).stream().map(mapper).collect(Collectors.toList());
     }
 }

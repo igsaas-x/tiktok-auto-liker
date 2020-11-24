@@ -1,10 +1,10 @@
 package com.construction.organization.payment.service;
 
 import com.construction.appconfiguration.utils.ApplicationSecurityContext;
+import com.construction.feature.task.repository.TaskRepository;
 import com.construction.organization.payment.domain.CommandType;
 import com.construction.organization.payment.domain.PaymentEntry;
 import com.construction.organization.payment.domain.PaymentEntryStatus;
-import com.construction.organization.payment.domain.PaymentRequest;
 import com.construction.organization.payment.repository.PaymentEntryRepository;
 import com.construction.persistence.exception.ResourceNotFoundException;
 import com.construction.persistence.service.EntityDataMapper;
@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import javax.transaction.Transactional;
+import java.math.BigDecimal;
 import java.util.List;
 
 import static com.construction.organization.payment.domain.PaymentEntryStatus.*;
@@ -29,6 +30,15 @@ public class PaymentEntryService {
     private final EntityDataMapper dataMapper;
     private final StatusHistoryService historyService;
     private final ApplicationSecurityContext context;
+    private final TaskRepository taskRepository;
+
+    public List<PaymentEntry> getAll(){
+        return repository.findAll();
+    }
+
+    public Page<PaymentEntry> getAll(Pageable pageable){
+        return repository.findAll(pageable);
+    }
 
     public PaymentEntry save(final PaymentEntry paymentEntry) {
         return repository.save(paymentEntry);
@@ -49,7 +59,10 @@ public class PaymentEntryService {
         return repository.findAllByPaymentRequestSubConstructorIdAndStatus(id, status, pageable);
     }
 
-    public PaymentEntry handleCommand(final PaymentEntry paymentEntry, final CommandType command, final String comment) {
+    public void handleCommand(final PaymentEntry paymentEntry,
+                              final CommandType command,
+                              final BigDecimal approveAmount,
+                              final String comment) {
         switch (command) {
             case SUBMIT:
                 if (!PaymentEntryStatus.OPEN.equals(paymentEntry.getStatus())) {
@@ -79,12 +92,22 @@ public class PaymentEntryService {
                 if (!REVIEWED.equals(paymentEntry.getStatus())) {
                     throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "payment request is not in reviewed status");
                 }
+                if (approveAmount == null || BigDecimal.ZERO.equals(approveAmount)) {
+                    paymentEntry.setApprovedAmount(paymentEntry.getRequestAmount());
+                } else {
+                    paymentEntry.setApprovedAmount(approveAmount);
+                }
                 paymentEntry.setStatus(APPROVED);
                 break;
             case CASH_OUT:
                 if (!APPROVED.equals(paymentEntry.getStatus())) {
                     throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "payment request is not in approved status");
                 }
+                final var task = paymentEntry.getTask();
+                final var paidAmount = paymentEntry.getApprovedAmount();
+                final var availableAmount = task.getAvailableAmount().subtract(paidAmount);
+                task.setAvailableAmount(availableAmount);
+                taskRepository.save(task);
                 paymentEntry.setStatus(PAID);
                 break;
             case REJECT:
@@ -99,7 +122,7 @@ public class PaymentEntryService {
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "command not found");
         }
         historyService.addHistory(paymentEntry, command, context.authenticatedUser(), comment);
-        return repository.save(paymentEntry);
+        repository.save(paymentEntry);
     }
 
     public Page<PaymentEntry> getAllPending(final Pageable pageable) {
