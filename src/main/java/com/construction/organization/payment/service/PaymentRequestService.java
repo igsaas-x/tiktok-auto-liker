@@ -33,7 +33,7 @@ public class PaymentRequestService {
 
         final var request = repository.save(paymentRequest);
         request.getEntries().forEach(entry -> {
-            historyService.addHistory(entry, CommandType.CREATE, context.authenticatedUser(), null);
+            historyService.addHistory(entry, CommandType.CREATE, null, context.authenticatedUser(), null);
         });
         return request;
     }

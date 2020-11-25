@@ -23,6 +23,10 @@ public class TaskSubConstructAssignService {
     public TaskSubConstructorAssign assign(final Long taskId, final Long subId) {
         final var task = taskRepository.findById(taskId).orElseThrow(() -> new ResourceNotFoundException(Task.class, taskId));
         final var sub = subConstructorRepository.findById(subId).orElseThrow(() -> new ResourceNotFoundException(SubConstructor.class, subId));
+
+        final var taskSubAssigns = repository.findAllByTaskId(taskId);
+        repository.deleteAll(taskSubAssigns);
+
         final var assign = new TaskSubConstructorAssign()
                 .setCreatedAt(LocalDateTime.now())
                 .setTask(task)

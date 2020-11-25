@@ -15,6 +15,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import javax.persistence.EntityManager;
 import javax.transaction.Transactional;
 import java.math.BigDecimal;
 import java.util.List;
@@ -31,12 +32,22 @@ public class PaymentEntryService {
     private final StatusHistoryService historyService;
     private final ApplicationSecurityContext context;
     private final TaskRepository taskRepository;
+    private final EntityManager entityManager;
 
-    public List<PaymentEntry> getAll(){
+    public List<PaymentEntry> search(final Long boqId,
+                                     final Long taskId,
+                                     final Long houseId,
+                                     final Long subConstructorId,
+                                     final PaymentEntryStatus status) {
+        final String sql = "select pe from PaymentEntry where 1 = 1";
+        return entityManager.createQuery(sql, PaymentEntry.class).getResultList();
+    }
+
+    public List<PaymentEntry> getAll() {
         return repository.findAll();
     }
 
-    public Page<PaymentEntry> getAll(Pageable pageable){
+    public Page<PaymentEntry> getAll(Pageable pageable) {
         return repository.findAll(pageable);
     }
 
@@ -61,6 +72,7 @@ public class PaymentEntryService {
 
     public void handleCommand(final PaymentEntry paymentEntry,
                               final CommandType command,
+                              final String attachment,
                               final BigDecimal approveAmount,
                               final String comment) {
         switch (command) {
@@ -104,7 +116,7 @@ public class PaymentEntryService {
                     throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "payment request is not in approved status");
                 }
                 final var task = paymentEntry.getTask();
-                final var paidAmount = paymentEntry.getApprovedAmount();
+                final var paidAmount = task.getPaidAmount().add(paymentEntry.getApprovedAmount());
                 final var availableAmount = task.getAvailableAmount().subtract(paidAmount);
                 task.setAvailableAmount(availableAmount);
                 taskRepository.save(task);
@@ -121,7 +133,7 @@ public class PaymentEntryService {
             default:
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "command not found");
         }
-        historyService.addHistory(paymentEntry, command, context.authenticatedUser(), comment);
+        historyService.addHistory(paymentEntry, command, attachment, context.authenticatedUser(), comment);
         repository.save(paymentEntry);
     }
 
@@ -136,7 +148,7 @@ public class PaymentEntryService {
         if (newEntry.getStatus() == null) {
             newEntry.setStatus(status);
         }
-        historyService.addHistory(newEntry, CommandType.UPDATE, context.authenticatedUser(), null);
+        historyService.addHistory(newEntry, CommandType.UPDATE, null, context.authenticatedUser(), null);
         return repository.save(newEntry);
     }
 

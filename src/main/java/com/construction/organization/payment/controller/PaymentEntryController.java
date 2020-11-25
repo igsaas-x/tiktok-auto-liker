@@ -75,11 +75,12 @@ public class PaymentEntryController {
     public Map<String, Object> handleCommand(@RequestBody IdList ids,
                                              @RequestParam CommandType command,
                                              @RequestParam(required = false) BigDecimal approveAmount,
+                                             @RequestParam(required = false) String attachment,
                                              @RequestParam(required = false) String comment) {
         if (!ALLOWED_PENDING_FOR.contains(command)) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "unsupported 'command', supported commands are: " + ALLOWED_PARAM);
         }
-        service.getByAllId(ids.getIds()).forEach(entry -> service.handleCommand(entry, command, approveAmount, comment));
+        service.getByAllId(ids.getIds()).forEach(entry -> service.handleCommand(entry, command, attachment, approveAmount, comment));
         return Map.of("success", true);
     }
 

@@ -19,10 +19,11 @@ public class StatusHistoryService {
     private final StatusHistoryRepository repository;
 
     @Async
-    public void addHistory(PaymentEntry entry, CommandType commandType, AppUser doneBy, String comment) {
+    public void addHistory(PaymentEntry entry, CommandType commandType, String attachment, AppUser doneBy, String comment) {
         var history = new StatusHistory()
                 .setPaymentEntry(entry)
                 .setCreatedBy(doneBy)
+                .setAttachment(attachment)
                 .setCommandType(commandType)
                 .setComment(comment);
         repository.save(history);
