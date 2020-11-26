@@ -1,6 +1,9 @@
 package com.construction.organization.payment.dto.mapper;
 
+import com.construction.feature.task.dto.mapper.TaskMapper;
+import com.construction.organization.payment.domain.PaymentEntry;
 import com.construction.organization.payment.domain.PaymentRequest;
+import com.construction.organization.payment.dto.PaymentEntryDto;
 import com.construction.organization.payment.dto.PaymentRequestDto;
 import com.construction.organization.subconstructor.domain.SubConstructor;
 import com.construction.organization.subconstructor.repository.SubConstructorRepository;
@@ -18,6 +21,8 @@ public class PaymentRequestMapper extends DtoMapper<PaymentRequest, PaymentReque
     private SubConstructorRepository subConstructorRepository;
     @Autowired
     private PaymentEntryMapper paymentEntryMapper;
+    @Autowired
+    private TaskMapper taskMapper;
 
     protected PaymentRequestMapper() {
         super(PaymentRequest.class, PaymentRequestDto.class);
@@ -39,5 +44,22 @@ public class PaymentRequestMapper extends DtoMapper<PaymentRequest, PaymentReque
             request.setSubConstructor(sub);
         }
         return request;
+    }
+
+    @Override
+    public PaymentRequestDto apply(PaymentRequest paymentRequest) {
+        final var dto = super.apply(paymentRequest);
+        final var entriesDto = paymentRequest.getEntries().stream()
+                .map(this::getDto)
+                .collect(Collectors.toList());
+        dto.setEntries(entriesDto);
+        return dto;
+    }
+
+    private PaymentEntryDto getDto(final PaymentEntry paymentEntry) {
+        final var paymentEntryDto = paymentEntryMapper.apply(paymentEntry);
+        final var taskDto = taskMapper.apply(paymentEntry.getTask());
+        paymentEntryDto.setTaskDto(taskDto);
+        return paymentEntryDto;
     }
 }

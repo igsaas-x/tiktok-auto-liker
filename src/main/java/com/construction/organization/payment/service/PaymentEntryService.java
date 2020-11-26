@@ -9,6 +9,7 @@ import com.construction.organization.payment.repository.PaymentEntryRepository;
 import com.construction.persistence.exception.ResourceNotFoundException;
 import com.construction.persistence.service.EntityDataMapper;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -43,6 +44,7 @@ public class PaymentEntryService {
         return entityManager.createQuery(sql, PaymentEntry.class).getResultList();
     }
 
+    @Cacheable("PaymentEntry")
     public List<PaymentEntry> getAll() {
         return repository.findAll();
     }

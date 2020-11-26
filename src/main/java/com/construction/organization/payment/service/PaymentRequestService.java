@@ -11,6 +11,7 @@ import com.construction.persistence.service.EntityDataMapper;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -64,10 +65,12 @@ public class PaymentRequestService {
         return repository.save(paymentRequest);
     }
 
+    @Cacheable("PageablePaymentRequest")
     public Page<PaymentRequest> getAll(Pageable pageable) {
         return repository.findAll(pageable);
     }
 
+    @Cacheable("PaymentRequest")
     public List<PaymentRequest> getAll() {
         return repository.findAll();
     }
