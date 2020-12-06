@@ -27,6 +27,7 @@ public class ResourceServerConfiguration extends ResourceServerConfigurerAdapter
                         "/**/image/**",
                         "/files/**",
                         "/image/**").permitAll()
+                .antMatchers("/health/isloggedin").hasIpAddress("192.168.1.254")
                 .antMatchers("/health", "/api/**", "/swagger-resources/**", "/v2/**").permitAll()
                 .antMatchers(HttpMethod.POST, "/feedback").permitAll()
                 .anyRequest().authenticated();
