@@ -11,6 +11,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -20,17 +22,24 @@ public class TaskSubConstructAssignService {
     private final TaskRepository taskRepository;
     private final SubConstructorRepository subConstructorRepository;
 
-    public TaskSubConstructorAssign assign(final Long taskId, final Long subId) {
+    public List<TaskSubConstructorAssign> assign(final Long taskId, final List<Long> subIds) {
         final var task = taskRepository.findById(taskId).orElseThrow(() -> new ResourceNotFoundException(Task.class, taskId));
-        final var sub = subConstructorRepository.findById(subId).orElseThrow(() -> new ResourceNotFoundException(SubConstructor.class, subId));
+        final var subs = subConstructorRepository.findAllById(subIds);
 
         final var taskSubAssigns = repository.findAllByTaskId(taskId);
         repository.deleteAll(taskSubAssigns);
 
-        final var assign = new TaskSubConstructorAssign()
+        final var assign = subs.stream()
+                .map(sub -> build(task, sub))
+                .collect(Collectors.toList());
+
+        return repository.saveAll(assign);
+    }
+
+    private TaskSubConstructorAssign build(final Task task, final SubConstructor subConstructor) {
+        return new TaskSubConstructorAssign()
                 .setCreatedAt(LocalDateTime.now())
                 .setTask(task)
-                .setSubConstructor(sub);
-        return repository.save(assign);
+                .setSubConstructor(subConstructor);
     }
 }

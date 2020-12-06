@@ -25,6 +25,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -164,22 +165,23 @@ public class TaskController {
     }
 
     @PostMapping("/{id}/assign/sub-constructor/{sid}")
-    public TaskDto assignToSubConstructor(@PathVariable Long id, @PathVariable Long sid) {
+    public Map<String, Boolean> assignToSubConstructor(@PathVariable Long id, @PathVariable Long sid) {
         filterConfig.configureFilter(ActionName.ASSIGN, "task");
-        return mapper.apply(subConstructAssignService.assign(id, sid).getTask());
+        subConstructAssignService.assign(id, List.of(sid));
+        return Map.of("success", true);
     }
 
     @PostMapping("/batch/assign/sub-constructor/batch")
-    public boolean batchAssignToSubConstructor(@RequestBody final IdListBatch batch) {
+    public Map<String, Boolean> batchAssignToSubConstructor(@RequestBody final IdListBatch batch) {
         filterConfig.configureFilter(ActionName.ASSIGN, "task");
-        batch.getIds().forEach(taskId -> batch.getSids().forEach(sid -> {
+        batch.getIds().forEach(taskId -> {
             try {
-                subConstructAssignService.assign(taskId, sid);
+                subConstructAssignService.assign(taskId, batch.getSids());
             } catch (Exception e) {
                 log.error("error assign task");
             }
-        }));
-        return true;
+        });
+        return Map.of("success", true);
     }
 
     @GetMapping("/by-sub-constructor/{id}")
