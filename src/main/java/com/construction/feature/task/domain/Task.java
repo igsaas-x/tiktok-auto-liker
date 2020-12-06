@@ -38,6 +38,9 @@ public class Task extends AuditingEntity {
 
     private String unit;
 
+    @Enumerated(EnumType.STRING)
+    private ContractType contractType;
+
     @Column(columnDefinition = "DECIMAL default 0")
     private BigDecimal unitPrice;
 

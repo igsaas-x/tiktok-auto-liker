@@ -34,9 +34,6 @@ public class TaskTemplate extends AuditingEntity {
 
     private boolean leaf;
 
-    @Enumerated(EnumType.STRING)
-    private ContractType contractType;
-
     @JsonIgnore
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "parent")
     private List<TaskTemplate> child;

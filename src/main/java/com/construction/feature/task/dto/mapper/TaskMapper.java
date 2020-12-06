@@ -1,6 +1,5 @@
 package com.construction.feature.task.dto.mapper;
 
-import com.construction.feature.task.domain.ContractType;
 import com.construction.feature.task.domain.Task;
 import com.construction.feature.task.domain.TaskSubConstructorAssign;
 import com.construction.feature.task.dto.TaskDto;
@@ -11,9 +10,7 @@ import com.construction.organization.subconstructor.data.SubConstructorMapper;
 import com.construction.persistence.exception.ResourceNotFoundException;
 import com.construction.persistence.mapper.DtoMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.util.stream.Collectors;
 
@@ -51,9 +48,6 @@ public class TaskMapper extends DtoMapper<Task, TaskDto> {
         final var task = super.toEntity(taskDto);
         final var taskTemplate = taskTemplateRepository.findById(taskDto.getTaskTemplateId()).orElseThrow(
                 () -> new ResourceNotFoundException(Task.class, taskDto.getTaskTemplateId()));
-        if (ContractType.UN_CONTRACT.equals(taskTemplate.getContractType())) {
-            throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "UN_CONTRACT task cannot be used in BOQ");
-        }
         task.setTaskTemplate(taskTemplate);
         return task;
     }

@@ -25,7 +25,9 @@ public class TaskTemplateMapper extends DtoMapper<TaskTemplate, TaskTemplateDto>
         if (taskTemplateDto.getParentId() != null) {
             taskTemplateRepository.findById(taskTemplateDto.getParentId()).ifPresentOrElse(
                     taskTemplate::setParent,
-                    () -> new ResourceNotFoundException(TaskTemplate.class, taskTemplateDto.getParentId())
+                    () -> {
+                        throw new ResourceNotFoundException(TaskTemplate.class, taskTemplateDto.getParentId());
+                    }
             );
         }
         return taskTemplate;

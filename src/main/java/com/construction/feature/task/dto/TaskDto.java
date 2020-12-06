@@ -1,5 +1,6 @@
 package com.construction.feature.task.dto;
 
+import com.construction.feature.task.domain.ContractType;
 import com.construction.organization.subconstructor.data.SubConstructorDto;
 import com.construction.persistence.domain.ObjectStatus;
 import com.fasterxml.jackson.annotation.JsonFormat;
@@ -28,6 +29,7 @@ public class TaskDto {
     @JsonProperty("name")
     private String taskTemplateName;
     private Integer quantity;
+    private ContractType contractType;
     private String unit;
     private BigDecimal unitPrice;
     private BigDecimal totalPrice;

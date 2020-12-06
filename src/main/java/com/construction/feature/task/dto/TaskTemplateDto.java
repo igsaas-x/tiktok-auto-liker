@@ -13,5 +13,4 @@ public class TaskTemplateDto {
     private String description;
     private boolean leaf;
     private String floor;
-    private ContractType contractType;
 }
