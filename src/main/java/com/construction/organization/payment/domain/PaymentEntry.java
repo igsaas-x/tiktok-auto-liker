@@ -30,11 +30,11 @@ public class PaymentEntry extends VersionEntity {
     String externalId;
 
     @ManyToOne(optional = false)
-    @JoinColumn(name = "payment_request_id", nullable = false)
+    @JoinColumn(name = "payment_request_id", nullable = false, updatable = false)
     PaymentRequest paymentRequest;
 
     @ManyToOne
-    @JoinColumn
+    @JoinColumn(updatable = false)
     Task task;
 
     String description;

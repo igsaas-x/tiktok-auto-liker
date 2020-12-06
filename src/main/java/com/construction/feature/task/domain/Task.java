@@ -27,11 +27,12 @@ public class Task extends AuditingEntity {
 
     @JsonIgnore
     @ManyToOne
+    @JoinColumn(updatable = false)
     private BOQ boq;
 
     @NotNull
     @ManyToOne
-    @JoinColumn
+    @JoinColumn(updatable = false)
     private TaskTemplate taskTemplate;
 
     private Integer quantity;

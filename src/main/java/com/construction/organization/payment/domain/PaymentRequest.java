@@ -29,7 +29,7 @@ public class PaymentRequest extends SimpleAuditingEntity {
     String externalId;
 
     @ManyToOne
-    @JoinColumn
+    @JoinColumn(updatable = false)
     SubConstructor subConstructor;
 
     @OneToMany(cascade = CascadeType.ALL)
