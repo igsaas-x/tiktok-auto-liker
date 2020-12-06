@@ -16,4 +16,9 @@ public class AddressService {
     public List<Address> getChild(final Long id) {
         return repository.findAllByParentId(id);
     }
+
+    public List<Address> getChild(final String name) {
+        return repository.findAllByParentNameKh(name);
+    }
+
 }

@@ -3,10 +3,7 @@ package com.construction.feature.address.controller;
 import com.construction.feature.address.domain.Address;
 import com.construction.feature.address.service.AddressService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -25,5 +22,10 @@ public class AddressController {
     @GetMapping("/{id}")
     public List<Address> getByParentId(@PathVariable final Long id) {
         return addressService.getChild(id);
+    }
+
+    @GetMapping("/search")
+    public List<Address> getByParentName(@RequestParam final String name) {
+        return addressService.getChild(name);
     }
 }

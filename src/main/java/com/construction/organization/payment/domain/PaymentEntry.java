@@ -2,8 +2,8 @@ package com.construction.organization.payment.domain;
 
 import com.construction.feature.task.domain.Task;
 import com.construction.persistence.converter.StringSetConverter;
+import com.construction.persistence.domain.ObjectStatus;
 import com.construction.persistence.domain.VersionEntity;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
@@ -38,7 +38,7 @@ public class PaymentEntry extends VersionEntity {
     Task task;
 
     String description;
-    
+
     @Convert(converter = StringSetConverter.class)
     Set<String> attachment;
 
@@ -57,6 +57,10 @@ public class PaymentEntry extends VersionEntity {
         }
         if (task == null) {
             throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "task cannot be null");
+        } else {
+            if (!ObjectStatus.APPROVED.equals(task.getStatus())) {
+                throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "task is not approved");
+            }
         }
         if (requestAmount == null) {
             requestAmount = task.getTotalPrice();

@@ -3,14 +3,18 @@ package com.construction.feature.house.domain;
 import com.construction.feature.project.domain.Project;
 import com.construction.feature.street.domain.Street;
 import com.construction.persistence.domain.AuditingEntity;
+import com.construction.persistence.domain.ObjectStatus;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.hibernate.annotations.Filter;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.server.ResponseStatusException;
 
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.PrePersist;
 
 @Entity
 @Getter
@@ -44,4 +48,18 @@ public class House extends AuditingEntity {
     private Float landWidth;
 
     private Float landLong;
+
+    @PrePersist
+    private void prePersist() {
+        if (street != null) {
+            if (!ObjectStatus.APPROVED.equals(street.getStatus())) {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "street is not APPROVED");
+            }
+        }
+        if (project != null) {
+            if (!ObjectStatus.APPROVED.equals(project.getStatus())) {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "project is not APPROVED");
+            }
+        }
+    }
 }

@@ -7,4 +7,5 @@ import java.util.List;
 
 public interface AddressRepository extends JpaRepository<Address, Long> {
     List<Address> findAllByParentId(final Long id);
+    List<Address> findAllByParentNameKh(final String khName);
 }

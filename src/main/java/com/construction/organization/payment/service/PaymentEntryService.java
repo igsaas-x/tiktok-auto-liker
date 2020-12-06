@@ -9,6 +9,8 @@ import com.construction.organization.payment.repository.PaymentEntryRepository;
 import com.construction.persistence.exception.ResourceNotFoundException;
 import com.construction.persistence.service.EntityDataMapper;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -53,6 +55,7 @@ public class PaymentEntryService {
         return repository.findAll(pageable);
     }
 
+    @CachePut("PaymentEntry")
     public PaymentEntry save(final PaymentEntry paymentEntry) {
         return repository.save(paymentEntry);
     }
@@ -72,6 +75,7 @@ public class PaymentEntryService {
         return repository.findAllByPaymentRequestSubConstructorIdAndStatus(id, status, pageable);
     }
 
+    @CachePut("PaymentEntry")
     public void handleCommand(final PaymentEntry paymentEntry,
                               final CommandType command,
                               final String attachment,
@@ -143,6 +147,7 @@ public class PaymentEntryService {
         return repository.findAllByStatusNot(PaymentEntryStatus.APPROVED, pageable);
     }
 
+    @CachePut("PaymentEntry")
     public PaymentEntry update(final Long id, final PaymentEntry sourceEntry) {
         final var targetEntry = getById(id);
         final var status = targetEntry.getStatus();
@@ -154,6 +159,7 @@ public class PaymentEntryService {
         return repository.save(newEntry);
     }
 
+    @CacheEvict("PaymentEntry")
     public boolean delete(final Long id) {
         repository.deleteById(id);
         return true;
