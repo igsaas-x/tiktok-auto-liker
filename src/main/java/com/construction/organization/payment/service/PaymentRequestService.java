@@ -31,6 +31,7 @@ public class PaymentRequestService {
     final StatusHistoryService historyService;
     final ApplicationSecurityContext context;
 
+    @CachePut("PaymentRequest")
     public PaymentRequest save(PaymentRequest paymentRequest) {
 
         final var request = repository.save(paymentRequest);
@@ -55,13 +56,13 @@ public class PaymentRequestService {
         return repository.save(paymentRequest);
     }
 
+    @CachePut("PaymentRequest")
     public PaymentRequest update(Long id, PaymentRequest source) {
         final var target = getById(id);
         final var paymentRequest = dataMapper.mapObject(source, target, PaymentRequest.class);
         return repository.save(paymentRequest);
     }
 
-    @Cacheable("PageablePaymentRequest")
     public Page<PaymentRequest> getAll(Pageable pageable) {
         return repository.findAll(pageable);
     }
