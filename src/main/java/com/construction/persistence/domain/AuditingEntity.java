@@ -64,7 +64,7 @@ public abstract class AuditingEntity extends VersionEntity {
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime approvedAt;
 
-    @Column(name = "status")
+    @Column(name = "status", nullable = false, columnDefinition = "varchar(10) default 'OPEN'")
     @Enumerated(EnumType.STRING)
     private ObjectStatus status;
 

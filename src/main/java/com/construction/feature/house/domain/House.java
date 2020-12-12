@@ -61,5 +61,8 @@ public class House extends AuditingEntity {
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "project is not APPROVED");
             }
         }
+        if (getStatus() == null) {
+            setStatus(ObjectStatus.OPEN);
+        }
     }
 }
