@@ -12,6 +12,7 @@ import com.construction.persistence.domain.AssignFor;
 import com.construction.persistence.dto.AssignedDto;
 import com.construction.persistence.dto.IdList;
 import com.construction.persistence.dto.IdListBatch;
+import com.construction.persistence.dto.IdListUserListBatch;
 import com.construction.persistence.filter.FilterConfig;
 import com.construction.user.authorization.domain.ActionName;
 import io.swagger.annotations.Api;
@@ -149,6 +150,21 @@ public class TaskController {
     public boolean assignAll(@RequestBody IdList ids, @PathVariable Long userId, @RequestParam AssignFor assignFor) {
         filterConfig.configureFilter(ActionName.ASSIGN, "task");
         ids.getIds().forEach(id -> service.assign(id, userId, assignFor));
+        return true;
+    }
+
+    @PostMapping("/batch/assign")
+    public boolean assignAllBatch(@RequestBody IdListUserListBatch ids, @RequestParam AssignFor assignFor) {
+        filterConfig.configureFilter(ActionName.ASSIGN, "task");
+        ids.getIds().forEach(id -> {
+            ids.getUserIds().forEach(userId -> {
+                try {
+                    service.assign(id, userId, assignFor);
+                } catch (final Exception e) {
+                    log.error(String.format("error assign task id %s to user id %s", id, userId));
+                }
+            });
+        });
         return true;
     }
 
