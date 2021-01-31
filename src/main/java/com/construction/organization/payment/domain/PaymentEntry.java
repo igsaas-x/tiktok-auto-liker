@@ -4,6 +4,7 @@ import com.construction.feature.task.domain.Task;
 import com.construction.persistence.converter.StringSetConverter;
 import com.construction.persistence.domain.ObjectStatus;
 import com.construction.persistence.domain.VersionEntity;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
@@ -15,6 +16,7 @@ import org.springframework.web.server.ResponseStatusException;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.Set;
 
 import static com.construction.organization.payment.domain.PaymentEntryStatus.OPEN;
@@ -49,6 +51,9 @@ public class PaymentEntry extends VersionEntity {
 
     @Enumerated(EnumType.STRING)
     PaymentEntryStatus status = PaymentEntryStatus.OPEN;
+
+    @JsonFormat(pattern = "yyyy-MM-dd")
+    LocalDate paidOn;
 
     @PrePersist
     private void prePersist() {

@@ -21,6 +21,7 @@ import org.springframework.web.server.ResponseStatusException;
 import javax.persistence.EntityManager;
 import javax.transaction.Transactional;
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.List;
 
 import static com.construction.organization.payment.domain.PaymentEntryStatus.*;
@@ -127,6 +128,7 @@ public class PaymentEntryService {
                 task.setAvailableAmount(availableAmount);
                 taskRepository.save(task);
                 paymentEntry.setStatus(PAID);
+                paymentEntry.setPaidOn(LocalDate.now());
                 break;
             case REJECT:
                 if (OPEN.equals(paymentEntry.getStatus())
