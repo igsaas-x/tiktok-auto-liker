@@ -2,5 +2,5 @@ kill $(cat ./bin/shutdown.pid)
 ./gradlew bootJar
 kill $(ps -aux | grep gradle |grep -v grep | awk '{print $2}')
 sleep 5
-nohup java -Xss512m -Xmx1024m -jar ./build/libs/construction-0.0.1.jar &
+nohup java -XX:+UseParallelGC -XX:-UseGCOverheadLimit -XX:InitialRAMPercentage=30 -XX:MaxRAMPercentage=70 -jar ./build/libs/construction-0.0.1.jar &
 echo > nohup.out

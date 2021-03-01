@@ -10,12 +10,13 @@ import org.springframework.context.annotation.Primary;
 @Configuration
 public class ApplicationConfiguration {
 
+    public static final ObjectMapper OBJECT_MAPPER = new ObjectMapper()
+            .configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false)
+            .registerModule(new JavaTimeModule());
+
     @Bean
     @Primary
     public ObjectMapper getObjectMapper() {
-        ObjectMapper mapper = new ObjectMapper();
-        mapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
-        mapper.registerModule(new JavaTimeModule());
-        return mapper;
+        return OBJECT_MAPPER;
     }
 }
