@@ -110,7 +110,7 @@ public class StreetController {
     public boolean assignAllBatch(@RequestBody IdListUserListBatch body, @RequestParam AssignFor assignFor) {
         filterConfig.configureFilter(ActionName.ASSIGN, "street");
         body.getUserIds().forEach(userId -> {
-            body.getUserIds().forEach(id -> {
+            body.getIds().forEach(id -> {
                 try {
                     service.assign(id, userId, assignFor);
                 } catch (final Exception e) {
