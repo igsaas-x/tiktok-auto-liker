@@ -11,8 +11,6 @@ import com.construction.persistence.service.EntityDataMapper;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.experimental.FieldDefaults;
-import org.springframework.cache.annotation.CachePut;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -31,7 +29,6 @@ public class PaymentRequestService {
     final StatusHistoryService historyService;
     final ApplicationSecurityContext context;
 
-    @CachePut("PaymentRequest")
     public PaymentRequest save(PaymentRequest paymentRequest) {
 
         final var request = repository.save(paymentRequest);
@@ -49,14 +46,12 @@ public class PaymentRequestService {
         return repository.findById(id).orElseThrow(() -> new ResourceNotFoundException(PaymentRequest.class, id));
     }
 
-    @CachePut("PaymentEntry")
     public PaymentRequest addEntries(Long id, List<PaymentEntry> entries) {
         final var paymentRequest = getById(id);
         paymentRequest.getEntries().addAll(entries);
         return repository.save(paymentRequest);
     }
 
-    @CachePut("PaymentRequest")
     public PaymentRequest update(Long id, PaymentRequest source) {
         final var target = getById(id);
         final var paymentRequest = dataMapper.mapObject(source, target, PaymentRequest.class);
@@ -67,7 +62,6 @@ public class PaymentRequestService {
         return repository.findAll(pageable);
     }
 
-    @Cacheable("PaymentRequest")
     public List<PaymentRequest> getAll() {
         return repository.findAll();
     }

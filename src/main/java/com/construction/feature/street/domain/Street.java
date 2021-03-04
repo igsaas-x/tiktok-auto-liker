@@ -16,7 +16,7 @@ import javax.persistence.Entity;
         condition = "created_by = :id or " +
                 "exists (SELECT 1 FROM street_assign sa WHERE sa.app_user_id = :id and sa.street_id = id and sa.assign_for = :assignFor)")
 @Filter(name = "readFilter",
-        condition = "created_by = :id or id in (SELECT sa.street_id FROM street_assign sa WHERE sa.app_user_id = :id)")
+        condition = "created_by = :id or exists (SELECT 1 FROM street_assign sa WHERE sa.app_user_id = :id and sa.street_id = id)")
 public class Street extends AuditingEntity {
 
     private String code;

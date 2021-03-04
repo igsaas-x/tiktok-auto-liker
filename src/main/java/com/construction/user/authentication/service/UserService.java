@@ -8,6 +8,7 @@ import com.construction.user.authorization.domain.Permission;
 import com.construction.user.authorization.repository.PermissionRepository;
 import com.construction.user.authorization.service.UserRoleService;
 import lombok.AllArgsConstructor;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Service;
 
@@ -37,6 +38,7 @@ public class UserService {
     private final PermissionRepository permissionRepository;
     private final UserRoleService roleService;
 
+    @Cacheable(value = "usersAuthorities", key = "#user.id")
     public List<SimpleGrantedAuthority> grantedAuthorities(AppUser user) {
         var role = user.getRole();
         if (role == null) {
@@ -79,12 +81,14 @@ public class UserService {
                 .collect(Collectors.toList());
     }
 
+    @Cacheable("allAuthorities")
     private List<SimpleGrantedAuthority> allAuthorities() {
         return permissionRepository.findAll().stream()
                 .map(this::getAuthorityFromPermission)
                 .collect(Collectors.toList());
     }
 
+    @Cacheable("allReadAuthorities")
     private List<SimpleGrantedAuthority> readAllAuthorities() {
         return permissionRepository.findAllByActionName(ActionName.READ).stream()
                 .map(this::getAuthorityFromPermission)
@@ -95,6 +99,7 @@ public class UserService {
         return new SimpleGrantedAuthority(permission.getCodeName());
     }
 
+    @Cacheable(value = "user", key = "#name")
     public AppUser getUserByUserName(final String name) {
         return repository.findByUserName(name).orElseThrow(() -> new ResourceNotFoundException(AppUser.class, name));
     }

@@ -4,11 +4,15 @@ import com.construction.user.authorization.domain.Permission;
 import com.construction.user.authorization.domain.RolePermission;
 import com.construction.user.authorization.domain.UserRole;
 import com.construction.user.authorization.dto.PermissionDto;
-import com.construction.user.authorization.dto.mapper.PermissionMapper;
 import com.construction.user.authorization.dto.RoleDto;
+import com.construction.user.authorization.dto.mapper.PermissionMapper;
 import com.construction.user.authorization.repository.RolePermissionRepository;
 import com.construction.user.authorization.repository.UserRoleRepository;
 import lombok.AllArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -27,6 +31,7 @@ public class UserRoleService {
     private final PermissionMapper permissionMapper;
     private final PermissionService permissionService;
 
+    @CachePut("roles")
     public UserRole save(RoleDto roleDto) {
         var role = new UserRole().setName(roleDto.getName());
         final var newRole = repository.save(role);
@@ -47,14 +52,22 @@ public class UserRoleService {
         return new RolePermission().setPermission(permission).setRole(role);
     }
 
+    @Caching(evict = {
+            @CacheEvict(value = "rolePermissions", key = "#id"),
+            @CacheEvict(value = "role", key = "#id"),
+            @CacheEvict("roles"),
+            @CacheEvict("usersAuthorities")
+    })
     public void deleteById(Long id) {
         repository.deleteById(id);
     }
 
+    @Cacheable(value = "role", key = "#id")
     public UserRole getById(Long id) {
         return repository.findById(id).orElseThrow();
     }
 
+    @Cacheable("roles")
     public List<UserRole> getAll() {
         return repository.findAll();
     }
@@ -63,6 +76,7 @@ public class UserRoleService {
         return repository.findAll(pageable);
     }
 
+    @Cacheable(value = "rolePermissions", key = "#id")
     public List<Permission> getRolePermission(Long id) {
         return rolePermissionRepository.findAllByRoleId(id)
                 .stream()
@@ -79,6 +93,12 @@ public class UserRoleService {
         return permissionMapper.toRoleDto(role, permissions).getPermissions();
     }
 
+    @Caching(evict = {
+            @CacheEvict(value = "rolePermissions", key = "#id"),
+            @CacheEvict(value = "role", key = "#id"),
+            @CacheEvict("roles"),
+            @CacheEvict("usersAuthorities")
+    })
     public UserRole updateById(Long id, RoleDto dto) {
         var role = getById(id);
         role.setName(dto.getName());
