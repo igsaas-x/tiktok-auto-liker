@@ -23,12 +23,16 @@ public class ResourceServerConfiguration extends ResourceServerConfigurerAdapter
     public void configure(HttpSecurity http) throws Exception {
 
         http.antMatcher("/**").authorizeRequests()
-                .antMatchers(HttpMethod.GET,
-                        "/**/image/**",
+                .antMatchers(HttpMethod.GET, "/**/image/**",
                         "/files/**",
+                        "/subconstructor/fingerprint",
                         "/image/**").permitAll()
-                .antMatchers("/health", "/api/**", "/swagger-resources/**", "/v2/**").permitAll()
+                .antMatchers("/health",
+                        "/api/**",
+                        "/swagger-resources/**",
+                        "/v2/**").permitAll()
                 .antMatchers(HttpMethod.POST, "/feedback").permitAll()
+                .antMatchers(HttpMethod.POST, "/subconstructor/fingerprint").permitAll()
                 .anyRequest().authenticated();
     }
 }

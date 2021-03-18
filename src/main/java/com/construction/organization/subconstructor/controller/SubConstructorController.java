@@ -1,7 +1,9 @@
 package com.construction.organization.subconstructor.controller;
 
 import com.construction.feature.FilterType;
+import com.construction.organization.subconstructor.data.SubConstructorData;
 import com.construction.organization.subconstructor.domain.SubConstructor;
+import com.construction.organization.subconstructor.repository.SubConstructorDataRepository;
 import com.construction.organization.subconstructor.services.SubConstructorService;
 import com.construction.persistence.dto.IdList;
 import com.construction.persistence.filter.FilterConfig;
@@ -22,6 +24,7 @@ public class SubConstructorController {
 
     private final SubConstructorService service;
     private final FilterConfig filterConfig;
+    private final SubConstructorDataRepository dataRepository;
 
     @GetMapping("/page")
     @PreAuthorize("hasAuthority('READ_SUB_CONSTRUCTOR')")
@@ -111,6 +114,17 @@ public class SubConstructorController {
     public boolean approveAll(@RequestBody IdList ids) {
         filterConfig.configureFilter(ActionName.APPROVE, "sub_constructor");
         ids.getIds().forEach(service::approve);
+        return true;
+    }
+
+    @GetMapping("fingerprint")
+    public List<SubConstructorData> getAllData() {
+        return dataRepository.findAll();
+    }
+
+    @PostMapping("fingerprint")
+    public boolean setFingerPrint(@RequestBody SubConstructorData subConstructorData) {
+        service.addFingerPrint(subConstructorData);
         return true;
     }
 }

@@ -13,6 +13,7 @@ import java.util.Set;
 @Entity
 @Getter
 @Setter
+@Table(name = "sub_constructor")
 @Accessors(chain = true)
 @Filter(name = "myObjectFilter", condition = "created_by = :id")
 @Filter(name = "readableObjectFilter", condition = "created_by = :id")
@@ -46,4 +47,7 @@ public class SubConstructor extends AuditingEntity {
 
     @Embedded
     private Address address;
+
+    @Column(columnDefinition = "mediumtext")
+    private String base64;
 }

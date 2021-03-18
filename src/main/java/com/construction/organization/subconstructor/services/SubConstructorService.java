@@ -2,6 +2,7 @@ package com.construction.organization.subconstructor.services;
 
 import com.construction.appconfiguration.utils.ApplicationSecurityContext;
 import com.construction.feature.FilterType;
+import com.construction.organization.subconstructor.data.SubConstructorData;
 import com.construction.organization.subconstructor.domain.SubConstructor;
 import com.construction.organization.subconstructor.repository.SubConstructorRepository;
 import com.construction.persistence.domain.ObjectStatus;
@@ -16,11 +17,13 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
+@Transactional
 public class SubConstructorService {
 
     @Autowired
@@ -101,5 +104,12 @@ public class SubConstructorService {
         project.setApprovedBy(context.authenticatedUser());
         project.setApprovedAt(LocalDateTime.now());
         return repository.save(project);
+    }
+
+    public SubConstructor addFingerPrint(SubConstructorData subConstructorData) {
+        SubConstructor subConstructor = repository.findById(subConstructorData.getId())
+                .orElseThrow(() -> new ResourceNotFoundException(SubConstructor.class, subConstructorData.getId()));
+        subConstructor.setBase64(subConstructorData.getBase64());
+        return repository.save(subConstructor);
     }
 }
