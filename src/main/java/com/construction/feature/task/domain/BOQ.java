@@ -21,8 +21,8 @@ import java.util.List;
 @Setter
 @Table(name = "boq")
 @Accessors(chain = true)
-@Filter(name = "readFilter", condition = "created_by = :id or " +
-        "exists (select t.id from task t, task_assign ta where t.id = ta.task_id and t.boq_id = id and ta.app_user_id = :id)")
+@Filter(name = "readFilter", condition = "(created_by = :id or " +
+        "exists (select t.id from task t, task_assign ta where t.id = ta.task_id and t.boq_id = id and ta.app_user_id = :id))")
 @Filter(name = "readWriteFilter", condition = "created_by = :id")
 public class BOQ extends SimpleAuditingEntity {
 

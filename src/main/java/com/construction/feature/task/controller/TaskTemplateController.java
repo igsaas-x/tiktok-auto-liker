@@ -5,6 +5,7 @@ import com.construction.feature.task.dto.TaskTemplateData;
 import com.construction.feature.task.dto.TaskTemplateDto;
 import com.construction.feature.task.dto.mapper.TaskTemplateMapper;
 import com.construction.feature.task.repository.TaskDataRepository;
+import com.construction.feature.task.repository.TaskTemplateRepository;
 import com.construction.feature.task.service.TaskTemplateService;
 import com.construction.persistence.dto.IdList;
 import io.swagger.annotations.Api;
@@ -27,6 +28,7 @@ public class TaskTemplateController {
 
     private final TaskTemplateService service;
     private final TaskTemplateMapper mapper;
+    private final TaskTemplateRepository repository;
     private final TaskDataRepository dataRepository;
 
     @PostMapping
@@ -120,5 +122,10 @@ public class TaskTemplateController {
     @GetMapping("/parent/{id}")
     public List<TaskTemplate> getByParentId(@PathVariable Long id) {
         return service.getByParentId(id);
+    }
+
+    @GetMapping("/code/{code}/exists")
+    public Map<String, Object> codeExist(@PathVariable("code") String code) {
+        return Map.of("exist", repository.findByCode(code).isPresent());
     }
 }

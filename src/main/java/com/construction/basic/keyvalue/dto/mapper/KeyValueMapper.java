@@ -11,10 +11,6 @@ import java.util.stream.Collectors;
 @Component
 public class KeyValueMapper extends DtoMapper<KeyValue, KeyValueDto> {
 
-    protected KeyValueMapper() {
-        super(KeyValue.class, KeyValueDto.class);
-    }
-
     public List<KeyValue> toEntityList(List<KeyValueDto> dtoList) {
         return dtoList.stream().map(this::toEntity).collect(Collectors.toList());
     }

@@ -6,6 +6,7 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.hibernate.annotations.Filter;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 
 @Entity
@@ -19,6 +20,7 @@ import javax.persistence.Entity;
         condition = "created_by = :id or exists (SELECT 1 FROM street_assign sa WHERE sa.app_user_id = :id and sa.street_id = id)")
 public class Street extends AuditingEntity {
 
+    @Column(unique = true)
     private String code;
 
     private String name;

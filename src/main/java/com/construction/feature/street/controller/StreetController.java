@@ -3,6 +3,7 @@ package com.construction.feature.street.controller;
 import com.construction.feature.FilterType;
 import com.construction.feature.street.domain.Street;
 import com.construction.feature.street.domain.StreetAssign;
+import com.construction.feature.street.repository.StreetRepository;
 import com.construction.feature.street.service.StreetAssignService;
 import com.construction.feature.street.service.StreetService;
 import com.construction.persistence.domain.AssignFor;
@@ -22,6 +23,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @Slf4j
 @RequestMapping("/street")
@@ -30,6 +32,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class StreetController {
 
+    private final StreetRepository repository;
     private final StreetService service;
     private final FilterConfig filterConfig;
     private final StreetAssignService assignService;
@@ -155,5 +158,10 @@ public class StreetController {
     public List<AssignedDto> getAssignedUser(@PathVariable Long id) {
         filterConfig.configureFilter(ActionName.READ, "street");
         return assignService.getAssignedUser(id);
+    }
+
+    @GetMapping("/code/{code}")
+    public Map<String, Object> codeExist(@PathVariable("code") String code) {
+        return Map.of("exist", repository.findByCode(code).isPresent());
     }
 }

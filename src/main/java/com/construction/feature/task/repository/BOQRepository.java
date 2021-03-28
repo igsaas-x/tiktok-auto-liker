@@ -1,10 +1,14 @@
 package com.construction.feature.task.repository;
 
+import com.construction.feature.street.domain.Street;
 import com.construction.feature.task.domain.BOQ;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.stereotype.Repository;
 
+import java.util.Optional;
+
 @Repository
 public interface BOQRepository extends JpaRepository<BOQ, Long>, JpaSpecificationExecutor<BOQ> {
+    Optional<Street> findByCode(String code);
 }

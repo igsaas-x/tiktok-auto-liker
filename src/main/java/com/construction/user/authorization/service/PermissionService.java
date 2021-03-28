@@ -3,14 +3,16 @@ package com.construction.user.authorization.service;
 import com.construction.persistence.exception.ResourceNotFoundException;
 import com.construction.user.authorization.domain.Permission;
 import com.construction.user.authorization.repository.PermissionRepository;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+@Slf4j
 @Service
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class PermissionService {
 
     private final PermissionRepository repository;
@@ -22,6 +24,7 @@ public class PermissionService {
 
     @Cacheable(value = "permission", key = "#id")
     public Permission getById(Long id) {
+        log.info("get permission has been called");
         return repository.findById(id).orElseThrow(() -> new ResourceNotFoundException(Permission.class, id));
     }
 

@@ -11,26 +11,6 @@ import java.util.stream.Collectors;
 @Component
 public class SystemConfigMapper extends DtoMapper<SystemConfig, SystemConfigDTO> {
 
-    protected SystemConfigMapper() {
-        super(SystemConfig.class, SystemConfigDTO.class);
-    }
-
-    @Override
-    public SystemConfig toEntity(SystemConfigDTO dto) {
-        SystemConfig entity = new SystemConfig();
-        entity.setCode(dto.getCode());
-        entity.setValue(dto.getValue());
-        return entity;
-    }
-
-    @Override
-    public SystemConfigDTO apply(SystemConfig entity) {
-        SystemConfigDTO dto = new SystemConfigDTO();
-        dto.setCode(entity.getCode());
-        dto.setValue(entity.getValue());
-        return dto;
-    }
-
     public List<SystemConfig> toEntityList(List<SystemConfigDTO> dtoList) {
         return dtoList.stream().map(this::toEntity).collect(Collectors.toList());
     }

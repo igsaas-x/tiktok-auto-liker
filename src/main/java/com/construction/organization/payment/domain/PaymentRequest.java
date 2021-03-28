@@ -1,6 +1,7 @@
 package com.construction.organization.payment.domain;
 
 import com.construction.organization.subconstructor.domain.SubConstructor;
+import com.construction.persistence.converter.StringListConverter;
 import com.construction.persistence.domain.SimpleAuditingEntity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AccessLevel;
@@ -31,6 +32,10 @@ public class PaymentRequest extends SimpleAuditingEntity {
     @ManyToOne
     @JoinColumn(updatable = false)
     SubConstructor subConstructor;
+
+    @Convert(converter = StringListConverter.class)
+    @Column(columnDefinition = "text")
+    List<String> attachments;
 
     @OneToMany(cascade = CascadeType.ALL)
     @JsonIgnore

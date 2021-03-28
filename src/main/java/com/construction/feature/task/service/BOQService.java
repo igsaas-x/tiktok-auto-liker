@@ -3,21 +3,21 @@ package com.construction.feature.task.service;
 import com.construction.feature.task.domain.BOQ;
 import com.construction.feature.task.domain.Task;
 import com.construction.feature.task.repository.BOQRepository;
-import com.construction.persistence.domain.AssignFor;
+import com.construction.persistence.dto.SidList;
 import com.construction.persistence.exception.ResourceNotFoundException;
 import com.construction.persistence.service.EntityDataMapper;
-import com.construction.persistence.utils.SFWhere;
-import com.construction.user.authentication.service.AppUserService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
+import javax.persistence.EntityManager;
 import javax.transaction.Transactional;
 import java.util.List;
 
+@Slf4j
 @Service
 @Transactional
 @RequiredArgsConstructor
@@ -26,7 +26,8 @@ public class BOQService {
     private final BOQRepository repository;
     private final EntityDataMapper dataMapper;
     private final TaskService taskService;
-    private final AppUserService userService;
+    private final TaskSubConstructAssignService subConstructAssignService;
+    private final EntityManager em;
 
     public BOQ save(BOQ boq) {
         return repository.save(boq);
@@ -41,10 +42,32 @@ public class BOQService {
         return repository.findById(id).orElseThrow(() -> new ResourceNotFoundException(BOQ.class, id));
     }
 
-    public ResponseEntity<Object> search(BOQ boq, Pageable pageable) {
-        Page<BOQ> all = repository.findAll(SFWhere.and(boq)
-                .build(), pageable);
-        return new ResponseEntity<>(all, HttpStatus.OK);
+    @SuppressWarnings("unchecked")
+    public List<BOQ> search(String code,
+                            Long projectId,
+                            Long houseId,
+                            Long streetId,
+                            Pageable pageable) {
+        StringBuilder sql = new StringBuilder("select * from boq where 1=1 ");
+
+        if (StringUtils.hasText(code)) {
+            sql.append(" and code = ").append(code);
+        }
+        if (projectId != null) {
+            sql.append(" and project_id = ").append(projectId);
+        }
+        if (houseId != null) {
+            sql.append(" and house_id = ").append(houseId);
+        }
+        if (streetId != null) {
+            sql.append(" and street_id = ").append(streetId);
+        }
+        if (pageable != null) {
+            sql.append(" limit ").append(pageable.getPageSize());
+            sql.append(" offset ").append(pageable.getOffset());
+        }
+
+        return em.createNativeQuery(sql.toString(), BOQ.class).getResultList();
     }
 
     public List<BOQ> findAll() {
@@ -84,17 +107,25 @@ public class BOQService {
         return true;
     }
 
-    public boolean assign(Long boqId, Long userId, AssignFor assignFor) {
-        var user = userService.getById(userId);
-        var boq = getById(boqId);
-        taskService.getByBoq(boq).forEach(task -> taskService.assign(task, user, assignFor));
+    public boolean assign(Long boqId, SidList sids) {
+        taskService.getByBoqId(boqId).forEach(task -> {
+            try {
+                subConstructAssignService.assign(task.getId(), sids.getSids());
+            } catch (Exception e) {
+                log.error("cannot add sub-constructor to task id:{}", task.getId());
+            }
+        });
         return true;
     }
 
-    public boolean unAssign(Long id, Long userId) {
-        var boq = getById(id);
-        var user = userService.getById(userId);
-        taskService.getByBoq(boq).forEach(task -> taskService.unAssign(task, user));
+    public boolean unAssign(Long boqId, SidList sids) {
+        taskService.getByBoqId(boqId).forEach(task -> {
+            try {
+                subConstructAssignService.unAssign(task.getId(), sids.getSids());
+            } catch (Exception e) {
+                log.error("cannot unassign task id:{}", task.getId());
+            }
+        });
         return true;
     }
 }

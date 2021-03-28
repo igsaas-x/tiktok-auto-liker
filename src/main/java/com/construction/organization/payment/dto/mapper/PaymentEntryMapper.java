@@ -7,9 +7,11 @@ import com.construction.organization.payment.domain.PaymentEntry;
 import com.construction.organization.payment.dto.PaymentEntryDto;
 import com.construction.persistence.exception.ResourceNotFoundException;
 import com.construction.persistence.mapper.DtoMapper;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+@Slf4j
 @Component
 public class PaymentEntryMapper extends DtoMapper<PaymentEntry, PaymentEntryDto> {
 
@@ -18,10 +20,6 @@ public class PaymentEntryMapper extends DtoMapper<PaymentEntry, PaymentEntryDto>
     @Autowired
     private TaskMapper taskMapper;
 
-    protected PaymentEntryMapper() {
-        super(PaymentEntry.class, PaymentEntryDto.class);
-    }
-
     @Override
     public PaymentEntry toEntity(PaymentEntryDto dto) {
         final var entry = super.toEntity(dto);
@@ -29,7 +27,7 @@ public class PaymentEntryMapper extends DtoMapper<PaymentEntry, PaymentEntryDto>
             final var task = taskRepository.findById(dto.getTaskId()).orElseThrow(() -> new ResourceNotFoundException(Task.class, dto.getTaskId()));
             entry.setTask(task);
         } else {
-            System.out.println("task is null");
+            log.error("task is null");
         }
         return entry;
     }

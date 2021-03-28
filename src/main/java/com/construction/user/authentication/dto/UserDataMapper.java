@@ -15,10 +15,6 @@ public class UserDataMapper extends DtoMapper<AppUser, UserDto> {
     @Autowired
     private PasswordEncoder encoder;
 
-    protected UserDataMapper() {
-        super(AppUser.class, UserDto.class);
-    }
-
     @Override
     public AppUser toEntity(UserDto dto) {
         var user = new AppUser().setUserName(dto.getUserName())

@@ -3,6 +3,7 @@ package com.construction.feature.project.controllers;
 import com.construction.feature.FilterType;
 import com.construction.feature.project.domain.Project;
 import com.construction.feature.project.domain.ProjectAssign;
+import com.construction.feature.project.repositories.ProjectRepository;
 import com.construction.feature.project.services.ProjectAssignService;
 import com.construction.feature.project.services.ProjectService;
 import com.construction.persistence.domain.AssignFor;
@@ -20,6 +21,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @Slf4j
 @RestController
@@ -27,6 +29,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ProjectController {
 
+    private final ProjectRepository repository;
     private final ProjectService service;
     private final FilterConfig filterConfig;
     private final ProjectAssignService assignService;
@@ -167,5 +170,10 @@ public class ProjectController {
     public List<AssignedDto> getAssignedUser(@PathVariable Long id) {
         filterConfig.configureFilter(ActionName.READ, "project");
         return assignService.getAssignedUser(id);
+    }
+
+    @GetMapping("/code/{code}")
+    public Map<String, Object> codeExist(@PathVariable("code") String code) {
+        return Map.of("exist", repository.findByCode(code).isPresent());
     }
 }

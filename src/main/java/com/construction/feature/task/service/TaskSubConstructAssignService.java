@@ -9,12 +9,14 @@ import com.construction.organization.subconstructor.repository.SubConstructorRep
 import com.construction.persistence.exception.ResourceNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
+@Transactional
 @RequiredArgsConstructor
 public class TaskSubConstructAssignService {
 
@@ -34,6 +36,12 @@ public class TaskSubConstructAssignService {
                 .collect(Collectors.toList());
 
         return repository.saveAll(assign);
+    }
+
+    public void unAssign(Long taskId, final List<Long> subIds) {
+        subIds.forEach(id -> {
+            repository.deleteByTaskIdAndSubConstructorId(taskId, id);
+        });
     }
 
     private TaskSubConstructorAssign build(final Task task, final SubConstructor subConstructor) {

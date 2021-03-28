@@ -18,10 +18,6 @@ public class HouseMapper extends DtoMapper<House, HouseDto> {
     @Autowired
     private TypeOfHouseRepository typeOfHouseRepository;
 
-    protected HouseMapper() {
-        super(House.class, HouseDto.class);
-    }
-
     @Override
     public House toEntity(HouseDto dto) {
         var typeOfHouse = dto.getTypeOfHouseId() == null ? null : typeOfHouseRepository.findById(dto.getTypeOfHouseId()).orElse(null);

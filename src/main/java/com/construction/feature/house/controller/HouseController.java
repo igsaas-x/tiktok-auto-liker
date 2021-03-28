@@ -19,7 +19,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
@@ -53,9 +52,9 @@ public class HouseController {
     }
 
     @GetMapping("/search")
-    public ResponseEntity<Object> search(House house, Pageable pageable) {
+    public Page<HouseDto> search(House house, Pageable pageable) {
         filterConfig.configureFilter(ActionName.READ, "house");
-        return houseService.search(house, pageable);
+        return houseService.search(house, pageable).map(mapper);
     }
 
     @ApiOperation("Find by Id")

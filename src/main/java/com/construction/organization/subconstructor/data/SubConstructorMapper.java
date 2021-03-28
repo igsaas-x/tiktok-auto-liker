@@ -13,10 +13,6 @@ public class SubConstructorMapper extends DtoMapper<SubConstructor, SubConstruct
     @Autowired
     private SubConstructorRepository repository;
 
-    protected SubConstructorMapper() {
-        super(SubConstructor.class, SubConstructorDto.class);
-    }
-
     @Override
     public SubConstructorDto apply(SubConstructor subConstructor) {
         return super.apply(subConstructor);

@@ -6,6 +6,7 @@ import com.construction.user.authorization.domain.UserRole;
 import com.construction.user.authorization.dto.PermissionDto;
 import com.construction.user.authorization.dto.RoleDto;
 import com.construction.user.authorization.dto.mapper.PermissionMapper;
+import com.construction.user.authorization.repository.PermissionRepository;
 import com.construction.user.authorization.repository.RolePermissionRepository;
 import com.construction.user.authorization.repository.UserRoleRepository;
 import lombok.AllArgsConstructor;
@@ -30,6 +31,7 @@ public class UserRoleService {
     private final RolePermissionRepository rolePermissionRepository;
     private final PermissionMapper permissionMapper;
     private final PermissionService permissionService;
+    private final PermissionRepository permissionRepository;
 
     @CachePut("roles")
     public UserRole save(RoleDto roleDto) {
@@ -78,18 +80,12 @@ public class UserRoleService {
 
     @Cacheable(value = "rolePermissions", key = "#id")
     public List<Permission> getRolePermission(Long id) {
-        return rolePermissionRepository.findAllByRoleId(id)
-                .stream()
-                .map(RolePermission::getPermission)
-                .collect(Collectors.toList());
+        return permissionRepository.getPermissionByRoleId(id);
     }
 
     public List<PermissionDto> getRolePermissionDto(Long id) {
         final var role = getById(id);
-        final var permissions = rolePermissionRepository.findAllByRole(role)
-                .stream()
-                .map(RolePermission::getPermission)
-                .collect(Collectors.toList());
+        final var permissions = permissionRepository.getPermissionByRoleId(id);
         return permissionMapper.toRoleDto(role, permissions).getPermissions();
     }
 

@@ -6,9 +6,7 @@ import javax.validation.constraints.NotNull;
 import java.util.List;
 
 @Data
-public class IdListBatch {
-    @NotNull
-    private List<Long> ids;
+public class SidList {
     @NotNull
     private List<Long> sids;
 }

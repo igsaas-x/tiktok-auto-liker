@@ -26,10 +26,6 @@ public class BOQMapper extends DtoMapper<BOQ, BOQDto> {
     @Autowired
     private TaskMapper taskMapper;
 
-    protected BOQMapper() {
-        super(BOQ.class, BOQDto.class);
-    }
-
     @Override
     public BOQDto apply(BOQ boq) {
         final var boqDto = super.apply(boq);

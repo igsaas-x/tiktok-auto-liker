@@ -26,10 +26,6 @@ public class TaskMapper extends DtoMapper<Task, TaskDto> {
     @Autowired
     private TaskRepository taskRepository;
 
-    protected TaskMapper() {
-        super(Task.class, TaskDto.class);
-    }
-
     @Override
     public TaskDto apply(Task task) {
         final var taskDto = super.apply(task);

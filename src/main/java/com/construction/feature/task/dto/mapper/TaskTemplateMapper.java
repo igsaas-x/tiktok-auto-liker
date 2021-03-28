@@ -5,17 +5,14 @@ import com.construction.feature.task.dto.TaskTemplateDto;
 import com.construction.feature.task.repository.TaskTemplateRepository;
 import com.construction.persistence.exception.ResourceNotFoundException;
 import com.construction.persistence.mapper.DtoMapper;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 @Component
+@RequiredArgsConstructor
 public class TaskTemplateMapper extends DtoMapper<TaskTemplate, TaskTemplateDto> {
 
     private final TaskTemplateRepository taskTemplateRepository;
-
-    public TaskTemplateMapper(TaskTemplateRepository taskTemplateRepository) {
-        super(TaskTemplate.class, TaskTemplateDto.class);
-        this.taskTemplateRepository = taskTemplateRepository;
-    }
 
     @Override
     public TaskTemplate toEntity(TaskTemplateDto taskTemplateDto) {

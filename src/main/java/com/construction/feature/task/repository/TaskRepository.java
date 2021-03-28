@@ -18,7 +18,10 @@ import java.util.List;
 
 @Repository
 public interface TaskRepository extends JpaRepository<Task, Long>, JpaSpecificationExecutor<Task> {
+
     List<Task> findAllByBoq(final BOQ boq);
+
+    List<Task> findAllByBoqId(final Long id);
 
     Page<Task> findAllByCreatedBy(final AppUser appUser, Pageable pageable);
 
@@ -36,10 +39,10 @@ public interface TaskRepository extends JpaRepository<Task, Long>, JpaSpecificat
             "and ((pa.assignFor = :assignFor and p.status = :status) " +
             "or (pa.assignFor = :assignFor1 and p.status = :status1))")
     Page<Task> findAllPendingTask(@Param("userId") Long userId,
-                               @Param("assignFor") AssignFor assignFor,
-                               @Param("status") ObjectStatus status,
-                               @Param("assignFor1") AssignFor assignFor1,
-                               @Param("status1") ObjectStatus status1, Pageable pageable);
+                                  @Param("assignFor") AssignFor assignFor,
+                                  @Param("status") ObjectStatus status,
+                                  @Param("assignFor1") AssignFor assignFor1,
+                                  @Param("status1") ObjectStatus status1, Pageable pageable);
 
     @Query(value = "select p from Task p, TaskAssign pa where p.id = pa.task and pa.appUser.id = :userId")
     Page<Task> findAssignedTask(Long userId, Pageable pageable);
@@ -49,6 +52,7 @@ public interface TaskRepository extends JpaRepository<Task, Long>, JpaSpecificat
             nativeQuery = true)
     BigDecimal getPaidAmount(@Param("con_id") Long subConstructorId, @Param("task_id") Long taskId);
 
-    @Query(value = "SELECT t.total_price - IFNULL((select sum(pe.approved_amount) from payment_entry pe where pe.task_id = :task_id and pe.status = 'PAID'),0) as available_amount from task t where t.id = :task_id", nativeQuery = true)
+    @Query(value = "SELECT t.total_price - IFNULL((select sum(pe.approved_amount) from payment_entry pe " +
+            "where pe.task_id = :task_id and pe.status = 'PAID'),0) as available_amount from task t where t.id = :task_id", nativeQuery = true)
     BigDecimal getAvailableAmount(@Param("task_id") Long taskId);
 }

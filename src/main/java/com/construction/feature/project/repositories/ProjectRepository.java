@@ -9,6 +9,8 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
+import java.util.Optional;
+
 @Repository
 public interface ProjectRepository extends JpaRepository<Project, Long>, JpaSpecificationExecutor<Project> {
 
@@ -33,4 +35,6 @@ public interface ProjectRepository extends JpaRepository<Project, Long>, JpaSpec
 
     @Query(value = "select p from Project p, ProjectAssign pa where p.id = pa.project and pa.appUser.id = :userId")
     Page<Project> findAssignedProject(final Long userId, Pageable pageable);
+
+    Optional<Project> findByCode(String code);
 }

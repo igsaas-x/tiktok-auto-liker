@@ -75,6 +75,10 @@ public class TaskService {
         return repository.findAllByBoq(boq);
     }
 
+    public List<Task> getByBoqId(Long id) {
+        return repository.findAllByBoqId(id);
+    }
+
     public List<Task> getAll() {
         return repository.findAll();
     }

@@ -24,10 +24,6 @@ public class PaymentRequestMapper extends DtoMapper<PaymentRequest, PaymentReque
     @Autowired
     private TaskMapper taskMapper;
 
-    protected PaymentRequestMapper() {
-        super(PaymentRequest.class, PaymentRequestDto.class);
-    }
-
     @Override
     public PaymentRequest toEntity(PaymentRequestDto dto) {
         final var request = super.toEntity(dto);

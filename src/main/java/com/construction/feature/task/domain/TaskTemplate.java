@@ -26,6 +26,7 @@ public class TaskTemplate extends AuditingEntity {
 
     private boolean firstLevel;
 
+    @Column(unique = true)
     private String code;
 
     private String name;

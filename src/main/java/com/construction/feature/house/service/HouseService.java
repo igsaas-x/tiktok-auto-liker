@@ -18,8 +18,6 @@ import com.construction.user.authorization.domain.ActionName;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -58,9 +56,8 @@ public class HouseService {
         return houses.stream().distinct().collect(Collectors.toList());
     }
 
-    public ResponseEntity<Object> search(House house, Pageable pageable) {
-        Page<House> all = repository.findAll(SFWhere.and(house).build(), pageable);
-        return new ResponseEntity<>(all, HttpStatus.OK);
+    public Page<House> search(House house, Pageable pageable) {
+        return repository.findAll(SFWhere.and(house).build(), pageable);
     }
 
     public List<House> getAssigned() {

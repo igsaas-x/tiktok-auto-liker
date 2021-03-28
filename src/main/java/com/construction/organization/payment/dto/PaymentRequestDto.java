@@ -41,4 +41,6 @@ public class PaymentRequestDto {
 
     @JsonProperty(value = "paymentEntries")
     List<PaymentEntryDto> entries;
+
+    List<String> attachments;
 }

@@ -54,7 +54,7 @@ public class PaymentEntry extends VersionEntity {
 
     @JsonFormat(pattern = "yyyy-MM-dd")
     LocalDate paidOn;
-
+    
     @PrePersist
     private void prePersist() {
         if (status == null) {

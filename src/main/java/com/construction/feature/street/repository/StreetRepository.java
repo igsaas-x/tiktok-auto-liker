@@ -9,6 +9,8 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
+import java.util.Optional;
+
 @Repository
 public interface StreetRepository extends JpaRepository<Street, Long>, JpaSpecificationExecutor<Street> {
 
@@ -33,4 +35,6 @@ public interface StreetRepository extends JpaRepository<Street, Long>, JpaSpecif
 
     @Query(value = "select p from Street p, StreetAssign pa where p.id = pa.street and pa.appUser.id = :userId")
     Page<Street> findAssignedStreet(Long userId, Pageable pageable);
+
+    Optional<Street> findByCode(String code);
 }
