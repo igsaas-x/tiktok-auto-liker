@@ -48,7 +48,7 @@ public class PaymentRequestController {
     @PostMapping
     @PreAuthorize("hasAuthority('CREATE_PAYMENT')")
     public PaymentRequestDto save(@RequestBody PaymentRequestDto dto) {
-        return requestMapper.apply(service.save(requestMapper.toEntity(dto)));
+        return requestMapper.apply(service.create(requestMapper.toEntity(dto)));
     }
 
     @GetMapping("/{id}")

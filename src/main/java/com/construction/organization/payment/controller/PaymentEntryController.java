@@ -9,8 +9,6 @@ import com.construction.organization.payment.dto.mapper.PaymentEntryMapper;
 import com.construction.organization.payment.service.PaymentEntryService;
 import com.construction.organization.payment.service.StatusHistoryService;
 import com.construction.persistence.dto.IdList;
-import com.construction.persistence.filter.FilterConfig;
-import com.construction.user.authorization.domain.ActionName;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -36,7 +34,6 @@ public class PaymentEntryController {
     static final List<CommandType> ALLOWED_PENDING_FOR = Arrays.asList(CommandType.values());
     static final String ALLOWED_PARAM = "SUBMIT/VERIFY/CONFIRM/REVIEW/APPROVE/CASH-OUT/REJECT";
 
-    private final FilterConfig filterConfig;
     private final PaymentEntryService service;
     private final PaymentEntryMapper mapper;
     private final StatusHistoryService historyService;
@@ -44,28 +41,39 @@ public class PaymentEntryController {
     @GetMapping("/{id}")
     @PreAuthorize("hasAuthority('READ_PAYMENT')")
     public PaymentEntryDto getById(@PathVariable("id") Long id) {
-        filterConfig.configureFilter(ActionName.READ, "payment");
         return mapper.apply(service.getById(id));
     }
 
     @GetMapping
     @PreAuthorize("hasAuthority('READ_PAYMENT')")
     public List<PaymentEntryDto> getByAll() {
-        filterConfig.configureFilter(ActionName.READ, "payment");
         return service.getAll().stream().map(mapper).collect(Collectors.toList());
     }
 
     @GetMapping("/page")
     @PreAuthorize("hasAuthority('READ_PAYMENT')")
     public Page<PaymentEntryDto> getByAllPaged(Pageable pageable) {
-        filterConfig.configureFilter(ActionName.READ, "payment");
         return service.getAll(pageable).map(mapper);
+    }
+
+    @GetMapping("/search")
+    @PreAuthorize("hasAuthority('READ_PAYMENT')")
+    public List<PaymentEntryDto> search(final Long boqId,
+                                        final Long projectId,
+                                        final Long streetId,
+                                        final Long houseId,
+                                        final Long subConstructorId,
+                                        final PaymentEntryStatus status,
+                                        final Pageable pageable) {
+        return service.search(boqId, projectId, streetId, houseId, subConstructorId, status, pageable)
+                .stream()
+                .map(mapper)
+                .collect(Collectors.toList());
     }
 
     @GetMapping("/pending")
     @PreAuthorize("hasAuthority('READ_PAYMENT')")
     public Page<PaymentEntryDto> getPending(@RequestParam CommandType pendingFor, Pageable pageable) {
-        filterConfig.configureFilter(ActionName.READ, "payment");
         return service.findPendingFor(pendingFor, pageable).map(mapper);
     }
 

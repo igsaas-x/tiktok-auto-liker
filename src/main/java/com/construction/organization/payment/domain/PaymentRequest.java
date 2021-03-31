@@ -1,5 +1,8 @@
 package com.construction.organization.payment.domain;
 
+import com.construction.feature.house.domain.House;
+import com.construction.feature.project.domain.Project;
+import com.construction.feature.street.domain.Street;
 import com.construction.organization.subconstructor.domain.SubConstructor;
 import com.construction.persistence.converter.StringListConverter;
 import com.construction.persistence.domain.SimpleAuditingEntity;
@@ -14,6 +17,7 @@ import org.hibernate.annotations.FilterDef;
 import org.hibernate.annotations.ParamDef;
 
 import javax.persistence.*;
+import java.time.LocalDate;
 import java.util.List;
 
 @Entity
@@ -32,6 +36,14 @@ public class PaymentRequest extends SimpleAuditingEntity {
     @ManyToOne
     @JoinColumn(updatable = false)
     SubConstructor subConstructor;
+
+    LocalDate requestDate;
+
+    Long projectId;
+
+    Long streetId;
+
+    Long houseId;
 
     @Convert(converter = StringListConverter.class)
     @Column(columnDefinition = "text")

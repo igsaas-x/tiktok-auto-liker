@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.experimental.Accessors;
 import lombok.experimental.FieldDefaults;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -34,7 +35,15 @@ public class PaymentRequestDto {
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     LocalDateTime updatedAt;
 
+    LocalDate requestDate;
+
     Long subConstructorId;
+
+    Long projectId;
+
+    Long streetId;
+
+    Long houseId;
 
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     String subConstructorEngFullName;

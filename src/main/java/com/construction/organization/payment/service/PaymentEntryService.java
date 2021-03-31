@@ -36,12 +36,43 @@ public class PaymentEntryService {
     private final EntityManager entityManager;
 
     public List<PaymentEntry> search(final Long boqId,
-                                     final Long taskId,
+                                     final Long projectId,
+                                     final Long streetId,
                                      final Long houseId,
                                      final Long subConstructorId,
-                                     final PaymentEntryStatus status) {
-        final String sql = "select pe from PaymentEntry where 1 = 1";
-        return entityManager.createQuery(sql, PaymentEntry.class).getResultList();
+                                     final PaymentEntryStatus status,
+                                     final Pageable pageable) {
+        final StringBuilder sql = new StringBuilder("select pe.* from payment_entry pe join task t on pe.task_id = t.id");
+        if (status != null) {
+            sql.append(" and pe.status like '").append(status).append("'");
+        }
+        if (subConstructorId != null) {
+            sql.append(" and pe.payment_request_id in (select pr.id from payment_request pr where pr.sub_constructor_id = ")
+                    .append(subConstructorId)
+                    .append(")");
+        }
+        if (boqId != null || projectId != null || streetId != null || houseId != null) {
+            sql.append(" and t.boq_id in (select b.id from boq b where 1=1");
+            if (boqId != null) {
+                sql.append(" and b.id = ").append(boqId);
+            }
+            if (projectId != null) {
+                sql.append(" and b.project_id = ").append(projectId);
+            }
+            if (streetId != null) {
+                sql.append(" and b.street_id = ").append(streetId);
+            }
+            if (houseId != null) {
+                sql.append(" and b.house_id = ").append(houseId);
+            }
+            sql.append(")");
+        }
+        if (pageable != null) {
+            sql.append(" limit ").append(pageable.getPageSize());
+            sql.append(" offset ").append(pageable.getOffset());
+        }
+
+        return entityManager.createQuery(sql.toString(), PaymentEntry.class).getResultList();
     }
 
     public List<PaymentEntry> getAll() {
@@ -81,17 +112,26 @@ public class PaymentEntryService {
                 if (!PaymentEntryStatus.OPEN.equals(paymentEntry.getStatus())) {
                     throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "payment request is not in open status");
                 }
+                if (approveAmount != null) {
+                    throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Approve amount cannot be set on create request");
+                }
                 paymentEntry.setStatus(SUBMITTED);
                 break;
             case VERIFY:
                 if (!SUBMITTED.equals(paymentEntry.getStatus())) {
                     throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "payment request is not in submitted status");
                 }
+                if (approveAmount != null) {
+                    throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Approve amount cannot be set on create request");
+                }
                 paymentEntry.setStatus(VERIFIED);
                 break;
             case CONFIRM:
                 if (!VERIFIED.equals(paymentEntry.getStatus())) {
                     throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "payment request is not in verified status");
+                }
+                if (approveAmount != null) {
+                    throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Approve amount cannot be set on create request");
                 }
                 paymentEntry.setStatus(PaymentEntryStatus.CONFIRMED);
                 break;

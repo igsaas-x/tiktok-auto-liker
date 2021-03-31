@@ -1,6 +1,7 @@
 package com.construction.organization.payment.service;
 
 import com.construction.appconfiguration.utils.ApplicationSecurityContext;
+import com.construction.feature.task.repository.TaskRepository;
 import com.construction.organization.payment.domain.CommandType;
 import com.construction.organization.payment.domain.PaymentEntry;
 import com.construction.organization.payment.domain.PaymentEntryStatus;
@@ -9,11 +10,13 @@ import com.construction.organization.payment.repository.PaymentRequestRepository
 import com.construction.persistence.exception.ResourceNotFoundException;
 import com.construction.persistence.service.EntityDataMapper;
 import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import javax.transaction.Transactional;
 import java.util.List;
@@ -21,18 +24,28 @@ import java.util.List;
 @Service
 @Transactional
 @FieldDefaults(level = AccessLevel.PRIVATE)
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class PaymentRequestService {
 
     final EntityDataMapper dataMapper;
     final PaymentRequestRepository repository;
     final StatusHistoryService historyService;
     final ApplicationSecurityContext context;
+    final TaskRepository taskRepository;
 
-    public PaymentRequest save(PaymentRequest paymentRequest) {
-
+    public PaymentRequest create(PaymentRequest paymentRequest) {
         final var request = repository.save(paymentRequest);
         request.getEntries().forEach(entry -> {
+            // validate request amount
+            var availableAmount = taskRepository.getAvailableAmount(entry.getTask().getId());
+            if (entry.getRequestAmount().compareTo(availableAmount) > 0) {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Request amount cannot be greater than available amount");
+            }
+            // validate approve amount
+            if (entry.getApprovedAmount() != null) {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Approve amount cannot be set on create request");
+            }
+
             historyService.addHistory(entry, CommandType.CREATE, null, context.authenticatedUser(), null);
         });
         return request;
