@@ -26,6 +26,7 @@ public class ResourceServerConfiguration extends ResourceServerConfigurerAdapter
                 .antMatchers(HttpMethod.GET, "/**/image/**",
                         "/files/**",
                         "/subconstructor/fingerprint",
+                        "/subconstructor/fingerprint/**",
                         "/image/**").permitAll()
                 .antMatchers("/health",
                         "/api/**",

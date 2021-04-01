@@ -122,6 +122,11 @@ public class SubConstructorController {
         return dataRepository.findAll();
     }
 
+    @GetMapping("fingerprint/pending")
+    public List<SubConstructorData> getPendingData() {
+        return dataRepository.findByBase64(null);
+    }
+
     @PostMapping("fingerprint")
     public boolean setFingerPrint(@RequestBody SubConstructorData subConstructorData) {
         service.addFingerPrint(subConstructorData);

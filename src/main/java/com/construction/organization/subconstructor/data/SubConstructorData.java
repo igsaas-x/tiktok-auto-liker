@@ -1,9 +1,9 @@
 package com.construction.organization.subconstructor.data;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import org.springframework.data.annotation.Immutable;
 
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
@@ -14,8 +14,10 @@ import javax.persistence.Table;
 @Table(name = "sub_constructor")
 public class SubConstructorData {
     @Id
-    @Column
     private Long id;
-    @Column
+
+    @JsonProperty("name")
+    private String engFullName;
+
     private String base64;
 }
