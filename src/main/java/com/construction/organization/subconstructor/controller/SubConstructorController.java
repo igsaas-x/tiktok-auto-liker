@@ -128,8 +128,10 @@ public class SubConstructorController {
     }
 
     @PostMapping("fingerprint")
-    public boolean setFingerPrint(@RequestBody SubConstructorData subConstructorData) {
-        service.addFingerPrint(subConstructorData);
-        return true;
+    public SubConstructorData setFingerPrint(@RequestBody SubConstructorData subConstructorData) {
+        var subConstructor = service.addFingerPrint(subConstructorData);
+        return new SubConstructorData()
+                .setId(subConstructor.getId())
+                .setEngFullName(subConstructor.getEngFullName());
     }
 }
