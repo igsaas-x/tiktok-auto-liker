@@ -14,7 +14,7 @@ public interface StorageService {
 
     void writeXxOutput(final String filename);
 
-    String store(MultipartFile file);
+    String store(MultipartFile file, String name);
 
     Stream<Path> loadAll();
 

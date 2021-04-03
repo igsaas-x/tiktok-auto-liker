@@ -8,7 +8,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.util.FileSystemUtils;
-import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -20,7 +19,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
-import java.util.UUID;
 import java.util.stream.Stream;
 
 @Log
@@ -40,11 +38,10 @@ public class FileSystemStorageService implements StorageService {
     }
 
     @Override
-    public String store(@NotNull MultipartFile file) {
+    public String store(@NotNull MultipartFile file, String filename) {
         if (file.getOriginalFilename() == null) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "File name not found");
         }
-        String filename = StringUtils.cleanPath(file.getOriginalFilename());
         try {
             if (file.isEmpty()) {
                 throw new StorageException("Failed to store empty file " + filename);
@@ -56,10 +53,9 @@ public class FileSystemStorageService implements StorageService {
                                 + filename);
             }
             try (InputStream inputStream = file.getInputStream()) {
-                var name = newName(filename);
-                Files.copy(inputStream, this.rootLocation.resolve(name),
+                Files.copy(inputStream, this.rootLocation.resolve(filename),
                         StandardCopyOption.REPLACE_EXISTING);
-                return name;
+                return filename;
             }
         } catch (IOException e) {
             throw new StorageException("Failed to store file " + filename, e);
@@ -90,11 +86,6 @@ public class FileSystemStorageService implements StorageService {
         } catch (IOException e) {
             log.warning(e.getMessage());
         }
-    }
-
-    private String newName(@NotNull final String name) {
-        return UUID.randomUUID().toString().replaceAll("-", "")
-                + "." + StringUtils.getFilenameExtension(name);
     }
 
     @Override

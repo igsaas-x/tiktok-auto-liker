@@ -8,7 +8,6 @@ import com.construction.basic.file.storage.StorageFileNotFoundException;
 import com.construction.basic.file.storage.StorageService;
 import net.coobird.thumbnailator.Thumbnails;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.StringUtils;
@@ -20,6 +19,7 @@ import javax.validation.constraints.NotNull;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.List;
+import java.util.Objects;
 
 @RestController
 public class FileUploadController {
@@ -104,9 +104,10 @@ public class FileUploadController {
     }
 
     @PostMapping("/upload")
+    @Transactional
     public FileEntity handleFileUpload(@RequestParam("file") MultipartFile file,
                                        @RequestParam(value = "category", required = false) final Long categoryId) {
-        final var name = storageService.store(file);
+        final var name = StringUtils.cleanPath(Objects.requireNonNull(file.getOriginalFilename()));
         final var newFile = new FileEntity()
                 .setName(name)
                 .setExtension(StringUtils.getFilenameExtension(name))
@@ -120,7 +121,9 @@ public class FileUploadController {
             final var category = categoryRepository.findById(categoryId).orElseThrow();
             newFile.setCategory(category);
         }
-        return repository.save(newFile);
+        var fileEntity = repository.save(newFile);
+        storageService.store(file, fileEntity.getName());
+        return fileEntity;
     }
 
     @ExceptionHandler(StorageFileNotFoundException.class)

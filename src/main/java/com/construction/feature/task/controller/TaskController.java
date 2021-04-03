@@ -25,6 +25,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -70,9 +71,14 @@ public class TaskController {
     }
 
     @GetMapping("/search")
-    public ResponseEntity<Object> search(Task task, Pageable pageable) {
+    public ResponseEntity<Object> search(LocalDate requestDate,
+                                         Long subConstructorId,
+                                         Long projectId,
+                                         Long streetId,
+                                         Long houseId,
+                                         Pageable pageable) {
         filterConfig.configureFilter(ActionName.READ, "task");
-        return service.search(task, pageable);
+        return null;
     }
 
     @ApiOperation("Find all data")

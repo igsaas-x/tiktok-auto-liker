@@ -29,6 +29,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -65,10 +66,14 @@ public class TaskService {
         return repository.findById(id).orElseThrow(() -> new ResourceNotFoundException(Task.class, id));
     }
 
-    public ResponseEntity<Object> search(Task task, Pageable pageable) {
-        Page<Task> all = repository.findAll(SFWhere.and(task)
-                .build(), pageable);
-        return new ResponseEntity<>(all, HttpStatus.OK);
+    public ResponseEntity<Object> search(LocalDate requestDate,
+                                         Long subConstructorId,
+                                         Long projectId,
+                                         Long streetId,
+                                         Long houseId,
+                                         Pageable pageable) {
+        StringBuilder sql = new StringBuilder("select * from task");
+        return null;
     }
 
     public List<Task> getByBoq(BOQ boq) {
