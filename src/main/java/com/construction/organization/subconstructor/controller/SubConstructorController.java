@@ -8,10 +8,11 @@ import com.construction.organization.subconstructor.services.SubConstructorServi
 import com.construction.persistence.dto.IdList;
 import com.construction.persistence.filter.FilterConfig;
 import com.construction.user.authorization.domain.ActionName;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,12 +20,13 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/subconstructor")
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class SubConstructorController {
 
     private final SubConstructorService service;
     private final FilterConfig filterConfig;
     private final SubConstructorDataRepository dataRepository;
+    private final SimpMessagingTemplate messagingTemplate;
 
     @GetMapping("/page")
     @PreAuthorize("hasAuthority('READ_SUB_CONSTRUCTOR')")
@@ -133,5 +135,15 @@ public class SubConstructorController {
         return new SubConstructorData()
                 .setId(subConstructor.getId())
                 .setEngFullName(subConstructor.getEngFullName());
+    }
+
+    @PostMapping("{id}/fingerprint/verify")
+    public SubConstructorData verifyFingerprint(@PathVariable Long id) {
+        var subConstructor = service.getById(id);
+        var subConstructorData = new SubConstructorData()
+                .setId(subConstructor.getId())
+                .setEngFullName(subConstructor.getEngFullName());
+        messagingTemplate.convertAndSend("/topic/subconstructor/fingerprint", subConstructorData);
+        return subConstructorData;
     }
 }

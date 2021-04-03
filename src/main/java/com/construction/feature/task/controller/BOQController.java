@@ -13,7 +13,7 @@ import com.construction.persistence.filter.FilterConfig;
 import com.construction.user.authorization.domain.ActionName;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -27,7 +27,7 @@ import java.util.stream.Collectors;
 @RequestMapping("/boq")
 @RestController
 @Api(tags = "BOQ API")
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class BOQController {
 
     private final BOQRepository repository;
@@ -111,7 +111,7 @@ public class BOQController {
     }
 
     @PostMapping("{id}/unassign/sub-constructor")
-    public Map<String,Object> unAssign(@PathVariable Long id, @RequestBody @Valid final SidList sids){
+    public Map<String, Object> unAssign(@PathVariable Long id, @RequestBody @Valid final SidList sids) {
         filterConfig.configureFilter(ActionName.ASSIGN, "task");
         service.unAssign(id, sids);
         return Map.of("success", true);

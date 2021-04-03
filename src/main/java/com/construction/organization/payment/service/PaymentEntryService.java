@@ -121,9 +121,6 @@ public class PaymentEntryService {
                 if (!SUBMITTED.equals(paymentEntry.getStatus())) {
                     throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "payment request is not in submitted status");
                 }
-                if (approveAmount != null) {
-                    throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Approve amount cannot be set on create request");
-                }
                 paymentEntry.setStatus(VERIFIED);
                 break;
             case CONFIRM:
@@ -138,6 +135,9 @@ public class PaymentEntryService {
             case REVIEW:
                 if (!CONFIRMED.equals(paymentEntry.getStatus())) {
                     throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "payment request is not in confirmed status");
+                }
+                if (approveAmount != null) {
+                    throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Approve amount cannot be set on create request");
                 }
                 paymentEntry.setStatus(REVIEWED);
                 break;
