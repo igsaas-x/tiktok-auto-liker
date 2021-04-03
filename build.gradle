@@ -16,15 +16,13 @@ configurations {
 
 repositories {
     mavenCentral()
-    maven {
-        url 'https://nexus.pentaho.org/content/groups/omni/'
-    }
 }
 
 dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.springframework.boot:spring-boot-starter-security'
+    implementation 'org.springframework.boot:spring-boot-starter-websocket'
     implementation 'org.springframework.security.oauth:spring-security-oauth2:2.4.0.RELEASE'
     implementation 'org.springframework.security:spring-security-jwt:1.0.9.RELEASE'
     implementation 'org.modelmapper:modelmapper:2.3.8'
@@ -33,11 +31,6 @@ dependencies {
     implementation 'io.springfox:springfox-swagger-ui:2.9.2'
     implementation 'com.lowagie:itext:2.1.7'
     implementation 'com.introproventures:graphql-jpa-query-boot-starter:0.4.10'
-    implementation("org.pentaho.reporting.engine:classic-core:9.2.0.0-122"){
-        exclude group: "org.apache.httpcomponents"
-        exclude group: "org.codehaus.groovy"
-        exclude group: "org.pentaho"
-    }
     compileOnly 'org.projectlombok:lombok'
     runtimeOnly 'mysql:mysql-connector-java'
     annotationProcessor 'org.projectlombok:lombok'

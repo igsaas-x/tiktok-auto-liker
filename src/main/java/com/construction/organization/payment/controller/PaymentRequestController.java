@@ -14,7 +14,7 @@ import com.construction.persistence.filter.FilterConfig;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -31,7 +31,7 @@ import java.util.stream.Collectors;
 @RestController
 @Api(tags = "PaymentRequest API")
 @FieldDefaults(level = AccessLevel.PRIVATE)
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class PaymentRequestController {
 
     static final List<CommandType> ALLOWED_PENDING_FOR = Arrays.asList(CommandType.values());

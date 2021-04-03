@@ -4,13 +4,13 @@ import com.introproventures.graphql.jpa.query.autoconfigure.GraphQLJpaQueryPrope
 import com.introproventures.graphql.jpa.query.autoconfigure.GraphQLSchemaConfigurer;
 import com.introproventures.graphql.jpa.query.autoconfigure.GraphQLShemaRegistration;
 import com.introproventures.graphql.jpa.query.schema.impl.GraphQLJpaSchemaBuilder;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Configuration;
 
 import javax.persistence.EntityManager;
 
 @Configuration
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class GraphQLSchemaConfig implements GraphQLSchemaConfigurer {
 
     private final EntityManager entityManager;

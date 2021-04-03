@@ -51,7 +51,7 @@ public class BOQService {
         StringBuilder sql = new StringBuilder("select * from boq where 1=1 ");
 
         if (StringUtils.hasText(code)) {
-            sql.append(" and code = ").append(code);
+            sql.append(" and code = '").append(code).append("'");
         }
         if (projectId != null) {
             sql.append(" and project_id = ").append(projectId);

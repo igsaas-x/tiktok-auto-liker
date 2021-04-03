@@ -60,6 +60,10 @@ public class ApplicationSecurityContext {
         if (authentication == null) {
             return null;
         }
-        return getAuth().getAuthorities().stream().map(GrantedAuthority::getAuthority).collect(Collectors.toList());
+        return getAuth()
+                .getAuthorities()
+                .stream()
+                .map(GrantedAuthority::getAuthority)
+                .collect(Collectors.toList());
     }
 }

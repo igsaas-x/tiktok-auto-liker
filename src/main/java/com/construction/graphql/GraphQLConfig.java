@@ -3,7 +3,7 @@ package com.construction.graphql;
 import com.construction.graphql.instrumentation.FilterInstrumentation;
 import graphql.GraphQLContext;
 import graphql.execution.instrumentation.Instrumentation;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.context.annotation.RequestScope;
@@ -12,7 +12,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.function.Supplier;
 
 @Configuration
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class GraphQLConfig {
 
     private final FilterInstrumentation filterInstrumentation;
