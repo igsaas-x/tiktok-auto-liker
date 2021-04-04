@@ -172,7 +172,7 @@ public class ProjectController {
         return assignService.getAssignedUser(id);
     }
 
-    @GetMapping("/code/{code}")
+    @GetMapping("/code/{code:.+}")
     public Map<String, Object> codeExist(@PathVariable("code") String code) {
         return Map.of("exist", repository.findByCode(code).isPresent());
     }

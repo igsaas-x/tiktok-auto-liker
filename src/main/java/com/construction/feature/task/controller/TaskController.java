@@ -21,7 +21,6 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
@@ -71,14 +70,17 @@ public class TaskController {
     }
 
     @GetMapping("/search")
-    public ResponseEntity<Object> search(LocalDate requestDate,
-                                         Long subConstructorId,
-                                         Long projectId,
-                                         Long streetId,
-                                         Long houseId,
-                                         Pageable pageable) {
+    public List<TaskDto> search(LocalDate requestDate,
+                                Long subConstructorId,
+                                Long projectId,
+                                Long streetId,
+                                Long houseId,
+                                Pageable pageable) {
         filterConfig.configureFilter(ActionName.READ, "task");
-        return null;
+        return service.search(requestDate, subConstructorId, projectId, streetId, houseId, pageable)
+                .stream()
+                .map(mapper)
+                .collect(Collectors.toList());
     }
 
     @ApiOperation("Find all data")

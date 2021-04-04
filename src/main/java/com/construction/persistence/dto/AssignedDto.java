@@ -7,13 +7,13 @@ import lombok.Data;
 
 import java.time.LocalDateTime;
 
-import static com.construction.persistence.dto.LocalDateFormat.DATE_FORMAT;
+import static com.construction.persistence.dto.LocalDateFormat.DATE_TIME_FORMAT;
 
 @Data
 public class AssignedDto {
     private Long userId;
     private String userName;
-    @JsonFormat(pattern = DATE_FORMAT)
+    @JsonFormat(pattern = DATE_TIME_FORMAT)
     private LocalDateTime createdAt;
     private AssignFor assignFor;
 

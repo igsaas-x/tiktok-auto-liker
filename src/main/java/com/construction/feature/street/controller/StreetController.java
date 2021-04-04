@@ -160,8 +160,9 @@ public class StreetController {
         return assignService.getAssignedUser(id);
     }
 
-    @GetMapping("/code/{code}")
+    @GetMapping("/code/{code:.+}")
     public Map<String, Object> codeExist(@PathVariable("code") String code) {
+        System.out.println("code is:" + code);
         return Map.of("exist", repository.findByCode(code).isPresent());
     }
 }

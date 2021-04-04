@@ -14,23 +14,23 @@ import com.construction.feature.task.repository.TaskRepository;
 import com.construction.feature.task.repository.TaskSubConstructorAssignRepository;
 import com.construction.persistence.domain.AssignFor;
 import com.construction.persistence.domain.ObjectStatus;
+import com.construction.persistence.dto.LocalDateFormat;
 import com.construction.persistence.exception.ResourceNotFoundException;
 import com.construction.persistence.service.EntityDataMapper;
 import com.construction.persistence.utils.EntityValidator;
-import com.construction.persistence.utils.SFWhere;
 import com.construction.user.authentication.domain.AppUser;
 import com.construction.user.authentication.service.AppUserService;
 import com.construction.user.authorization.domain.ActionName;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.EntityManager;
 import javax.transaction.Transactional;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -46,6 +46,7 @@ public class TaskService {
     private final AppUserService userService;
     private final TaskAssignRepository assignRepository;
     private final TaskDataRepository taskDataRepository;
+    private final EntityManager entityManager;
     private final TaskSubConstructorAssignRepository constructorAssignRepository;
 
     public Task save(Task task) {
@@ -66,14 +67,37 @@ public class TaskService {
         return repository.findById(id).orElseThrow(() -> new ResourceNotFoundException(Task.class, id));
     }
 
-    public ResponseEntity<Object> search(LocalDate requestDate,
-                                         Long subConstructorId,
-                                         Long projectId,
-                                         Long streetId,
-                                         Long houseId,
-                                         Pageable pageable) {
-        StringBuilder sql = new StringBuilder("select * from task");
-        return null;
+    @SuppressWarnings("unchecked")
+    public List<Task> search(LocalDate requestDate,
+                             Long subConstructorId,
+                             Long projectId,
+                             Long streetId,
+                             Long houseId,
+                             Pageable pageable) {
+        StringBuilder sql = new StringBuilder("select t.* from task t,boq b where t.boq_id = b.id");
+        if (requestDate != null) {
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern(LocalDateFormat.DATE_FORMAT);
+            sql.append(" and created_at = '").append(formatter.format(requestDate)).append("'");
+        }
+        if (subConstructorId != null) {
+            sql.append(" and t.id in (select ts.task_id from task_sub_constructor_assign where sub_constructor_id = ")
+                    .append(subConstructorId)
+                    .append(")");
+        }
+        if (projectId != null) {
+            sql.append(" and b.project_id = ").append(projectId);
+        }
+        if (streetId != null) {
+            sql.append(" and b.street_id = ").append(streetId);
+        }
+        if (houseId != null) {
+            sql.append(" and b.house_id = ").append(houseId);
+        }
+        if (pageable != null) {
+            sql.append(" limit ").append(pageable.getPageSize());
+            sql.append(" offset ").append(pageable.getOffset());
+        }
+        return entityManager.createNativeQuery(sql.toString(), Task.class).getResultList();
     }
 
     public List<Task> getByBoq(BOQ boq) {

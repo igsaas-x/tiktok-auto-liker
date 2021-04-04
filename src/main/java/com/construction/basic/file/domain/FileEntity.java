@@ -1,6 +1,7 @@
 package com.construction.basic.file.domain;
 
 import com.construction.persistence.domain.VersionEntity;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -31,6 +32,7 @@ public class FileEntity extends VersionEntity {
     );
 
     @CreatedDate
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;
 

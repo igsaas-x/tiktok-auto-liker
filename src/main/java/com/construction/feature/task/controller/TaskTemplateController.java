@@ -114,7 +114,7 @@ public class TaskTemplateController {
         return mapper.apply(service.getById(id));
     }
 
-    @GetMapping("/code/{code}")
+    @GetMapping("/code/{code:.+}")
     public TaskTemplate getByCode(@PathVariable String code) {
         return service.getByCode(code);
     }
@@ -124,7 +124,7 @@ public class TaskTemplateController {
         return service.getByParentId(id);
     }
 
-    @GetMapping("/code/{code}/exists")
+    @GetMapping("/code/{code:.+}/exists")
     public Map<String, Object> codeExist(@PathVariable("code") String code) {
         return Map.of("exist", repository.findByCode(code).isPresent());
     }

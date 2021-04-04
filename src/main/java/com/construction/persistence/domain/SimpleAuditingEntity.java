@@ -35,7 +35,7 @@ public abstract class SimpleAuditingEntity extends VersionEntity {
 
     @JsonIgnore
     @LastModifiedBy
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "updated_by")
     private AppUser updatedBy;
 

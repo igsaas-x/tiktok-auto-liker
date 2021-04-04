@@ -122,7 +122,8 @@ public class FileUploadController {
             newFile.setCategory(category);
         }
         var fileEntity = repository.save(newFile);
-        storageService.store(file, fileEntity.getName());
+        var savedEntity = repository.findById(fileEntity.getId()).orElseThrow();
+        storageService.store(file, savedEntity.getName());
         return fileEntity;
     }
 
