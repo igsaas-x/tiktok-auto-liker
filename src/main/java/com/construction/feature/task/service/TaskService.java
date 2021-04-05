@@ -77,7 +77,7 @@ public class TaskService {
             sql.append(" and date(created_at) = '").append(requestDate).append("'");
         }
         if (subConstructorId != null) {
-            sql.append(" and t.id in (select ts.task_id from task_sub_constructor_assign where sub_constructor_id = ")
+            sql.append(" and t.id in (select ts.task_id from task_sub_constructor_assign ts where ts.sub_constructor_id = ")
                     .append(subConstructorId)
                     .append(")");
         }

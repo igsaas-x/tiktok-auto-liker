@@ -3,28 +3,23 @@ package com.construction.feature.task.dto.mapper;
 import com.construction.feature.task.domain.Task;
 import com.construction.feature.task.domain.TaskSubConstructorAssign;
 import com.construction.feature.task.dto.TaskDto;
-import com.construction.feature.task.repository.TaskRepository;
 import com.construction.feature.task.repository.TaskSubConstructorAssignRepository;
 import com.construction.feature.task.repository.TaskTemplateRepository;
 import com.construction.organization.subconstructor.data.SubConstructorMapper;
 import com.construction.persistence.exception.ResourceNotFoundException;
 import com.construction.persistence.mapper.DtoMapper;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.util.stream.Collectors;
 
 @Component
+@RequiredArgsConstructor
 public class TaskMapper extends DtoMapper<Task, TaskDto> {
 
-    @Autowired
-    private TaskSubConstructorAssignRepository subConstructorAssignRepository;
-    @Autowired
-    private SubConstructorMapper subConstructorMapper;
-    @Autowired
-    private TaskTemplateRepository taskTemplateRepository;
-    @Autowired
-    private TaskRepository taskRepository;
+    private final TaskSubConstructorAssignRepository subConstructorAssignRepository;
+    private final TaskTemplateRepository taskTemplateRepository;
+    private final SubConstructorMapper subConstructorMapper;
 
     @Override
     public TaskDto apply(Task task) {
@@ -42,8 +37,8 @@ public class TaskMapper extends DtoMapper<Task, TaskDto> {
     @Override
     public Task toEntity(TaskDto taskDto) {
         final var task = super.toEntity(taskDto);
-        final var taskTemplate = taskTemplateRepository.findById(taskDto.getTaskTemplateId()).orElseThrow(
-                () -> new ResourceNotFoundException(Task.class, taskDto.getTaskTemplateId()));
+        final var taskTemplate = taskTemplateRepository.findById(taskDto.getTaskTemplateId())
+                .orElseThrow(() -> new ResourceNotFoundException(Task.class, taskDto.getTaskTemplateId()));
         task.setTaskTemplate(taskTemplate);
         return task;
     }
