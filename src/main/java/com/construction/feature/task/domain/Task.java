@@ -73,7 +73,7 @@ public class Task extends AuditingEntity {
 
     @PreUpdate
     private void preUpdate() {
-        if (paidAmount != null && paidAmount.compareTo(totalPrice) > 0) {
+        if (paidAmount != null && paidAmount.compareTo(totalPrice) >= 0) {
             setStatus(ObjectStatus.CLOSED);
         }
         if (availableAmount != null && availableAmount.equals(BigDecimal.ZERO)) {
