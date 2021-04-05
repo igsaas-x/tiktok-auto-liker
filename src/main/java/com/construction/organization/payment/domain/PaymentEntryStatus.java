@@ -7,5 +7,6 @@ public enum PaymentEntryStatus {
     CONFIRMED,
     REVIEWED,
     APPROVED,
+    REJECTED,
     PAID
 }

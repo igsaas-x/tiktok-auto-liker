@@ -7,7 +7,7 @@ import java.util.List;
 
 public interface BOQAssignRepository extends JpaRepository<BOQAssign, Long> {
 
-    List<BOQAssign> findByBoq(String code);
+    List<BOQAssign> findByBoqId(Long boqId);
 
     List<BOQAssign> findBySubConstructorId(Long subConstructorId);
 }

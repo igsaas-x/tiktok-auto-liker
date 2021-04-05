@@ -28,8 +28,8 @@ import static com.construction.organization.payment.domain.PaymentEntryStatus.*;
 @RequiredArgsConstructor
 public class PaymentEntryService {
 
-    private final PaymentEntryRepository repository;
     private final EntityDataMapper dataMapper;
+    private final PaymentEntryRepository repository;
     private final StatusHistoryService historyService;
     private final ApplicationSecurityContext context;
     private final TaskRepository taskRepository;
@@ -81,10 +81,6 @@ public class PaymentEntryService {
 
     public Page<PaymentEntry> getAll(Pageable pageable) {
         return repository.findAll(pageable);
-    }
-
-    public PaymentEntry save(final PaymentEntry paymentEntry) {
-        return repository.save(paymentEntry);
     }
 
     public PaymentEntry getById(final Long id) {
@@ -148,6 +144,10 @@ public class PaymentEntryService {
                 if (approveAmount == null || BigDecimal.ZERO.equals(approveAmount)) {
                     paymentEntry.setApprovedAmount(paymentEntry.getRequestAmount());
                 } else {
+                    // validate approve amount
+                    if (approveAmount.compareTo(paymentEntry.getTask().getAvailableAmount()) > 0) {
+                        throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Approve amount cannot be greater than available amount");
+                    }
                     paymentEntry.setApprovedAmount(approveAmount);
                 }
                 paymentEntry.setStatus(APPROVED);
@@ -160,6 +160,7 @@ public class PaymentEntryService {
                 final var paidAmount = task.getPaidAmount().add(paymentEntry.getApprovedAmount());
                 final var availableAmount = task.getAvailableAmount().subtract(paidAmount);
                 task.setAvailableAmount(availableAmount);
+                task.setPaidAmount(paidAmount);
                 taskRepository.save(task);
                 paymentEntry.setStatus(PAID);
                 paymentEntry.setPaidOn(LocalDate.now());
@@ -170,7 +171,7 @@ public class PaymentEntryService {
                         || PAID.equals(paymentEntry.getStatus())) {
                     throw new RuntimeException("status cannot be rejected");
                 }
-                paymentEntry.setStatus(OPEN);
+                paymentEntry.setStatus(REJECTED);
                 break;
             default:
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "command not found");
@@ -180,12 +181,15 @@ public class PaymentEntryService {
     }
 
     public Page<PaymentEntry> getAllPending(final Pageable pageable) {
-        return repository.findAllByStatusNot(PaymentEntryStatus.APPROVED, pageable);
+        return repository.findAllByStatusNot(APPROVED, pageable);
     }
 
     public PaymentEntry update(final Long id, final PaymentEntry sourceEntry) {
         final var targetEntry = getById(id);
         final var status = targetEntry.getStatus();
+        if (!OPEN.equals(status)) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "entry has been submitted, cannot be deleted");
+        }
         final var newEntry = dataMapper.mapObject(sourceEntry, targetEntry, PaymentEntry.class);
         if (newEntry.getStatus() == null) {
             newEntry.setStatus(status);

@@ -14,7 +14,6 @@ import com.construction.feature.task.repository.TaskRepository;
 import com.construction.feature.task.repository.TaskSubConstructorAssignRepository;
 import com.construction.persistence.domain.AssignFor;
 import com.construction.persistence.domain.ObjectStatus;
-import com.construction.persistence.dto.LocalDateFormat;
 import com.construction.persistence.exception.ResourceNotFoundException;
 import com.construction.persistence.service.EntityDataMapper;
 import com.construction.persistence.utils.EntityValidator;
@@ -30,7 +29,6 @@ import javax.persistence.EntityManager;
 import javax.transaction.Transactional;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -76,8 +74,7 @@ public class TaskService {
                              Pageable pageable) {
         StringBuilder sql = new StringBuilder("select t.* from task t,boq b where t.boq_id = b.id");
         if (requestDate != null) {
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern(LocalDateFormat.DATE_FORMAT);
-            sql.append(" and created_at = '").append(formatter.format(requestDate)).append("'");
+            sql.append(" and date(created_at) = '").append(requestDate).append("'");
         }
         if (subConstructorId != null) {
             sql.append(" and t.id in (select ts.task_id from task_sub_constructor_assign where sub_constructor_id = ")

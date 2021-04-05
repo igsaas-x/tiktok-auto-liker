@@ -3,7 +3,6 @@ package com.construction.feature.task.service;
 import com.construction.feature.task.domain.BOQ;
 import com.construction.feature.task.domain.Task;
 import com.construction.feature.task.repository.BOQRepository;
-import com.construction.persistence.dto.SidList;
 import com.construction.persistence.exception.ResourceNotFoundException;
 import com.construction.persistence.service.EntityDataMapper;
 import lombok.RequiredArgsConstructor;
@@ -107,10 +106,10 @@ public class BOQService {
         return true;
     }
 
-    public boolean assign(Long boqId, SidList sids) {
+    public boolean assign(Long boqId, List<Long> sids) {
         taskService.getByBoqId(boqId).forEach(task -> {
             try {
-                subConstructAssignService.assign(task.getId(), sids.getSids());
+                subConstructAssignService.assign(task.getId(), sids);
             } catch (Exception e) {
                 log.error("cannot add sub-constructor to task id:{}", task.getId());
             }
@@ -118,10 +117,10 @@ public class BOQService {
         return true;
     }
 
-    public boolean unAssign(Long boqId, SidList sids) {
+    public boolean unAssign(Long boqId, List<Long> sids) {
         taskService.getByBoqId(boqId).forEach(task -> {
             try {
-                subConstructAssignService.unAssign(task.getId(), sids.getSids());
+                subConstructAssignService.unAssign(task.getId(), sids);
             } catch (Exception e) {
                 log.error("cannot unassign task id:{}", task.getId());
             }

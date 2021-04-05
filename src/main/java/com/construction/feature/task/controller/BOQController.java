@@ -7,13 +7,18 @@ import com.construction.feature.task.dto.mapper.BOQDataMapper;
 import com.construction.feature.task.dto.mapper.BOQMapper;
 import com.construction.feature.task.dto.mapper.TaskMapper;
 import com.construction.feature.task.repository.BOQRepository;
+import com.construction.feature.task.service.BOQAssignService;
 import com.construction.feature.task.service.BOQService;
+import com.construction.organization.subconstructor.data.SubConstructorDto;
+import com.construction.organization.subconstructor.data.SubConstructorMapper;
+import com.construction.persistence.dto.IdListBatch;
 import com.construction.persistence.dto.SidList;
 import com.construction.persistence.filter.FilterConfig;
 import com.construction.user.authorization.domain.ActionName;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -24,8 +29,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-@RequestMapping("/boq")
+@Slf4j
 @RestController
+@RequestMapping("boq")
 @Api(tags = "BOQ API")
 @RequiredArgsConstructor
 public class BOQController {
@@ -36,6 +42,8 @@ public class BOQController {
     private final TaskMapper taskMapper;
     private final BOQMapper mapper;
     private final BOQDataMapper dataMapper;
+    private final BOQAssignService assignService;
+    private final SubConstructorMapper constructorMapper;
 
     @PostMapping
     @PreAuthorize("hasAuthority('CREATE_BOQ')")
@@ -44,13 +52,13 @@ public class BOQController {
         return true;
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("{id}")
     public BOQDto findById(@PathVariable("id") Long id) {
         filterConfig.configureFilter(ActionName.READ, "boq");
         return mapper.apply(service.getById(id));
     }
 
-    @GetMapping("/search")
+    @GetMapping("search")
     public List<BOQData> search(String code,
                                 Long projectId,
                                 Long houseId,
@@ -64,7 +72,7 @@ public class BOQController {
     }
 
     @ApiOperation("Find by Id")
-    @DeleteMapping("/{id}")
+    @DeleteMapping("{id}")
     public void delete(@PathVariable("id") Long id) {
         filterConfig.configureFilter(ActionName.DELETE, "boq");
         service.deleteById(id);
@@ -78,42 +86,77 @@ public class BOQController {
     }
 
     @ApiOperation("Pagination request")
-    @GetMapping("/page")
+    @GetMapping("page")
     public Page<BOQData> pageQuery(Pageable pageable) {
         filterConfig.configureFilter(ActionName.READ, "boq");
         return service.findAll(pageable).map(dataMapper);
     }
 
     @ApiOperation("Update one data")
-    @PutMapping("/{id}")
+    @PutMapping("{id}")
     public BOQDto update(@PathVariable Long id, @RequestBody BOQDto dto) {
         filterConfig.configureFilter(ActionName.UPDATE, "boq");
         return mapper.apply(service.updateById(id, mapper.toEntity(dto)));
     }
 
-    @PutMapping("/{id}/add-task")
+    @PutMapping("{id}/add-task")
     public BOQDto addTask(@PathVariable Long id, @RequestBody List<TaskDto> dtos) {
         filterConfig.configureFilter(ActionName.UPDATE, "boq");
         final var tasks = dtos.stream().map(taskMapper::toEntity).collect(Collectors.toList());
         return mapper.apply(service.addTask(id, tasks));
     }
 
-    @GetMapping("/code/{code:.+}")
+    @GetMapping("code/{code:.+}")
     public Map<String, Object> codeExist(@PathVariable("code") String code) {
         return Map.of("exist", repository.findByCode(code).isPresent());
     }
 
     @PostMapping("{id}/assign/sub-constructor")
-    public Map<String, Object> assignBOQ(@PathVariable Long id, @RequestBody @Valid final SidList sids) {
+    public Map<String, Object> assignBOQ(@PathVariable Long id, @RequestBody @Valid final SidList sidList) {
         filterConfig.configureFilter(ActionName.ASSIGN, "task");
-        service.assign(id, sids);
+        service.assign(id, sidList.getSids());
+        return Map.of("success", true);
+    }
+
+    @PostMapping("batch/assign/sub-constructor")
+    public Map<String, Object> batchAssignBOQ(@RequestBody @Valid final IdListBatch batch) {
+        filterConfig.configureFilter(ActionName.ASSIGN, "task");
+        batch.getIds().forEach(id -> {
+            try {
+                service.assign(id, batch.getSids());
+            } catch (Exception e) {
+                log.error("error to assign sub-constructor to boq id:" + id);
+            }
+        });
         return Map.of("success", true);
     }
 
     @PostMapping("{id}/unassign/sub-constructor")
     public Map<String, Object> unAssign(@PathVariable Long id, @RequestBody @Valid final SidList sids) {
         filterConfig.configureFilter(ActionName.ASSIGN, "task");
-        service.unAssign(id, sids);
+        service.unAssign(id, sids.getSids());
         return Map.of("success", true);
+    }
+
+    @PostMapping("batch/unassign/sub-constructor")
+    public Map<String, Object> batchUnAssign(@RequestBody @Valid final IdListBatch batch) {
+        filterConfig.configureFilter(ActionName.ASSIGN, "task");
+        batch.getIds().forEach(id -> {
+            try {
+                service.unAssign(id, batch.getSids());
+            } catch (Exception e) {
+                log.error("error to un-assign boq id:" + id);
+            }
+        });
+        return Map.of("success", true);
+    }
+
+    @GetMapping("{id}/assigned/subconstructor")
+    public List<SubConstructorDto> getAssignSubConstructor(@PathVariable Long id) {
+        filterConfig.configureFilter(ActionName.READ, "boq");
+        return assignService.getAssignedSubConstructor(id)
+                .stream()
+                .map(constructorMapper)
+                .collect(Collectors.toList());
     }
 }

@@ -11,7 +11,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.server.ResponseStatusException;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 
 @Entity
@@ -30,7 +29,6 @@ public class Task extends AuditingEntity {
     @JoinColumn(updatable = false)
     private BOQ boq;
 
-    @NotNull
     @ManyToOne
     @JoinColumn(updatable = false)
     private TaskTemplate taskTemplate;
@@ -45,7 +43,6 @@ public class Task extends AuditingEntity {
     @Column(columnDefinition = "DECIMAL default 0")
     private BigDecimal unitPrice;
 
-    @NotNull
     @Column(columnDefinition = "DECIMAL default 0")
     private BigDecimal totalPrice;
 
@@ -71,6 +68,16 @@ public class Task extends AuditingEntity {
         }
         if (availableAmount == null) {
             availableAmount = totalPrice;
+        }
+    }
+
+    @PreUpdate
+    private void preUpdate() {
+        if (paidAmount != null && paidAmount.compareTo(totalPrice) > 0) {
+            setStatus(ObjectStatus.CLOSED);
+        }
+        if (availableAmount != null && availableAmount.equals(BigDecimal.ZERO)) {
+            setStatus(ObjectStatus.CLOSED);
         }
     }
 }
