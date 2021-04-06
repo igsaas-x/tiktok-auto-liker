@@ -6,8 +6,8 @@ import com.construction.basic.file.repository.FileCategoryRepository;
 import com.construction.basic.file.repository.FileRepository;
 import com.construction.basic.file.storage.StorageFileNotFoundException;
 import com.construction.basic.file.storage.StorageService;
+import lombok.RequiredArgsConstructor;
 import net.coobird.thumbnailator.Thumbnails;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.StringUtils;
@@ -22,20 +22,13 @@ import java.util.List;
 import java.util.Objects;
 
 @RestController
+@RequiredArgsConstructor
 public class FileUploadController {
 
     private final StorageService storageService;
     private final ByteArrayOutputStream thumbOutput = new ByteArrayOutputStream();
-
-    @Autowired
-    private FileRepository repository;
-
-    @Autowired
-    private FileCategoryRepository categoryRepository;
-
-    public FileUploadController(StorageService storageService) {
-        this.storageService = storageService;
-    }
+    private final FileRepository repository;
+    private final FileCategoryRepository categoryRepository;
 
     @GetMapping("/files")
     public List<FileEntity> getAllFiles() {
@@ -107,7 +100,8 @@ public class FileUploadController {
     @Transactional
     public FileEntity handleFileUpload(@RequestParam("file") MultipartFile file,
                                        @RequestParam(value = "category", required = false) final Long categoryId) {
-        final var name = StringUtils.cleanPath(Objects.requireNonNull(file.getOriginalFilename()));
+        final var originalName = StringUtils.cleanPath(Objects.requireNonNull(file.getOriginalFilename()));
+        final var name = resolveFileName(originalName);
         final var newFile = new FileEntity()
                 .setName(name)
                 .setExtension(StringUtils.getFilenameExtension(name))
@@ -122,14 +116,25 @@ public class FileUploadController {
             newFile.setCategory(category);
         }
         var fileEntity = repository.save(newFile);
-        var savedEntity = repository.findById(fileEntity.getId()).orElseThrow();
-        storageService.store(file, savedEntity.getName());
+        storageService.store(file, fileEntity.getName());
         return fileEntity;
     }
 
     @ExceptionHandler(StorageFileNotFoundException.class)
     public ResponseEntity<?> handleStorageFileNotFound(StorageFileNotFoundException exc) {
         return ResponseEntity.notFound().build();
+    }
+
+    @Transactional
+    private String resolveFileName(String oldName) {
+        return repository.findByName(oldName)
+                .map(entity -> {
+                    var name = entity.getName().replace("." + entity.getExtension(), "");
+                    name += "-" + System.currentTimeMillis();
+                    name += "." + entity.getExtension();
+                    return name;
+                })
+                .orElse(oldName);
     }
 
 }
