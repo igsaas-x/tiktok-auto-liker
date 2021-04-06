@@ -1,6 +1,6 @@
 package com.construction.basic.file.storage;
 
-import lombok.extern.java.Log;
+import lombok.extern.slf4j.Slf4j;
 import net.coobird.thumbnailator.Thumbnails;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
@@ -11,6 +11,7 @@ import org.springframework.util.FileSystemUtils;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
+import javax.annotation.PostConstruct;
 import javax.validation.constraints.NotNull;
 import java.io.IOException;
 import java.io.InputStream;
@@ -21,7 +22,7 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.stream.Stream;
 
-@Log
+@Slf4j
 @Service
 public class FileSystemStorageService implements StorageService {
 
@@ -35,6 +36,19 @@ public class FileSystemStorageService implements StorageService {
         this.xLocation = Paths.get(properties.getXLocation());
         this.xxLocation = Paths.get(properties.getXxLocation());
         this.properties = properties;
+    }
+
+    @PostConstruct
+    private void postConstruct() throws IOException {
+        if (!rootLocation.toFile().exists()) {
+            Files.createDirectory(rootLocation);
+        }
+        if (!xLocation.toFile().exists()) {
+            Files.createDirectory(xLocation);
+        }
+        if (!xxLocation.toFile().exists()) {
+            Files.createDirectory(xxLocation);
+        }
     }
 
     @Override
@@ -67,8 +81,13 @@ public class FileSystemStorageService implements StorageService {
                     .size(properties.getXWidth(), properties.getXHeight())
                     .useOriginalFormat()
                     .toFile(xLocation.resolve(name).toFile());
-        } catch (IOException e) {
-            log.warning(e.getMessage());
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            try {
+                Files.copy(load(name).toFile().toPath(), xLocation.resolve(name));
+            } catch (IOException exception) {
+                log.error("cannot copy file");
+            }
         }
     }
 
@@ -80,8 +99,13 @@ public class FileSystemStorageService implements StorageService {
                     .size(properties.getXxWidth(), properties.getXxHeight())
                     .useOriginalFormat()
                     .toFile(xxLocation.resolve(name).toFile());
-        } catch (IOException e) {
-            log.warning(e.getMessage());
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            try {
+                Files.copy(load(name).toFile().toPath(), xxLocation.resolve(name));
+            } catch (IOException exception) {
+                log.error("cannot copy file");
+            }
         }
     }
 
@@ -151,7 +175,7 @@ public class FileSystemStorageService implements StorageService {
             final var xx = xxFile.delete();
             return zin && x && xx;
         } catch (Exception e) {
-            log.warning(e.getMessage());
+            log.error(e.getMessage());
             return false;
         }
     }

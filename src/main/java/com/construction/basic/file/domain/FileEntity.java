@@ -51,12 +51,18 @@ public class FileEntity extends VersionEntity {
     private FileType type;
 
     public FileEntity setType() {
-        if (this.extension == null) return this;
+        if (this.extension == null) {
+            this.type = FileType.OTHER;
+            return this;
+        }
         MAP.forEach((k, v) -> {
             if (k.contains(extension.toLowerCase())) {
                 this.type = v;
             }
         });
+        if (this.type == null) {
+            this.type = FileType.OTHER;
+        }
         return this;
     }
 
