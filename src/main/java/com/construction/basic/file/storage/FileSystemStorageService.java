@@ -20,6 +20,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.nio.file.attribute.PosixFilePermissions;
 import java.util.stream.Stream;
 
 @Slf4j
@@ -42,12 +43,15 @@ public class FileSystemStorageService implements StorageService {
     private void postConstruct() throws IOException {
         if (!rootLocation.toFile().exists()) {
             Files.createDirectory(rootLocation);
+            Files.setPosixFilePermissions(rootLocation, PosixFilePermissions.fromString("rwxrwxrwx"));
         }
         if (!xLocation.toFile().exists()) {
             Files.createDirectory(xLocation);
+            Files.setPosixFilePermissions(xLocation, PosixFilePermissions.fromString("rwxrwxrwx"));
         }
         if (!xxLocation.toFile().exists()) {
             Files.createDirectory(xxLocation);
+            Files.setPosixFilePermissions(xxLocation, PosixFilePermissions.fromString("rwxrwxrwx"));
         }
     }
 
