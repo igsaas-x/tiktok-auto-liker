@@ -9,6 +9,7 @@ import lombok.experimental.Accessors;
 import lombok.experimental.FieldDefaults;
 
 import java.math.BigDecimal;
+import java.util.Set;
 
 @Data
 @FieldDefaults(level = AccessLevel.PRIVATE)
@@ -33,6 +34,8 @@ public class PaymentEntryDto {
 
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     Long paymentRequestId;
+
+    Set<String> attachment;
 
     BigDecimal requestAmount;
 
