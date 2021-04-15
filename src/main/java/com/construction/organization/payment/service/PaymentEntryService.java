@@ -35,6 +35,7 @@ public class PaymentEntryService {
     private final TaskRepository taskRepository;
     private final EntityManager entityManager;
 
+    @SuppressWarnings("unchecked")
     public List<PaymentEntry> search(final Long boqId,
                                      final Long projectId,
                                      final Long streetId,
@@ -71,8 +72,7 @@ public class PaymentEntryService {
             sql.append(" limit ").append(pageable.getPageSize());
             sql.append(" offset ").append(pageable.getOffset());
         }
-
-        return entityManager.createQuery(sql.toString(), PaymentEntry.class).getResultList();
+        return entityManager.createNativeQuery(sql.toString(), PaymentEntry.class).getResultList();
     }
 
     public List<PaymentEntry> getAll() {
