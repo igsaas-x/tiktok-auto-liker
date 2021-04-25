@@ -31,6 +31,8 @@ public class PaymentEntry extends VersionEntity {
     @Column(unique = true)
     String externalId;
 
+    String invoiceNumber;
+
     @ManyToOne(optional = false)
     @JoinColumn(name = "payment_request_id", nullable = false, updatable = false)
     PaymentRequest paymentRequest;

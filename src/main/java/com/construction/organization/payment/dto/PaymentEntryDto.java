@@ -21,6 +21,8 @@ public class PaymentEntryDto {
 
     Long taskId;
 
+    String invoiceNumber;
+
     @JsonProperty(value = "subConstructorName", access = JsonProperty.Access.READ_ONLY)
     String paymentRequestSubConstructorEngFullName;
 

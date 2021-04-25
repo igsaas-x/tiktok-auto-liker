@@ -33,6 +33,8 @@ public class PaymentRequest extends SimpleAuditingEntity {
     @Column(unique = true)
     String externalId;
 
+    String invoiceNumber;
+
     @ManyToOne
     @JoinColumn(updatable = false)
     SubConstructor subConstructor;

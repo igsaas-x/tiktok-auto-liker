@@ -31,9 +31,8 @@ public class ResourceServerConfiguration extends ResourceServerConfigurerAdapter
                 .antMatchers("/health",
                         "/api/**",
                         "/swagger-resources/**",
-                        "/socket",
-                        "/socket/topic/subconstructor/fingerprint", // topic
-                        "/socket/app/subconstructor/fingerprint", // send message
+                        "/socket/**",
+                        "/socket/**/subconstructor/fingerprint", // topic
                         "/v2/**").permitAll()
                 .antMatchers(HttpMethod.POST, "/feedback").permitAll()
                 .antMatchers(HttpMethod.POST, "/subconstructor/fingerprint",

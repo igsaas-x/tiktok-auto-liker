@@ -45,6 +45,8 @@ public class PaymentRequestDto {
 
     Long houseId;
 
+    String invoiceNumber;
+
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     String subConstructorEngFullName;
 
