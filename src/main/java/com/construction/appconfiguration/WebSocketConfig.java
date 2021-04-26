@@ -23,6 +23,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
                         "http://prod.construction.s3-website-ap-southeast-1.amazonaws.com",
                         "http://localhost:3000",
                         "http://localhost:8081",
+                        "http://192.168.1.6:8081",
                         "chrome-extension://ggnhohnkfcpcanfekomdkjffnfcjnjam")
                 .withSockJS();
     }

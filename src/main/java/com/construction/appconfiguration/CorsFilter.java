@@ -13,6 +13,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.List;
 
 @Component
 @Order(Ordered.HIGHEST_PRECEDENCE)
@@ -30,6 +31,10 @@ public class CorsFilter extends GenericFilterBean {
             "origin",
             "X-CSRF-TOKEN",
             "otp-token"));
+    private static final List<String> ALLOWED_ORIGINS = Arrays.asList(
+            "http://localhost:3000",
+            "http://localhost:8081",
+            "http://prod.construction.s3-website-ap-southeast-1.amazonaws.com");
 
     @Override
     public void doFilter(final ServletRequest request,
@@ -42,11 +47,12 @@ public class CorsFilter extends GenericFilterBean {
                           final HttpServletResponse response,
                           final FilterChain chain) throws IOException, ServletException {
         // Always add the origins header
-        response.setHeader("Access-Control-Allow-Origin", "*");
+        var origin = request.getHeader("Origin");
+        response.setHeader("Access-Control-Allow-Origin", ALLOWED_ORIGINS.contains(origin) ? origin : "");
+        response.setHeader("Access-Control-Allow-Credentials", "true");
         if (isPreflightRequest(request)) {
             response.setHeader("Access-Control-Allow-Methods", "GET,POST,DELETE,PUT,OPTIONS");
             response.setHeader("Access-Control-Allow-Headers", ALLOWED_HEADERS);
-            response.setHeader("Access-Control-Allow-Credentials", "true");
             response.setHeader("Access-Control-Max-Age", "86400");
         } else {
             chain.doFilter(request, response);
