@@ -6,7 +6,6 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.hibernate.annotations.Filter;
-import org.springframework.util.StringUtils;
 
 import javax.persistence.*;
 import java.util.Set;
@@ -16,6 +15,7 @@ import java.util.Set;
 @Setter
 @Table(name = "sub_constructor")
 @Accessors(chain = true)
+@EntityListeners(SubConstructorListener.class)
 @Filter(name = "myObjectFilter", condition = "created_by = :id")
 @Filter(name = "readableObjectFilter", condition = "created_by = :id")
 public class SubConstructor extends AuditingEntity {
@@ -51,11 +51,4 @@ public class SubConstructor extends AuditingEntity {
 
     @Column(columnDefinition = "mediumtext")
     private String base64;
-
-    @PrePersist
-    private void prePersist() {
-        if (!StringUtils.hasText(engFullName)) {
-            engFullName = firstName + " " + lastName;
-        }
-    }
 }
