@@ -103,6 +103,9 @@ public class PaymentEntryService {
                               final String attachment,
                               final BigDecimal approveAmount,
                               final String comment) {
+
+        var originApprovedAmount = paymentEntry.getApprovedAmount();
+
         switch (command) {
             case SUBMIT:
                 if (!PaymentEntryStatus.OPEN.equals(paymentEntry.getStatus())) {
@@ -185,7 +188,14 @@ public class PaymentEntryService {
             default:
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "command not found");
         }
-        historyService.addHistory(paymentEntry, command, attachment, context.authenticatedUser(), comment);
+        historyService.addHistory(
+                paymentEntry,
+                command,
+                attachment,
+                context.authenticatedUser(),
+                originApprovedAmount,
+                approveAmount,
+                comment);
         repository.save(paymentEntry);
     }
 

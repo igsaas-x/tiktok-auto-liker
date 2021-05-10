@@ -10,6 +10,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @Service
@@ -19,12 +20,20 @@ public class StatusHistoryService {
     private final StatusHistoryRepository repository;
 
     @Async
-    public void addHistory(PaymentEntry entry, CommandType commandType, String attachment, AppUser doneBy, String comment) {
+    public void addHistory(PaymentEntry entry,
+                           CommandType commandType,
+                           String attachment,
+                           AppUser doneBy,
+                           BigDecimal originApprovedAmount,
+                           BigDecimal newApprovedAmount,
+                           String comment) {
         var history = new StatusHistory()
                 .setPaymentEntry(entry)
                 .setCreatedBy(doneBy)
                 .setAttachment(attachment)
                 .setCommandType(commandType)
+                .setOriginApprovedAmount(originApprovedAmount)
+                .setNewApprovedAmount(newApprovedAmount)
                 .setComment(comment);
         repository.save(history);
     }
