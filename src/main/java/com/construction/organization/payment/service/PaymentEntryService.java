@@ -117,6 +117,15 @@ public class PaymentEntryService {
                 if (!SUBMITTED.equals(paymentEntry.getStatus())) {
                     throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "payment request is not in submitted status");
                 }
+                if (approveAmount == null || BigDecimal.ZERO.equals(approveAmount)) {
+                    paymentEntry.setApprovedAmount(paymentEntry.getRequestAmount());
+                } else {
+                    // validate approve amount
+                    if (approveAmount.compareTo(paymentEntry.getTask().getAvailableAmount()) > 0) {
+                        throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Approve amount cannot be greater than available amount");
+                    }
+                    paymentEntry.setApprovedAmount(approveAmount);
+                }
                 paymentEntry.setStatus(VERIFIED);
                 break;
             case CONFIRM:
