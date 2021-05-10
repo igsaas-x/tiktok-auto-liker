@@ -8,8 +8,6 @@ import java.util.stream.Stream;
 
 public interface StorageService {
 
-    void init();
-
     void writeXOutput(final String filename);
 
     void writeXxOutput(final String filename);

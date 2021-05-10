@@ -107,16 +107,16 @@ public class FileUploadController {
                 .setExtension(StringUtils.getFilenameExtension(name))
                 .setType()
                 .setPath();
-        if (newFile.getType() == FileType.IMAGE) {
-            storageService.writeXOutput(name);
-            storageService.writeXxOutput(name);
-        }
         if (categoryId != null) {
             final var category = categoryRepository.findById(categoryId).orElseThrow();
             newFile.setCategory(category);
         }
         var fileEntity = repository.save(newFile);
         storageService.store(file, fileEntity.getName());
+        if (newFile.getType() == FileType.IMAGE) {
+            storageService.writeXOutput(name);
+            storageService.writeXxOutput(name);
+        }
         return fileEntity;
     }
 

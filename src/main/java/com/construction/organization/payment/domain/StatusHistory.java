@@ -10,6 +10,7 @@ import lombok.experimental.Accessors;
 import lombok.experimental.FieldDefaults;
 
 import javax.persistence.*;
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Setter
@@ -36,4 +37,8 @@ public class StatusHistory extends VersionEntity {
     LocalDateTime createdAt = LocalDateTime.now();
 
     String comment;
+
+    BigDecimal originApprovedAmount;
+
+    BigDecimal newApprovedAmount;
 }
