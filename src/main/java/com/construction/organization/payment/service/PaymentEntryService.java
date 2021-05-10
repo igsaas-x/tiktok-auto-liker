@@ -213,7 +213,14 @@ public class PaymentEntryService {
         if (newEntry.getStatus() == null) {
             newEntry.setStatus(status);
         }
-        historyService.addHistory(newEntry, CommandType.UPDATE, null, context.authenticatedUser(), null);
+        historyService.addHistory(
+                newEntry,
+                CommandType.UPDATE,
+                null,
+                context.authenticatedUser(),
+                targetEntry.getApprovedAmount(),
+                sourceEntry.getApprovedAmount(),
+                "update payment entry");
         return repository.save(newEntry);
     }
 
