@@ -46,7 +46,14 @@ public class PaymentRequestService {
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Approve amount cannot be set on create request");
             }
 
-            historyService.addHistory(entry, CommandType.CREATE, null, context.authenticatedUser(), null);
+            historyService.addHistory(
+                    entry,
+                    CommandType.CREATE,
+                    null,
+                    context.authenticatedUser(),
+                    null,
+                    null,
+                    null);
         });
         return request;
     }
