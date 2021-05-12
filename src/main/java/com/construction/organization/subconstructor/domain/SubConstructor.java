@@ -2,10 +2,13 @@ package com.construction.organization.subconstructor.domain;
 
 import com.construction.persistence.converter.StringSetConverter;
 import com.construction.persistence.domain.AuditingEntity;
+import com.construction.persistence.domain.ObjectStatus;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.hibernate.annotations.Filter;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.server.ResponseStatusException;
 
 import javax.persistence.*;
 import java.util.Set;
@@ -51,4 +54,10 @@ public class SubConstructor extends AuditingEntity {
 
     @Column(columnDefinition = "mediumtext")
     private String base64;
+
+    public void validateStatus() {
+        if (!ObjectStatus.APPROVED.equals(this.getStatus())) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Sub-constructor is not approved");
+        }
+    }
 }

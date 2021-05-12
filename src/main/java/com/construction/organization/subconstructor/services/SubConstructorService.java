@@ -9,31 +9,28 @@ import com.construction.persistence.domain.ObjectStatus;
 import com.construction.persistence.exception.ResourceNotFoundException;
 import com.construction.persistence.service.EntityDataMapper;
 import com.construction.persistence.utils.EntityValidator;
-import com.construction.persistence.utils.SFWhere;
 import com.construction.user.authorization.domain.ActionName;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 
+import javax.persistence.EntityManager;
 import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
 @Transactional
+@RequiredArgsConstructor
 public class SubConstructorService {
 
-    @Autowired
-    private SubConstructorRepository repository;
-    @Autowired
-    private EntityDataMapper dataMapper;
-    @Autowired
-    private EntityValidator<SubConstructor> validator;
-    @Autowired
-    private ApplicationSecurityContext context;
+    private final SubConstructorRepository repository;
+    private final EntityDataMapper dataMapper;
+    private final EntityValidator<SubConstructor> validator;
+    private final ApplicationSecurityContext context;
+    private final EntityManager em;
 
     public SubConstructor create(final SubConstructor subConstructor) {
         return repository.save(subConstructor);
@@ -43,10 +40,23 @@ public class SubConstructorService {
         return repository.findById(id).orElseThrow(() -> new ResourceNotFoundException(SubConstructor.class, id));
     }
 
-    public ResponseEntity<Object> search(SubConstructor subConstructor, Pageable pageable) {
-        Page<SubConstructor> all = repository.findAll(SFWhere.and(subConstructor)
-                .build(), pageable);
-        return new ResponseEntity<>(all, HttpStatus.OK);
+    @SuppressWarnings("unchecked")
+    public List<SubConstructor> search(ObjectStatus status, String name, Pageable pageable) {
+
+        StringBuilder sql = new StringBuilder("select * from sub_constructor where 1=1 ");
+
+        if (StringUtils.hasText(name)) {
+            sql.append(" and eng_full_name like '%").append(name).append("%'");
+        }
+        if (status != null) {
+            sql.append(" and status = '").append(status).append("'");
+        }
+        if (pageable != null) {
+            sql.append(" limit ").append(pageable.getPageSize());
+            sql.append(" offset ").append(pageable.getOffset());
+        }
+
+        return em.createNativeQuery(sql.toString(), SubConstructor.class).getResultList();
     }
 
     public List<SubConstructor> getAll() {

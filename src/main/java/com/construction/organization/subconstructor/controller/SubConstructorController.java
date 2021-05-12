@@ -1,22 +1,25 @@
 package com.construction.organization.subconstructor.controller;
 
 import com.construction.feature.FilterType;
+import com.construction.organization.subconstructor.data.ConstructorDto;
+import com.construction.organization.subconstructor.data.ConstructorMapper;
 import com.construction.organization.subconstructor.data.SubConstructorData;
 import com.construction.organization.subconstructor.domain.SubConstructor;
 import com.construction.organization.subconstructor.repository.SubConstructorDataRepository;
 import com.construction.organization.subconstructor.services.SubConstructorService;
+import com.construction.persistence.domain.ObjectStatus;
 import com.construction.persistence.dto.IdList;
 import com.construction.persistence.filter.FilterConfig;
 import com.construction.user.authorization.domain.ActionName;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/subconstructor")
@@ -27,25 +30,28 @@ public class SubConstructorController {
     private final FilterConfig filterConfig;
     private final SubConstructorDataRepository dataRepository;
     private final SimpMessagingTemplate messagingTemplate;
+    private final ConstructorMapper constructorMapper;
 
     @GetMapping("/page")
     @PreAuthorize("hasAuthority('READ_SUB_CONSTRUCTOR')")
-    public Page<SubConstructor> getAll(Pageable pageable, FilterType filter) {
-        return service.getAll(pageable, filter);
+    public Page<ConstructorDto> getAll(Pageable pageable, FilterType filter) {
+        return service.getAll(pageable, filter).map(constructorMapper);
     }
 
     @GetMapping("/search")
     @PreAuthorize("hasAuthority('READ_SUB_CONSTRUCTOR')")
-    public ResponseEntity<Object> search(SubConstructor subConstructor, Pageable pageable) {
+    public List<ConstructorDto> search(@RequestParam(required = false) ObjectStatus status,
+                                       @RequestParam(required = false) String name,
+                                       Pageable pageable) {
         filterConfig.configureFilter(ActionName.READ, "sub_constructor");
-        return service.search(subConstructor, pageable);
+        return service.search(status, name, pageable).stream().map(constructorMapper).collect(Collectors.toList());
     }
 
     @GetMapping
     @PreAuthorize("hasAuthority('READ_SUB_CONSTRUCTOR')")
-    public List<SubConstructor> getAll() {
+    public List<ConstructorDto> getAll() {
         filterConfig.configureFilter(ActionName.READ, "sub_constructor");
-        return service.getAll();
+        return service.getAll().stream().map(constructorMapper).collect(Collectors.toList());
     }
 
     @GetMapping("/{id}")
@@ -77,16 +83,16 @@ public class SubConstructorController {
 
     @GetMapping("/verify/pending")
     @PreAuthorize("hasAuthority('READ_SUB_CONSTRUCTOR')")
-    public List<SubConstructor> getPendingForVerify() {
+    public List<ConstructorDto> getPendingForVerify() {
         filterConfig.configureFilter(ActionName.VERIFY, "sub_constructor");
-        return service.getPendingForVerify();
+        return service.getPendingForVerify().stream().map(constructorMapper).collect(Collectors.toList());
     }
 
     @GetMapping("/approve/pending")
     @PreAuthorize("hasAuthority('READ_SUB_CONSTRUCTOR')")
-    public List<SubConstructor> getPendingForApprove() {
+    public List<ConstructorDto> getPendingForApprove() {
         filterConfig.configureFilter(ActionName.APPROVE, "sub_constructor");
-        return service.getPendingForApprove();
+        return service.getPendingForApprove().stream().map(constructorMapper).collect(Collectors.toList());
     }
 
     @PostMapping("/{id}/verify")

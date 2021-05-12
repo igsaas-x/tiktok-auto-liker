@@ -14,7 +14,7 @@ public class SequenceHelperService {
 
     public static final String SUB_CONSTRUCTOR_KEY = "SUB_CONSTRUCTOR";
     private static final String SQL = String.format(
-            "replace into sequence_helper(s_key,s_value) values('%s', 1)",
+            "INSERT INTO sequence_helper(s_key,s_value) VALUES('%s', 1) ON DUPLICATE KEY UPDATE s_key = s_key",
             SUB_CONSTRUCTOR_KEY);
 
     @Autowired

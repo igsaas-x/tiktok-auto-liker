@@ -6,6 +6,7 @@ import com.construction.feature.task.repository.TaskRepository;
 import com.construction.feature.task.repository.TaskSubConstructorAssignRepository;
 import com.construction.organization.subconstructor.domain.SubConstructor;
 import com.construction.organization.subconstructor.repository.SubConstructorRepository;
+import com.construction.persistence.domain.ObjectStatus;
 import com.construction.persistence.exception.ResourceNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -32,6 +33,7 @@ public class TaskSubConstructAssignService {
         repository.deleteAll(taskSubAssigns);
 
         final var assign = subs.stream()
+                .filter(sub -> ObjectStatus.APPROVED.equals(sub.getStatus()))
                 .map(sub -> build(task, sub))
                 .collect(Collectors.toList());
 
