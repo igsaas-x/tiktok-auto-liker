@@ -46,6 +46,7 @@ public class BOQService {
                             Long projectId,
                             Long houseId,
                             Long streetId,
+                            Long taskId,
                             Pageable pageable) {
         StringBuilder sql = new StringBuilder("select * from boq where 1=1 ");
 
@@ -61,6 +62,10 @@ public class BOQService {
         if (streetId != null) {
             sql.append(" and street_id = ").append(streetId);
         }
+        if (taskId != null) {
+            sql.append(" and id = (select boq_id from task t where t.id = ").append(taskId).append(")");
+        }
+
         if (pageable != null) {
             sql.append(" limit ").append(pageable.getPageSize());
             sql.append(" offset ").append(pageable.getOffset());

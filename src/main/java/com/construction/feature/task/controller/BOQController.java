@@ -63,9 +63,10 @@ public class BOQController {
                                 Long projectId,
                                 Long houseId,
                                 Long streetId,
+                                Long taskId,
                                 Pageable pageable) {
         filterConfig.configureFilter(ActionName.READ, "boq");
-        return service.search(code, projectId, houseId, streetId, pageable)
+        return service.search(code, projectId, houseId, streetId, taskId, pageable)
                 .stream()
                 .map(dataMapper)
                 .collect(Collectors.toList());

@@ -40,8 +40,8 @@ public class SubConstructorController {
 
     @GetMapping("/search")
     @PreAuthorize("hasAuthority('READ_SUB_CONSTRUCTOR')")
-    public List<ConstructorDto> search(@RequestParam(required = false) ObjectStatus status,
-                                       @RequestParam(required = false) String name,
+    public List<ConstructorDto> search(ObjectStatus status,
+                                       String name,
                                        Pageable pageable) {
         filterConfig.configureFilter(ActionName.READ, "sub_constructor");
         return service.search(status, name, pageable).stream().map(constructorMapper).collect(Collectors.toList());
