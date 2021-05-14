@@ -215,16 +215,18 @@ public class PaymentEntryService {
         if (!OPEN.equals(status)) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "entry has been submitted, cannot be deleted");
         }
-        var availableAmount = targetEntry.getTask().getAvailableAmount();
 
+        var availableAmount = targetEntry.getTask().getAvailableAmount();
         if (sourceEntry.getRequestAmount() != null && sourceEntry.getRequestAmount().compareTo(availableAmount) > 0) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Request amount cannot be greater than available amount");
         }
 
-        final var newEntry = dataMapper.mapObject(sourceEntry, targetEntry, PaymentEntry.class);
-        if (newEntry.getStatus() == null) {
-            newEntry.setStatus(status);
+        var availablePercent = targetEntry.getTask().getAvailableAmountAsPercent();
+        if (sourceEntry.getRequestAmountAsPercent() != null && sourceEntry.getRequestAmountAsPercent().compareTo(availablePercent) > 0) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Request amount percent cannot be greater than available percent");
         }
+
+        final var newEntry = dataMapper.mapObject(sourceEntry, targetEntry, PaymentEntry.class);
         historyService.addHistory(
                 newEntry,
                 CommandType.UPDATE,

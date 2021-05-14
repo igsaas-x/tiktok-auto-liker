@@ -55,6 +55,7 @@ public class PaymentEntry extends VersionEntity {
     BigDecimal approvedAmount;
 
     @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
     PaymentEntryStatus status = PaymentEntryStatus.OPEN;
 
     @JsonFormat(pattern = "yyyy-MM-dd")

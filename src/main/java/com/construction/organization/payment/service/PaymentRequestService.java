@@ -34,11 +34,6 @@ public class PaymentRequestService {
     public PaymentRequest create(PaymentRequest paymentRequest) {
         final var request = repository.save(paymentRequest);
         request.getEntries().forEach(entry -> {
-            // validate request amount
-            var availableAmount = entry.getTask().getAvailableAmount();
-            if (entry.getRequestAmount().compareTo(availableAmount) > 0) {
-                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Request amount cannot be greater than available amount");
-            }
             // validate approve amount
             if (entry.getApprovedAmount() != null) {
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Approve amount cannot be set on create request");

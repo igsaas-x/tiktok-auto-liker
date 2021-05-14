@@ -23,6 +23,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
+import javax.validation.Valid;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -47,7 +48,7 @@ public class PaymentRequestController {
     @ApiOperation("Add new data")
     @PostMapping
     @PreAuthorize("hasAuthority('CREATE_PAYMENT')")
-    public PaymentRequestDto save(@RequestBody PaymentRequestDto dto) {
+    public PaymentRequestDto save(@Valid @RequestBody PaymentRequestDto dto) {
         return requestMapper.apply(service.create(requestMapper.toEntity(dto)));
     }
 
