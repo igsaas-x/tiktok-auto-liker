@@ -14,12 +14,13 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.server.ResponseStatusException;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.util.Set;
 
 import static com.construction.organization.payment.domain.PaymentEntryStatus.OPEN;
+import static com.construction.persistence.constants.NumberConstants.HUNDRED;
 
 @Entity
 @Getter
@@ -46,8 +47,10 @@ public class PaymentEntry extends VersionEntity {
     @Convert(converter = StringSetConverter.class)
     Set<String> attachment;
 
-    @NotNull
+    @Column(nullable = false)
     BigDecimal requestAmount;
+
+    Float requestAmountAsPercent;
 
     BigDecimal approvedAmount;
 
@@ -56,7 +59,7 @@ public class PaymentEntry extends VersionEntity {
 
     @JsonFormat(pattern = "yyyy-MM-dd")
     LocalDate paidOn;
-    
+
     @PrePersist
     private void prePersist() {
         if (status == null) {
@@ -69,11 +72,21 @@ public class PaymentEntry extends VersionEntity {
                 throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "task is not approved");
             }
         }
-        if (requestAmount == null) {
-            requestAmount = task.getTotalPrice();
-        }
-        if (requestAmount.compareTo(task.getTotalPrice()) > 0) {
-            throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "request amount cannot greater than task total amount");
+        if (requestAmount == null && requestAmountAsPercent == null) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "requestAmount and requestAmountAsPercent cannot be both null");
+        } else if (requestAmount != null && requestAmountAsPercent != null) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "requestAmount and requestAmountAsPercent cannot be both exist");
+        } else if (requestAmount != null) {
+            if (requestAmount.compareTo(task.getAvailableAmount()) > 0) {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "request amount cannot greater than available amount");
+            }
+        } else {
+            if (requestAmountAsPercent.compareTo(task.getAvailableAmountAsPercent()) > 0) {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "request amount percent cannot greater than available amount as percent");
+            }
+            requestAmount = task.getTotalPrice()
+                    .multiply(BigDecimal.valueOf(requestAmountAsPercent))
+                    .divide(HUNDRED, RoundingMode.UNNECESSARY);
         }
     }
 }

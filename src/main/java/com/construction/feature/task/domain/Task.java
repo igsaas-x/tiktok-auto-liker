@@ -33,21 +33,25 @@ public class Task extends AuditingEntity {
     @JoinColumn(updatable = false)
     private TaskTemplate taskTemplate;
 
+    @Column(nullable = false)
     private Integer quantity;
 
     private String unit;
 
-    @Column(columnDefinition = "DECIMAL default 0")
+    @Column(nullable = false)
     private BigDecimal unitPrice;
 
-    @Column(columnDefinition = "DECIMAL default 0")
+    @Column(nullable = false)
     private BigDecimal totalPrice;
 
-    @Column(columnDefinition = "DECIMAL default 0")
+    @Column(columnDefinition = "DECIMAL default 0", nullable = false)
     private BigDecimal paidAmount;
 
-    @Column(columnDefinition = "DECIMAL default 0")
+    @Column(nullable = false)
     private BigDecimal availableAmount;
+
+    @Column(columnDefinition = "DECIMAL default 100")
+    private Float availableAmountAsPercent;
 
     @PrePersist
     private void prePersist() {
@@ -60,11 +64,17 @@ public class Task extends AuditingEntity {
         if (getStatus() == null) {
             setStatus(ObjectStatus.OPEN);
         }
+        if (totalPrice == null) {
+            totalPrice = unitPrice.multiply(BigDecimal.valueOf(quantity));
+        }
         if (paidAmount == null) {
             paidAmount = BigDecimal.ZERO;
         }
         if (availableAmount == null) {
             availableAmount = totalPrice;
+        }
+        if (availableAmountAsPercent == null) {
+            availableAmountAsPercent = 100F;
         }
     }
 
@@ -75,6 +85,15 @@ public class Task extends AuditingEntity {
         }
         if (availableAmount != null && availableAmount.equals(BigDecimal.ZERO)) {
             setStatus(ObjectStatus.CLOSED);
+        }
+    }
+
+    public void reduceAvailableAmountAsPercent(Float percent) {
+        if (this.availableAmountAsPercent != null && this.availableAmountAsPercent > 0F) {
+            this.availableAmountAsPercent = availableAmountAsPercent - percent;
+            if (this.availableAmountAsPercent < 0F) {
+                this.availableAmountAsPercent = 0F;
+            }
         }
     }
 }

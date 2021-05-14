@@ -28,20 +28,22 @@ public class TaskDto {
     private Long id;
     @JsonProperty("name")
     private String taskTemplateName;
+    @NotNull
     private Integer quantity;
     private ContractType contractType;
     private String unit;
+    @NotNull
     private BigDecimal unitPrice;
     private BigDecimal totalPrice;
     @NotNull
     private Long taskTemplateId;
-    @JsonProperty("createdBy")
+    @JsonProperty(value = "createdBy", access = JsonProperty.Access.READ_ONLY)
     private String createdByUserName;
-    @JsonProperty("updatedBy")
+    @JsonProperty(value = "updatedBy", access = JsonProperty.Access.READ_ONLY)
     private String updatedByUserName;
-    @JsonProperty("verifiedBy")
+    @JsonProperty(value = "verifiedBy", access = JsonProperty.Access.READ_ONLY)
     private String verifiedByUserName;
-    @JsonProperty("approvedBy")
+    @JsonProperty(value = "approvedBy", access = JsonProperty.Access.READ_ONLY)
     private String approvedByUserName;
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime createdAt;
@@ -51,9 +53,15 @@ public class TaskDto {
     private LocalDateTime verifiedAt;
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime approvedAt;
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private ObjectStatus status;
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private BigDecimal paidAmount;
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private BigDecimal availableAmount;
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    private Float availableAmountAsPercent;
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private BOQData boq;
     private List<SubConstructorDto> subConstructors;
 }

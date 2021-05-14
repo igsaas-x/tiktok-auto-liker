@@ -18,10 +18,12 @@ import org.springframework.web.server.ResponseStatusException;
 import javax.persistence.EntityManager;
 import javax.transaction.Transactional;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.util.List;
 
 import static com.construction.organization.payment.domain.PaymentEntryStatus.*;
+import static com.construction.persistence.constants.NumberConstants.HUNDRED;
 
 @Service
 @Transactional
@@ -171,6 +173,10 @@ public class PaymentEntryService {
                 final var task = paymentEntry.getTask();
                 final var paidAmount = task.getPaidAmount().add(paymentEntry.getApprovedAmount());
                 final var availableAmount = task.getAvailableAmount().subtract(paidAmount);
+                if (paymentEntry.getRequestAmountAsPercent() != null) {
+                    var paidPercent = paidAmount.divide(availableAmount, 8, RoundingMode.UNNECESSARY).multiply(HUNDRED);
+                    task.reduceAvailableAmountAsPercent(paidPercent.floatValue());
+                }
                 task.setAvailableAmount(availableAmount);
                 task.setPaidAmount(paidAmount);
                 taskRepository.save(task);
