@@ -17,6 +17,6 @@ public interface TaskSubConstructorAssignRepository extends JpaRepository<TaskSu
     void deleteByTaskIdAndSubConstructorId(Long taskId, Long subConstructorId);
 
     @Modifying
-    @Query("delete from task_sub_constructor_assign where task_id = :id")
+    @Query(value = "delete from task_sub_constructor_assign where task_id = :id", nativeQuery = true)
     void deleteWithTaskId(@Param("id") Long id);
 }
