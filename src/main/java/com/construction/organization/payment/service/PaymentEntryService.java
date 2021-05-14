@@ -213,7 +213,7 @@ public class PaymentEntryService {
         final var targetEntry = getById(id);
         final var status = targetEntry.getStatus();
         if (!OPEN.equals(status)) {
-            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "entry has been submitted, cannot be deleted");
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "entry has been submitted, cannot be updated");
         }
 
         var availableAmount = targetEntry.getTask().getAvailableAmount();
