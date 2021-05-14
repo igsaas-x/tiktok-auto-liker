@@ -29,8 +29,7 @@ public class TaskSubConstructAssignService {
         final var task = taskRepository.findById(taskId).orElseThrow(() -> new ResourceNotFoundException(Task.class, taskId));
         final var subs = subConstructorRepository.findAllById(subIds);
 
-        final var taskSubAssigns = repository.findAllByTaskId(taskId);
-        repository.deleteAll(taskSubAssigns);
+        repository.deleteWithTaskId(taskId);
 
         final var assign = subs.stream()
                 .filter(sub -> ObjectStatus.APPROVED.equals(sub.getStatus()))

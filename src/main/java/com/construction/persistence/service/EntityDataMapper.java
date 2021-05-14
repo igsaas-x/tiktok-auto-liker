@@ -32,7 +32,7 @@ public class EntityDataMapper {
         final var sourceWrapper = new BeanWrapperImpl(sourceObject);
         final var en = entityManager.getMetamodel().entity(clazz);
         en.getAttributes().forEach(attribute -> {
-            if (!SKIP.contains(attribute.getName()))
+            if (!SKIP.contains(attribute.getName()) && sourceWrapper.getPropertyValue(attribute.getName()) != null)
                 targetWrapper.setPropertyValue(attribute.getName(), sourceWrapper.getPropertyValue(attribute.getName()));
         });
         return (T) targetWrapper.getWrappedInstance();

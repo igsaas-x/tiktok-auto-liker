@@ -209,6 +209,12 @@ public class PaymentEntryService {
         if (!OPEN.equals(status)) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "entry has been submitted, cannot be deleted");
         }
+
+        var availableAmount = taskRepository.getAvailableAmount(targetEntry.getId());
+        if (sourceEntry.getRequestAmount().compareTo(availableAmount) > 0) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Request amount cannot be greater than available amount");
+        }
+
         final var newEntry = dataMapper.mapObject(sourceEntry, targetEntry, PaymentEntry.class);
         if (newEntry.getStatus() == null) {
             newEntry.setStatus(status);

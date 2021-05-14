@@ -41,6 +41,9 @@ public class BOQ extends SimpleAuditingEntity {
     @JoinColumn
     private Street street;
 
+    @Enumerated(EnumType.STRING)
+    private ContractType contractType;
+
     private String details;
 
     @Enumerated(EnumType.STRING)
