@@ -1,3 +1,4 @@
+echo > nohup.out
 git pull
 kill $(cat ./bin/shutdown.pid)
 ./gradlew bootJar
