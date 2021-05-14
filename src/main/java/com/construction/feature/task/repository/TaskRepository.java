@@ -13,7 +13,6 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import java.math.BigDecimal;
 import java.util.List;
 
 @Repository
@@ -47,12 +46,14 @@ public interface TaskRepository extends JpaRepository<Task, Long>, JpaSpecificat
     @Query(value = "select p from Task p, TaskAssign pa where p.id = pa.task and pa.appUser.id = :userId")
     Page<Task> findAssignedTask(Long userId, Pageable pageable);
 
-    @Query(value = "select IFNULL(sum(pe.approved_amount),0) FROM payment_entry pe join payment_request pr " +
-            "on pe.payment_request_id = pr.id and pr.sub_constructor_id = :con_id and pe.status = 'PAID' and pe.task_id = :task_id",
-            nativeQuery = true)
-    BigDecimal getPaidAmount(@Param("con_id") Long subConstructorId, @Param("task_id") Long taskId);
+    /**
+     @Query(value = "select IFNULL(sum(pe.approved_amount),0) FROM payment_entry pe join payment_request pr " +
+     "on pe.payment_request_id = pr.id and pr.sub_constructor_id = :con_id and pe.status = 'PAID' and pe.task_id = :task_id",
+     nativeQuery = true)
+     BigDecimal getPaidAmount(@Param("con_id") Long subConstructorId, @Param("task_id") Long taskId);
 
-    @Query(value = "SELECT t.total_price - IFNULL((select sum(pe.approved_amount) from payment_entry pe " +
-            "where pe.task_id = :task_id and pe.status = 'PAID'),0) as available_amount from task t where t.id = :task_id", nativeQuery = true)
-    BigDecimal getAvailableAmount(@Param("task_id") Long taskId);
+     @Query(value = "SELECT t.total_price - IFNULL((select sum(pe.approved_amount) from payment_entry pe " +
+     "where pe.task_id = :task_id and pe.status = 'PAID'),0) as available_amount from task t where t.id = :task_id", nativeQuery = true)
+     BigDecimal getAvailableAmount(@Param("task_id") Long taskId);
+     */
 }

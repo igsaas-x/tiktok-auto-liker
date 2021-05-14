@@ -40,7 +40,7 @@ public class PaymentEntryDto {
     Set<String> attachment;
 
     BigDecimal requestAmount;
-    
+
     Float requestAmountAsPercent;
 
     BigDecimal approvedAmount;

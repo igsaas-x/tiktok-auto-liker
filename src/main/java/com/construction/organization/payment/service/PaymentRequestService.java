@@ -1,7 +1,6 @@
 package com.construction.organization.payment.service;
 
 import com.construction.appconfiguration.utils.ApplicationSecurityContext;
-import com.construction.feature.task.repository.TaskRepository;
 import com.construction.organization.payment.domain.CommandType;
 import com.construction.organization.payment.domain.PaymentEntry;
 import com.construction.organization.payment.domain.PaymentEntryStatus;
@@ -31,13 +30,12 @@ public class PaymentRequestService {
     final PaymentRequestRepository repository;
     final StatusHistoryService historyService;
     final ApplicationSecurityContext context;
-    final TaskRepository taskRepository;
 
     public PaymentRequest create(PaymentRequest paymentRequest) {
         final var request = repository.save(paymentRequest);
         request.getEntries().forEach(entry -> {
             // validate request amount
-            var availableAmount = taskRepository.getAvailableAmount(entry.getTask().getId());
+            var availableAmount = entry.getTask().getAvailableAmount();
             if (entry.getRequestAmount().compareTo(availableAmount) > 0) {
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Request amount cannot be greater than available amount");
             }
