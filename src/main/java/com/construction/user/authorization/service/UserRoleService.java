@@ -93,7 +93,7 @@ public class UserRoleService {
             @CacheEvict(value = "rolePermissions", key = "#id"),
             @CacheEvict(value = "role", key = "#id"),
             @CacheEvict("roles"),
-            @CacheEvict("usersAuthorities")
+            @CacheEvict(value = "usersAuthorities", allEntries = true)
     })
     public UserRole updateById(Long id, RoleDto dto) {
         var role = getById(id);
