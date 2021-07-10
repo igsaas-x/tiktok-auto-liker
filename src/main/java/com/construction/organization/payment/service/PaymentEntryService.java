@@ -184,10 +184,8 @@ public class PaymentEntryService {
                 paymentEntry.setPaidOn(LocalDate.now());
                 break;
             case REJECT:
-                if (OPEN.equals(paymentEntry.getStatus())
-                        || APPROVED.equals(paymentEntry.getStatus())
-                        || PAID.equals(paymentEntry.getStatus())) {
-                    throw new RuntimeException("status cannot be rejected");
+                if (OPEN.equals(paymentEntry.getStatus()) || PAID.equals(paymentEntry.getStatus())) {
+                    throw new ResponseStatusException(HttpStatus.FORBIDDEN, "status cannot be rejected");
                 }
                 paymentEntry.setStatus(REJECTED);
                 break;

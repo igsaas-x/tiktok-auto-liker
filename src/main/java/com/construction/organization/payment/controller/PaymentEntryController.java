@@ -1,5 +1,7 @@
 package com.construction.organization.payment.controller;
 
+import com.construction.appconfiguration.utils.ApplicationSecurityContext;
+import com.construction.exception.UnAuthorizeException;
 import com.construction.organization.payment.domain.CommandType;
 import com.construction.organization.payment.domain.PaymentEntry;
 import com.construction.organization.payment.domain.PaymentEntryStatus;
@@ -37,6 +39,7 @@ public class PaymentEntryController {
     private final PaymentEntryService service;
     private final PaymentEntryMapper mapper;
     private final StatusHistoryService historyService;
+    private final ApplicationSecurityContext securityContext;
 
     @GetMapping("/{id}")
     @PreAuthorize("hasAuthority('READ_PAYMENT')")
@@ -79,7 +82,6 @@ public class PaymentEntryController {
 
     @ApiOperation("Submit command to payment request. Parameters are:" + ALLOWED_PARAM)
     @PutMapping("/command")
-    @PreAuthorize("hasAuthority('UPDATE_PAYMENT')")
     public Map<String, Object> handleCommand(@RequestBody IdList ids,
                                              @RequestParam CommandType command,
                                              @RequestParam(required = false) BigDecimal approveAmount,
@@ -90,6 +92,11 @@ public class PaymentEntryController {
         }
 
         log.info("approve amount is: " + approveAmount);
+
+        // check permission
+        if (!securityContext.hasPermissionTo(String.format("%s_PAYMENT", command))) {
+            throw new UnAuthorizeException();
+        }
 
         service.getByAllId(ids.getIds()).forEach(entry -> service.handleCommand(entry, command, attachment, approveAmount, comment));
         return Map.of("success", true);
