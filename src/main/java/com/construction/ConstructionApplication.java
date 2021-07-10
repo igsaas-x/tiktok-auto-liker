@@ -1,13 +1,11 @@
 package com.construction;
 
-import lombok.extern.java.Log;
 import org.springframework.boot.WebApplicationType;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.context.ApplicationPidFileWriter;
 
 @SpringBootApplication
-@Log
 public class ConstructionApplication {
 
     public static void main(String[] args) {
