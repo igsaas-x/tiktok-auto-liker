@@ -4,28 +4,21 @@ import com.construction.exception.PasswordInvalidException;
 import com.construction.persistence.exception.ResourceNotFoundException;
 import com.construction.persistence.service.EntityDataMapper;
 import com.construction.user.authentication.domain.AppUser;
+import com.construction.user.authentication.domain.UserStatus;
 import com.construction.user.authentication.repository.AppUserRepository;
-import com.construction.user.authorization.domain.ActionName;
-import com.construction.user.authorization.domain.Permission;
-import com.construction.user.authorization.repository.PermissionRepository;
 import com.construction.user.authorization.service.UserRoleService;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import javax.transaction.Transactional;
-import javax.validation.constraints.Email;
-import javax.validation.constraints.NotNull;
-import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
-@AllArgsConstructor
 @Transactional
+@RequiredArgsConstructor
 public class AppUserService {
 
     private final AppUserRepository repository;
@@ -37,7 +30,7 @@ public class AppUserService {
         return repository.findByUserName(name).orElseThrow(() -> new ResourceNotFoundException(AppUser.class, name));
     }
 
-    public AppUser getUserByEmail(@Email @NotNull final String email) {
+    public AppUser getUserByEmail(final String email) {
         return repository.findByEmail(email).orElseThrow(() -> new ResourceNotFoundException(AppUser.class, email));
     }
 
@@ -55,6 +48,12 @@ public class AppUserService {
 
     public void deleteById(Long id) {
         repository.deleteById(id);
+    }
+
+    public AppUser disable(Long id) {
+        var appUser = getById(id);
+        appUser.setStatus(UserStatus.INACTIVE);
+        return repository.save(appUser);
     }
 
     public AppUser assignRole(Long userId, Long roleId) {

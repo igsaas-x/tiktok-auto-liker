@@ -92,7 +92,7 @@ public class UserRoleService {
     @Caching(evict = {
             @CacheEvict(value = "rolePermissions", key = "#id"),
             @CacheEvict(value = "role", key = "#id"),
-            @CacheEvict("roles"),
+            @CacheEvict(value = "roles"),
             @CacheEvict(value = "usersAuthorities", allEntries = true)
     })
     public UserRole updateById(Long id, RoleDto dto) {

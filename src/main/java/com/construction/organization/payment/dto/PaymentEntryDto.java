@@ -37,6 +37,9 @@ public class PaymentEntryDto {
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     Long paymentRequestId;
 
+    @JsonProperty(value = "requestDate")
+    BigDecimal paymentRequestCreatedAt;
+
     Set<String> attachment;
 
     BigDecimal requestAmount;

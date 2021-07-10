@@ -5,7 +5,7 @@ import com.construction.user.authentication.domain.AppUser;
 import com.construction.user.authentication.dto.UserDataMapper;
 import com.construction.user.authentication.dto.UserDto;
 import com.construction.user.authentication.service.AppUserService;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -16,7 +16,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/user")
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class AppUserController {
 
     private final AppUserService service;
@@ -73,16 +73,15 @@ public class AppUserController {
         return service.createUser(mapper.toEntity(dto));
     }
 
-    @DeleteMapping("/{id}")
-    @PreAuthorize("hasAuthority('DELETE_USER')")
-    public boolean deleteUser(@NotNull @PathVariable("id") final Long id) {
+    @PutMapping("/{id}/disable")
+    @PreAuthorize("hasAuthority('DISABLE_USER')")
+    public AppUser disable(@PathVariable("id") final Long id) {
         if (id.equals(context.authenticatedUser().getId())) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "cannot delete current user");
         }
         if (id == 1L) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "cannot delete admin user");
         }
-        service.deleteById(id);
-        return true;
+        return service.disable(id);
     }
 }
