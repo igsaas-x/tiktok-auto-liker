@@ -9,7 +9,7 @@ import com.construction.user.authorization.dto.mapper.PermissionMapper;
 import com.construction.user.authorization.repository.PermissionRepository;
 import com.construction.user.authorization.repository.RolePermissionRepository;
 import com.construction.user.authorization.repository.UserRoleRepository;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
@@ -24,7 +24,7 @@ import java.util.stream.Collectors;
 
 @Service
 @Transactional
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class UserRoleService {
 
     private final UserRoleRepository repository;

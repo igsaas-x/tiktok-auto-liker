@@ -9,6 +9,7 @@ import lombok.experimental.Accessors;
 import lombok.experimental.FieldDefaults;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.Set;
 
 @Data
@@ -38,7 +39,7 @@ public class PaymentEntryDto {
     Long paymentRequestId;
 
     @JsonProperty(value = "requestDate")
-    BigDecimal paymentRequestCreatedAt;
+    LocalDateTime paymentRequestCreatedAt;
 
     Set<String> attachment;
 
