@@ -3,7 +3,7 @@ package com.construction.organization.payment.service;
 import com.construction.appconfiguration.utils.ApplicationSecurityContext;
 import com.construction.organization.payment.domain.CommandType;
 import com.construction.organization.payment.domain.PaymentEntry;
-import com.construction.organization.payment.domain.PaymentEntryStatus;
+import com.construction.organization.payment.domain.PaymentStatus;
 import com.construction.organization.payment.domain.PaymentRequest;
 import com.construction.organization.payment.repository.PaymentRequestRepository;
 import com.construction.persistence.exception.ResourceNotFoundException;
@@ -82,17 +82,17 @@ public class PaymentRequestService {
     public Page<PaymentRequest> findPendingFor(final CommandType pendingFor, Pageable pageable) {
         switch (pendingFor) {
             case SUBMIT:
-                return repository.getPendingPaymentRequest(PaymentEntryStatus.OPEN, pageable);
+                return repository.getPendingPaymentRequest(PaymentStatus.OPEN, pageable);
             case VERIFY:
-                return repository.getPendingPaymentRequest(PaymentEntryStatus.SUBMITTED, pageable);
+                return repository.getPendingPaymentRequest(PaymentStatus.SUBMITTED, pageable);
             case CONFIRM:
-                return repository.getPendingPaymentRequest(PaymentEntryStatus.VERIFIED, pageable);
+                return repository.getPendingPaymentRequest(PaymentStatus.VERIFIED, pageable);
             case REVIEW:
-                return repository.getPendingPaymentRequest(PaymentEntryStatus.CONFIRMED, pageable);
+                return repository.getPendingPaymentRequest(PaymentStatus.CONFIRMED, pageable);
             case APPROVE:
-                return repository.getPendingPaymentRequest(PaymentEntryStatus.REVIEWED, pageable);
+                return repository.getPendingPaymentRequest(PaymentStatus.REVIEWED, pageable);
             case CASH_OUT:
-                return repository.getPendingPaymentRequest(PaymentEntryStatus.APPROVED, pageable);
+                return repository.getPendingPaymentRequest(PaymentStatus.APPROVED, pageable);
         }
         return Page.empty();
     }

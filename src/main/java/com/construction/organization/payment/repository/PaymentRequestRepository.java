@@ -1,6 +1,6 @@
 package com.construction.organization.payment.repository;
 
-import com.construction.organization.payment.domain.PaymentEntryStatus;
+import com.construction.organization.payment.domain.PaymentStatus;
 import com.construction.organization.payment.domain.PaymentRequest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -13,5 +13,5 @@ import org.springframework.stereotype.Repository;
 public interface PaymentRequestRepository extends JpaRepository<PaymentRequest, Long> {
 
     @Query("select pr from PaymentRequest pr join pr.entries pe where pe.status = :status")
-    Page<PaymentRequest> getPendingPaymentRequest(@Param("status") final PaymentEntryStatus status, Pageable pageable);
+    Page<PaymentRequest> getPendingPaymentRequest(@Param("status") final PaymentStatus status, Pageable pageable);
 }

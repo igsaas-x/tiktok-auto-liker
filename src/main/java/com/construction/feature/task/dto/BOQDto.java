@@ -1,5 +1,6 @@
 package com.construction.feature.task.dto;
 
+import com.construction.feature.task.domain.ContractType;
 import com.construction.persistence.domain.SimpleObjectStatus;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -22,6 +23,7 @@ public class BOQDto {
     private String houseHouseNo;
     private Long streetId;
     private String streetName;
+    private ContractType contractType;
     private String details;
     @JsonProperty("createdBy")
     private String createdByUserName;

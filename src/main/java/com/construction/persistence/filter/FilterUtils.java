@@ -1,6 +1,6 @@
 package com.construction.persistence.filter;
 
-import com.construction.organization.payment.domain.PaymentEntryStatus;
+import com.construction.organization.payment.domain.PaymentStatus;
 import org.hibernate.Session;
 import org.springframework.stereotype.Component;
 
@@ -30,7 +30,7 @@ public class FilterUtils {
         session.enableFilter("readFilter").setParameter("id", id);
     }
 
-    public void enablePendingRequestFilter(final PaymentEntryStatus status) {
+    public void enablePendingRequestFilter(final PaymentStatus status) {
         var session = entityManager.unwrap(Session.class);
         session.enableFilter("pendingRequestFilter").setParameter("status", status.toString());
     }

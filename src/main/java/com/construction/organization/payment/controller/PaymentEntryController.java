@@ -4,7 +4,7 @@ import com.construction.appconfiguration.utils.ApplicationSecurityContext;
 import com.construction.exception.UnAuthorizeException;
 import com.construction.organization.payment.domain.CommandType;
 import com.construction.organization.payment.domain.PaymentEntry;
-import com.construction.organization.payment.domain.PaymentEntryStatus;
+import com.construction.organization.payment.domain.PaymentStatus;
 import com.construction.organization.payment.domain.StatusHistory;
 import com.construction.organization.payment.dto.PaymentEntryDto;
 import com.construction.organization.payment.dto.mapper.PaymentEntryMapper;
@@ -66,7 +66,7 @@ public class PaymentEntryController {
                                         final Long streetId,
                                         final Long houseId,
                                         final Long subConstructorId,
-                                        final PaymentEntryStatus status,
+                                        final PaymentStatus status,
                                         final Pageable pageable) {
         return service.search(boqId, projectId, streetId, houseId, subConstructorId, status, pageable)
                 .stream()
@@ -127,6 +127,6 @@ public class PaymentEntryController {
     @GetMapping("/by-subconstrucor/{id}")
     @PreAuthorize("hasAuthority('READ_PAYMENT')")
     public Page<PaymentEntryDto> getBySubConstructor(@PathVariable Long id, Pageable pageable) {
-        return service.getBySubConstructorId(id, PaymentEntryStatus.APPROVED, pageable).map(mapper);
+        return service.getBySubConstructorId(id, PaymentStatus.APPROVED, pageable).map(mapper);
     }
 }

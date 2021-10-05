@@ -1,6 +1,6 @@
 package com.construction.organization.payment.domain;
 
-public enum PaymentEntryStatus {
+public enum PaymentStatus {
     OPEN,
     SUBMITTED,
     VERIFIED,

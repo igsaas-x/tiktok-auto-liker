@@ -4,7 +4,7 @@ import com.construction.appconfiguration.utils.ApplicationSecurityContext;
 import com.construction.feature.task.repository.TaskRepository;
 import com.construction.organization.payment.domain.CommandType;
 import com.construction.organization.payment.domain.PaymentEntry;
-import com.construction.organization.payment.domain.PaymentEntryStatus;
+import com.construction.organization.payment.domain.PaymentStatus;
 import com.construction.organization.payment.repository.PaymentEntryRepository;
 import com.construction.persistence.exception.ResourceNotFoundException;
 import com.construction.persistence.service.EntityDataMapper;
@@ -22,7 +22,7 @@ import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.util.List;
 
-import static com.construction.organization.payment.domain.PaymentEntryStatus.*;
+import static com.construction.organization.payment.domain.PaymentStatus.*;
 import static com.construction.persistence.constants.NumberConstants.HUNDRED;
 
 @Service
@@ -43,7 +43,7 @@ public class PaymentEntryService {
                                      final Long streetId,
                                      final Long houseId,
                                      final Long subConstructorId,
-                                     final PaymentEntryStatus status,
+                                     final PaymentStatus status,
                                      final Pageable pageable) {
         final StringBuilder sql = new StringBuilder("select pe.* from payment_entry pe join task t on pe.task_id = t.id");
         if (status != null) {
@@ -96,7 +96,7 @@ public class PaymentEntryService {
         return repository.findByIdIn(ids);
     }
 
-    public Page<PaymentEntry> getBySubConstructorId(final Long id, final PaymentEntryStatus status, Pageable pageable) {
+    public Page<PaymentEntry> getBySubConstructorId(final Long id, final PaymentStatus status, Pageable pageable) {
         return repository.findAllByPaymentRequestSubConstructorIdAndStatus(id, status, pageable);
     }
 
@@ -110,7 +110,7 @@ public class PaymentEntryService {
 
         switch (command) {
             case SUBMIT:
-                if (!PaymentEntryStatus.OPEN.equals(paymentEntry.getStatus())) {
+                if (!PaymentStatus.OPEN.equals(paymentEntry.getStatus())) {
                     throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "payment request is not in open status");
                 }
                 if (approveAmount != null) {
@@ -140,7 +140,7 @@ public class PaymentEntryService {
                 if (approveAmount != null) {
                     throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Approve amount cannot be set on create request");
                 }
-                paymentEntry.setStatus(PaymentEntryStatus.CONFIRMED);
+                paymentEntry.setStatus(PaymentStatus.CONFIRMED);
                 break;
             case REVIEW:
                 if (!CONFIRMED.equals(paymentEntry.getStatus())) {
@@ -244,17 +244,17 @@ public class PaymentEntryService {
     public Page<PaymentEntry> findPendingFor(final CommandType pendingFor, Pageable pageable) {
         switch (pendingFor) {
             case SUBMIT:
-                return repository.findAllByStatus(PaymentEntryStatus.OPEN, pageable);
+                return repository.findAllByStatus(PaymentStatus.OPEN, pageable);
             case VERIFY:
-                return repository.findAllByStatus(PaymentEntryStatus.SUBMITTED, pageable);
+                return repository.findAllByStatus(PaymentStatus.SUBMITTED, pageable);
             case CONFIRM:
-                return repository.findAllByStatus(PaymentEntryStatus.VERIFIED, pageable);
+                return repository.findAllByStatus(PaymentStatus.VERIFIED, pageable);
             case REVIEW:
-                return repository.findAllByStatus(PaymentEntryStatus.CONFIRMED, pageable);
+                return repository.findAllByStatus(PaymentStatus.CONFIRMED, pageable);
             case APPROVE:
-                return repository.findAllByStatus(PaymentEntryStatus.REVIEWED, pageable);
+                return repository.findAllByStatus(PaymentStatus.REVIEWED, pageable);
             case CASH_OUT:
-                return repository.findAllByStatus(PaymentEntryStatus.APPROVED, pageable);
+                return repository.findAllByStatus(PaymentStatus.APPROVED, pageable);
         }
         return Page.empty();
     }

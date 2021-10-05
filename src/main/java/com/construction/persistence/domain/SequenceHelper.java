@@ -1,6 +1,5 @@
 package com.construction.persistence.domain;
 
-import com.introproventures.graphql.jpa.query.annotation.GraphQLIgnore;
 import lombok.Getter;
 
 import javax.persistence.Column;
@@ -10,7 +9,6 @@ import javax.persistence.Table;
 
 @Entity
 @Getter
-@GraphQLIgnore
 @Table(name = "sequence_helper")
 public class SequenceHelper {
 

@@ -2,14 +2,13 @@ package com.construction.persistence.filter;
 
 import com.construction.appconfiguration.utils.ApplicationSecurityContext;
 import com.construction.exception.UnAuthorizeException;
-import com.construction.organization.payment.domain.PaymentEntryStatus;
+import com.construction.organization.payment.domain.PaymentStatus;
 import com.construction.user.authorization.domain.ActionName;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Component;
 import org.springframework.web.server.ResponseStatusException;
-
-import javax.validation.constraints.NotNull;
 
 @Component
 @RequiredArgsConstructor
@@ -18,7 +17,7 @@ public class FilterConfig {
     private final ApplicationSecurityContext context;
     private final FilterUtils filterUtils;
 
-    public void configureFilter(@NotNull final ActionName action, @NotNull final String entityName) {
+    public void configureFilter(@NonNull final ActionName action, @NonNull final String entityName) {
         final var user = context.authenticatedUser();
         if (user == null) {
             filterUtils.enableNoAccessFilter();
@@ -45,7 +44,7 @@ public class FilterConfig {
         }
     }
 
-    public void enableChildFilter(final PaymentEntryStatus status) {
+    public void enableChildFilter(final PaymentStatus status) {
         filterUtils.enablePendingRequestFilter(status);
     }
 }

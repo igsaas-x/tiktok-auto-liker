@@ -1,5 +1,6 @@
 package com.construction.feature.task.dto;
 
+import com.construction.feature.task.domain.ContractType;
 import com.construction.persistence.domain.SimpleObjectStatus;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
@@ -15,6 +16,7 @@ public class BOQData {
     private Long projectId;
     private String projectName;
     private Long houseId;
+    private ContractType contractType;
     private String houseHouseNo;
     private Long streetId;
     private String streetName;

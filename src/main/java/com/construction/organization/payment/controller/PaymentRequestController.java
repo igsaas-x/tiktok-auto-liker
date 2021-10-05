@@ -2,7 +2,7 @@ package com.construction.organization.payment.controller;
 
 import com.construction.appconfiguration.utils.ApplicationSecurityContext;
 import com.construction.organization.payment.domain.CommandType;
-import com.construction.organization.payment.domain.PaymentEntryStatus;
+import com.construction.organization.payment.domain.PaymentStatus;
 import com.construction.organization.payment.dto.PaymentEntryDto;
 import com.construction.organization.payment.dto.PaymentRequestDto;
 import com.construction.organization.payment.dto.mapper.PaymentEntryMapper;
@@ -114,22 +114,22 @@ public class PaymentRequestController {
     private void enableFilter(CommandType commandType) {
         switch (commandType) {
             case SUBMIT:
-                filterConfig.enableChildFilter(PaymentEntryStatus.OPEN);
+                filterConfig.enableChildFilter(PaymentStatus.OPEN);
                 break;
             case VERIFY:
-                filterConfig.enableChildFilter(PaymentEntryStatus.SUBMITTED);
+                filterConfig.enableChildFilter(PaymentStatus.SUBMITTED);
                 break;
             case CONFIRM:
-                filterConfig.enableChildFilter(PaymentEntryStatus.VERIFIED);
+                filterConfig.enableChildFilter(PaymentStatus.VERIFIED);
                 break;
             case REVIEW:
-                filterConfig.enableChildFilter(PaymentEntryStatus.CONFIRMED);
+                filterConfig.enableChildFilter(PaymentStatus.CONFIRMED);
                 break;
             case APPROVE:
-                filterConfig.enableChildFilter(PaymentEntryStatus.REVIEWED);
+                filterConfig.enableChildFilter(PaymentStatus.REVIEWED);
                 break;
             case CASH_OUT:
-                filterConfig.enableChildFilter(PaymentEntryStatus.APPROVED);
+                filterConfig.enableChildFilter(PaymentStatus.APPROVED);
         }
     }
 

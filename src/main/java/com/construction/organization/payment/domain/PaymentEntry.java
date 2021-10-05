@@ -19,7 +19,7 @@ import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.util.Set;
 
-import static com.construction.organization.payment.domain.PaymentEntryStatus.OPEN;
+import static com.construction.organization.payment.domain.PaymentStatus.OPEN;
 import static com.construction.persistence.constants.NumberConstants.HUNDRED;
 
 @Entity
@@ -56,7 +56,7 @@ public class PaymentEntry extends VersionEntity {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    PaymentEntryStatus status = PaymentEntryStatus.OPEN;
+    PaymentStatus status = PaymentStatus.OPEN;
 
     @JsonFormat(pattern = "yyyy-MM-dd")
     LocalDate paidOn;

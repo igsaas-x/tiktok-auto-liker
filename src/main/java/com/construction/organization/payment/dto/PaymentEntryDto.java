@@ -1,7 +1,7 @@
 package com.construction.organization.payment.dto;
 
 import com.construction.feature.task.dto.TaskDto;
-import com.construction.organization.payment.domain.PaymentEntryStatus;
+import com.construction.organization.payment.domain.PaymentStatus;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AccessLevel;
 import lombok.Data;
@@ -50,5 +50,5 @@ public class PaymentEntryDto {
     BigDecimal approvedAmount;
 
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
-    PaymentEntryStatus status;
+    PaymentStatus status;
 }

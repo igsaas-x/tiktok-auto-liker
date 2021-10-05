@@ -71,4 +71,8 @@ public class BOQ extends SimpleAuditingEntity {
             }
         }
     }
+
+    public boolean isContract() {
+        return ContractType.CONTRACT.equals(this.contractType);
+    }
 }

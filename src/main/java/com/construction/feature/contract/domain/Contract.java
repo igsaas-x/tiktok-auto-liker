@@ -1,9 +1,8 @@
-package com.construction.organization.payment.domain;
+package com.construction.feature.contract.domain;
 
+import com.construction.feature.task.domain.BOQ;
 import com.construction.organization.subconstructor.domain.SubConstructor;
-import com.construction.persistence.converter.StringListConverter;
-import com.construction.persistence.domain.SimpleAuditingEntity;
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.construction.persistence.domain.AuditingEntity;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
@@ -15,12 +14,12 @@ import org.hibernate.annotations.ParamDef;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
-import javax.persistence.Convert;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
-import java.time.LocalDate;
+import java.math.BigDecimal;
 import java.util.List;
 
 @Entity
@@ -31,32 +30,29 @@ import java.util.List;
 @Filter(name = "myObjectFilter", condition = "created_by = :id")
 @Filter(name = "readableObjectFilter", condition = "created_by = :id")
 @FilterDef(name = "pendingRequestFilter", parameters = @ParamDef(name = "status", type = "string"))
-public class PaymentRequest extends SimpleAuditingEntity {
+public class Contract extends AuditingEntity {
 
-    @Column(unique = true)
-    String externalId;
-
-    String invoiceNumber;
-
+    @JoinColumn(name = "sub_constructor_id")
     @ManyToOne
-    @JoinColumn(updatable = false)
     SubConstructor subConstructor;
 
-    LocalDate requestDate;
-
-    Long projectId;
-
-    Long streetId;
-
-    Long houseId;
-
-    @Convert(converter = StringListConverter.class)
-    @Column(columnDefinition = "text")
-    List<String> attachments;
+    @OneToMany(cascade = CascadeType.ALL)
+    @JoinTable(name = "boq_contract",
+            joinColumns = {@JoinColumn(name = "contract_id")},
+            inverseJoinColumns = {@JoinColumn(name = "boq_id")})
+    List<BOQ> boqs;
 
     @OneToMany(cascade = CascadeType.ALL)
-    @JsonIgnore
-    @JoinColumn(name = "payment_request_id")
-    @Filter(name = "pendingRequestFilter", condition = "status = :status")
-    List<PaymentEntry> entries;
+    List<PaymentStep> paymentSteps;
+
+    @Column(nullable = false)
+    BigDecimal totalAmount;
+
+    BigDecimal paidAmount;
+
+    int totalStep;
+
+    int paidStep;
+
+    String note;
 }
