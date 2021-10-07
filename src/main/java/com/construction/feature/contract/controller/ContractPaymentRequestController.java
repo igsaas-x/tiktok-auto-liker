@@ -65,6 +65,16 @@ public class ContractPaymentRequestController {
         if (paymentRequest.getPaymentStep() == null) {
             throw new ResourceNotFoundException(PaymentStep.class, paymentRequestData.getPaymentStepId());
         }
+        if (paymentRequest.getPaymentStep().isPaid()) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Payment step is paid, cannot request for payment again");
+        }
+        // validate there is no active payment request for step
+        var existingRequests = repository.findAllByPaymentStep(paymentRequest.getPaymentStep());
+        existingRequests.forEach(request -> {
+            if (!PaymentStatus.OPEN.equals(request.getStatus())) {
+                throw new ResponseStatusException(HttpStatus.FORBIDDEN, "There are existing active request on this payment step");
+            }
+        });
         return mapper.apply(repository.save(paymentRequest));
     }
 
