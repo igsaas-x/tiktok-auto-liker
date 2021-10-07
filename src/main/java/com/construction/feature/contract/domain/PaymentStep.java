@@ -7,6 +7,8 @@ import lombok.experimental.Accessors;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import java.math.BigDecimal;
 
 @Entity
@@ -15,7 +17,8 @@ import java.math.BigDecimal;
 @Accessors(chain = true)
 public class PaymentStep extends VersionEntity {
 
-    @Column(name = "contract_id")
+    @ManyToOne
+    @JoinColumn(name = "contract_id")
     private Contract contract;
 
     @Column(nullable = false)

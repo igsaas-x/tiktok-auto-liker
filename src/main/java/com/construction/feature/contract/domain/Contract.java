@@ -19,6 +19,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.UniqueConstraint;
 import java.math.BigDecimal;
 import java.util.List;
 
@@ -38,11 +39,13 @@ public class Contract extends AuditingEntity {
 
     @OneToMany(cascade = CascadeType.ALL)
     @JoinTable(name = "boq_contract",
+            uniqueConstraints = {@UniqueConstraint(columnNames = {"contract_id", "boq_id"})},
             joinColumns = {@JoinColumn(name = "contract_id")},
             inverseJoinColumns = {@JoinColumn(name = "boq_id")})
     List<BOQ> boqs;
 
     @OneToMany(cascade = CascadeType.ALL)
+    @JoinColumn(name = "contract_id")
     List<PaymentStep> paymentSteps;
 
     @Column(nullable = false)
@@ -55,4 +58,16 @@ public class Contract extends AuditingEntity {
     int paidStep;
 
     String note;
+
+    public void addPaidAmount(BigDecimal amount) {
+        if (paidAmount == null) {
+            paidAmount = amount;
+        } else {
+            paidAmount = paidAmount.add(amount);
+        }
+    }
+
+    public void addPaidStep() {
+        paidStep++;
+    }
 }

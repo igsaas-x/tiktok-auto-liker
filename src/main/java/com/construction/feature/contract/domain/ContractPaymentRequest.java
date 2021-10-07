@@ -15,6 +15,8 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.PrePersist;
+import java.math.BigDecimal;
 
 @Entity
 @Getter
@@ -39,4 +41,14 @@ public class ContractPaymentRequest extends SimpleAuditingEntity {
 
     @Column(columnDefinition = "text")
     String detail;
+
+    BigDecimal approvedAmount;
+
+    @PrePersist
+    private void prePersist() {
+        status = PaymentStatus.OPEN;
+        if (approvedAmount == null) {
+            approvedAmount = paymentStep.getAmount();
+        }
+    }
 }

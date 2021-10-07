@@ -39,7 +39,5 @@ public class ContractStatusHistory extends SimpleAuditingEntity {
 
     String comment;
 
-    BigDecimal originApprovedAmount;
-
-    BigDecimal newApprovedAmount;
+    BigDecimal approvedAmount;
 }

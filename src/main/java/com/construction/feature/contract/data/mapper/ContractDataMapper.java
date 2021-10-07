@@ -8,27 +8,28 @@ import com.construction.persistence.mapper.DtoMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
-import java.util.stream.Collectors;
-
 @Component
 @RequiredArgsConstructor
 public class ContractDataMapper extends DtoMapper<Contract, ContractData> {
 
     private final SubConstructorRepository constructorRepository;
     private final BOQRepository boqRepository;
-    private final PaymentStepMapper paymentStepMapper;
 
     @Override
     public Contract toEntity(ContractData dto) {
-        var constructor = constructorRepository.findById(dto.getSubConstructorId()).orElse(null);
-        var boqs = boqRepository.findAllById(dto.getBoqIds());
-        var paymentStep = dto.getPaymentSteps().stream()
-                .map(paymentStepMapper::toEntity)
-                .collect(Collectors.toList());
         var contract = super.toEntity(dto);
-        contract.setPaymentSteps(paymentStep);
-        contract.setBoqs(boqs);
-        contract.setSubConstructor(constructor);
+        if (dto.getSubConstructorId() != null) {
+            var constructor = constructorRepository.findById(dto.getSubConstructorId()).orElse(null);
+            contract.setSubConstructor(constructor);
+        }
+        if (dto.getBoqIds() != null) {
+            var boqs = boqRepository.findAllById(dto.getBoqIds());
+            contract.setBoqs(boqs);
+        }
+
+        if (dto.getPaymentSteps() != null) {
+            contract.setTotalStep(dto.getPaymentSteps().size());
+        }
         return contract;
     }
 }
