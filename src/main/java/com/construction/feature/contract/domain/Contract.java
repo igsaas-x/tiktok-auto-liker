@@ -30,7 +30,6 @@ import java.util.List;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Filter(name = "myObjectFilter", condition = "created_by = :id")
 @Filter(name = "readableObjectFilter", condition = "created_by = :id")
-@FilterDef(name = "pendingRequestFilter", parameters = @ParamDef(name = "status", type = "string"))
 public class Contract extends AuditingEntity {
 
     @JoinColumn(name = "sub_constructor_id")
