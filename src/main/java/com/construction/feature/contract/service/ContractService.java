@@ -7,9 +7,12 @@ import com.construction.persistence.domain.ObjectStatus;
 import com.construction.persistence.utils.EntityValidator;
 import com.construction.user.authorization.domain.ActionName;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 
+import javax.persistence.EntityManager;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -21,6 +24,7 @@ public class ContractService {
     private final ContractRepository repository;
     private final ApplicationSecurityContext context;
     private final EntityValidator<Contract> validator;
+    private final EntityManager em;
 
     public List<Contract> verifyAll(List<Long> ids) {
         var contracts = repository.findAllById(ids);
@@ -42,5 +46,27 @@ public class ContractService {
             contract.setApprovedAt(LocalDateTime.now());
         });
         return repository.saveAll(contracts);
+    }
+
+    @SuppressWarnings("unchecked")
+    public List<Contract> search(String externalId,
+                                 Long subConstructorId,
+                                 Long boqId,
+                                 Pageable pageable) {
+        StringBuilder sql = new StringBuilder("select * from contract where 1=1 ");
+        if (subConstructorId != null) {
+            sql.append(" and sub_constructor_id =").append(subConstructorId);
+        }
+        if (StringUtils.hasText(externalId)) {
+            sql.append(" and external_id like '%").append(externalId).append("%'");
+        }
+        if (boqId != null) {
+            sql.append(" and id in (select contract_id from boq_contract where boq_id = ").append(boqId).append(")");
+        }
+        if (pageable != null) {
+            sql.append(" limit ").append(pageable.getPageSize());
+            sql.append(" offset ").append(pageable.getOffset());
+        }
+        return em.createNativeQuery(sql.toString(), Contract.class).getResultList();
     }
 }

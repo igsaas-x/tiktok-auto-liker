@@ -32,6 +32,9 @@ import java.util.List;
 @Filter(name = "readableObjectFilter", condition = "created_by = :id")
 public class Contract extends AuditingEntity {
 
+    @Column(unique = true)
+    String externalId;
+
     @JoinColumn(name = "sub_constructor_id")
     @ManyToOne
     SubConstructor subConstructor;

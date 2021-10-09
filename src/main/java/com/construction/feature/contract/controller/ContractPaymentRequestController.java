@@ -121,6 +121,18 @@ public class ContractPaymentRequestController {
         return repository.findAll(pageable).map(mapper);
     }
 
+    @GetMapping("search")
+    @PreAuthorize("hasAuthority('READ_PAYMENT')")
+    public List<ContractPaymentRequestData> search(@RequestParam String externalId,
+                                                   @RequestParam Long boqId,
+                                                   @RequestParam Long subConstructorId,
+                                                   Pageable pageable) {
+        return service.search(externalId, boqId, subConstructorId, pageable)
+                .stream()
+                .map(mapper)
+                .collect(Collectors.toList());
+    }
+
     @PostMapping("/{id}")
     public ContractPaymentRequestData command(@PathVariable Long id,
                                               @RequestParam CommandType command,

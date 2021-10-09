@@ -7,12 +7,14 @@ import com.construction.organization.payment.domain.CommandType;
 import com.construction.organization.payment.domain.PaymentStatus;
 import com.construction.persistence.exception.ResourceNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 import static com.construction.organization.payment.domain.PaymentStatus.*;
 
@@ -25,6 +27,7 @@ public class ContractPaymentRequestService {
     private final PaymentStepService paymentStepService;
     private final ContractStatusHistoryService historyService;
     private final ApplicationSecurityContext context;
+    private final ContractService contractService;
 
     public ContractPaymentRequest processCommand(Long id,
                                                  CommandType command,
@@ -91,6 +94,14 @@ public class ContractPaymentRequestService {
                 approveAmount == null ? paymentRequest.getPaymentStep().getAmount() : approveAmount,
                 comment);
         return repository.save(paymentRequest);
+    }
+
+    public List<ContractPaymentRequest> search(String externalId,
+                                               Long subConstructorId,
+                                               Long boqId,
+                                               Pageable pageable) {
+        var contracts = contractService.search(externalId, subConstructorId, boqId, pageable);
+        return repository.findAllByContractIn(contracts);
     }
 
 }

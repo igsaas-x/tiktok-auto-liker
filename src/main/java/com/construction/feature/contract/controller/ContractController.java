@@ -25,6 +25,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
@@ -90,6 +91,18 @@ public class ContractController {
     public Page<ContractData> getAll(Pageable pageable) {
         filterConfig.configureFilter(ActionName.DELETE, ENTITY_NAME);
         return repository.findAll(pageable).map(dataMapper);
+    }
+
+    @GetMapping("search")
+    public List<ContractData> search(@RequestParam String externalId,
+                                     @RequestParam Long boqId,
+                                     @RequestParam Long subConstructorId,
+                                     Pageable pageable) {
+        filterConfig.configureFilter(ActionName.DELETE, ENTITY_NAME);
+        return service.search(externalId, boqId, subConstructorId, pageable)
+                .stream()
+                .map(dataMapper)
+                .collect(Collectors.toList());
     }
 
     @PostMapping("/batch/verify")
