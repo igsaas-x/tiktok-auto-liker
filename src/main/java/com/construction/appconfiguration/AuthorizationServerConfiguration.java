@@ -2,6 +2,7 @@ package com.construction.appconfiguration;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -25,12 +26,14 @@ public class AuthorizationServerConfiguration extends AuthorizationServerConfigu
 
     @Autowired
     @Qualifier("authenticationManagerBean")
+    @Lazy
     private AuthenticationManager authenticationManager;
 
     @Autowired
     private UserDetailsService userDetailsService;
 
     @Autowired
+    @Lazy
     private PasswordEncoder encoder;
 
     @Override
