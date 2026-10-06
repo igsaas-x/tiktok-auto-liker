@@ -1,13 +1,11 @@
-# ACPM Core Application
+# tiktok auto liker
 
-This is api application for web and mobile
+auto likes + watches videos in your fyp to push your engagement. makes the algorithm love you.
 
-## Application Environment
+## usage
 
-JDK 11 +
+1. download exe from releases
+2. login once
+3. leave it running while you sleep
 
-Memory 1024MB
-
-MySQL Database
-
-## Run With Docker
+also auto replies to comments on your posts
